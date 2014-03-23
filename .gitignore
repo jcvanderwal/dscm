@@ -1,0 +1,30 @@
+*~
+*.swp
+*.class
+db/
+target/
+target-ide/
+logs/
+.clover/
+.settings/
+.project
+.classpath
+datanucleus.log
+*.iml
+.idea
+*.log
+*.lck
+.checkstyle-cachefile
+
+
+# os specific files
+.DS_Store
+
+# Package Files #
+*.jar
+*.war
+*.ear
+
+/xml/
+
+rebel.xml
