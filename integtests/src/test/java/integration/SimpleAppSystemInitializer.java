@@ -16,6 +16,7 @@
  */
 package integration;
 
+import org.apache.isis.applib.services.clock.ClockService;
 import org.apache.isis.core.commons.config.IsisConfiguration;
 import org.apache.isis.core.commons.config.IsisConfigurationDefault;
 import org.apache.isis.core.integtestsupport.IsisSystemForTest;
@@ -24,20 +25,24 @@ import org.apache.isis.objectstore.jdo.datanucleus.DataNucleusObjectStore;
 import org.apache.isis.objectstore.jdo.datanucleus.DataNucleusPersistenceMechanismInstaller;
 import org.apache.isis.objectstore.jdo.datanucleus.service.support.IsisJdoSupportImpl;
 
+import org.estatio.dscm.dom.Assets;
 import org.estatio.dscm.dom.DisplayGroups;
 import org.estatio.dscm.dom.Displays;
+import org.estatio.dscm.dom.Playlists;
+import org.estatio.dscm.dom.Publishers;
 
 /**
- * Holds an instance of an {@link IsisSystemForTest} as a {@link ThreadLocal} on the current thread,
- * initialized with ToDo app's domain services. 
+ * Holds an instance of an {@link IsisSystemForTest} as a {@link ThreadLocal} on
+ * the current thread, initialized with ToDo app's domain services.
  */
 public class SimpleAppSystemInitializer {
-    
-    private SimpleAppSystemInitializer(){}
+
+    private SimpleAppSystemInitializer() {
+    }
 
     public static IsisSystemForTest initIsft() {
         IsisSystemForTest isft = IsisSystemForTest.getElseNull();
-        if(isft == null) {
+        if (isft == null) {
             isft = new SimpleAppSystemBuilder().build().setUpSystem();
             IsisSystemForTest.set(isft);
         }
@@ -47,32 +52,29 @@ public class SimpleAppSystemInitializer {
     private static class SimpleAppSystemBuilder extends IsisSystemForTest.Builder {
 
         public SimpleAppSystemBuilder() {
-            //withFixtures( ... reference data fixtures ...); // if we had any...
             withLoggingAt(org.apache.log4j.Level.INFO);
             with(testConfiguration());
             with(new DataNucleusPersistenceMechanismInstaller());
-            
+
             withServices(
                     new Displays(),
                     new DisplayGroups(),
+                    new Assets(),
+                    new Publishers(),
+                    new Playlists(),
+                    new ClockService(),
                     new WrapperFactoryDefault(),
-                    new IsisJdoSupportImpl()
-                    );
+                    new IsisJdoSupportImpl());
         }
 
         private IsisConfiguration testConfiguration() {
             final IsisConfigurationDefault testConfiguration = new IsisConfigurationDefault();
-
             testConfiguration.add("isis.persistor.datanucleus.RegisterEntities.packagePrefix", "dom");
             testConfiguration.add("isis.persistor.datanucleus.impl.javax.jdo.option.ConnectionURL", "jdbc:hsqldb:mem:test");
-            
             testConfiguration.add("isis.persistor.datanucleus.impl.datanucleus.defaultInheritanceStrategy", "TABLE_PER_CLASS");
-            testConfiguration.add(DataNucleusObjectStore.INSTALL_FIXTURES_KEY , "true");
-            
-            testConfiguration.add("isis.persistor.datanucleus.impl.datanucleus.cache.level2.type","none");
-
+            testConfiguration.add(DataNucleusObjectStore.INSTALL_FIXTURES_KEY, "true");
+            testConfiguration.add("isis.persistor.datanucleus.impl.datanucleus.cache.level2.type", "none");
             testConfiguration.add("isis.persistor.datanucleus.impl.datanucleus.identifier.case", "PreserveCase");
-
             return testConfiguration;
         }
 

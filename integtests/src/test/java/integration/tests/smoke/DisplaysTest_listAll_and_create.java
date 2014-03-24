@@ -20,7 +20,7 @@ package integration.tests.smoke;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
-import integration.tests.SimpleAppIntegTest;
+import integration.tests.DSCMIntegTest;
 
 import java.util.List;
 
@@ -32,7 +32,7 @@ import org.estatio.dscm.dom.DisplayGroups;
 import org.estatio.dscm.dom.Displays;
 import org.estatio.dscm.fixture.DemoFixture;
 
-public class DisplaysTest_listAll_and_create extends SimpleAppIntegTest {
+public class DisplaysTest_listAll_and_create extends DSCMIntegTest {
 
     private Displays displays;
     private DisplayGroups displayGroups;
@@ -41,29 +41,28 @@ public class DisplaysTest_listAll_and_create extends SimpleAppIntegTest {
     public void setUp() throws Exception {
 
         scenarioExecution().install(new DemoFixture());
-        
+
         displays = wrap(service(Displays.class));
         displayGroups = wrap(service(DisplayGroups.class));
     }
 
-    
     @Test
     public void listAll() throws Exception {
 
         final List<Display> all = displays.allDisplays();
-        assertThat(all.size(), is(3));
-        
+        assertThat(all.size(), is(4));
+
         Display simpleObject = wrap(all.get(0));
-        assertThat(simpleObject.getName(), is("Foo"));
+        assertThat(simpleObject.getName(), is("Display 1"));
     }
-    
+
     @Test
     public void create() throws Exception {
-        
+
         displays.newDisplay("Faz", displayGroups.allDisplayGroups().get(0));
-        
+
         final List<Display> all = displays.allDisplays();
-        assertThat(all.size(), is(4));
+        assertThat(all.size(), is(5));
     }
 
 }
