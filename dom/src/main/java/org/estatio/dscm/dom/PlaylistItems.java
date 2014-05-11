@@ -20,53 +20,51 @@ package org.estatio.dscm.dom;
 
 import java.util.List;
 
-import org.joda.time.LocalDate;
-
 import org.apache.isis.applib.DomainObjectContainer;
 import org.apache.isis.applib.annotation.ActionSemantics;
 import org.apache.isis.applib.annotation.ActionSemantics.Of;
 import org.apache.isis.applib.annotation.Bookmarkable;
+import org.apache.isis.applib.annotation.Hidden;
 import org.apache.isis.applib.annotation.MemberOrder;
-import org.apache.isis.applib.annotation.Named;
-import org.apache.isis.applib.annotation.Optional;
+import org.apache.isis.applib.annotation.NotContributed;
 
-public class Playlists {
+@Hidden
+public class PlaylistItems {
 
     public String getId() {
-        return "playlist";
+        return "PlaylistItemItem";
     }
 
     public String iconName() {
-        return "Playlist";
+        return "PlaylistItemItem";
     }
 
     @Bookmarkable
     @ActionSemantics(Of.SAFE)
     @MemberOrder(sequence = "1")
-    public List<Playlist> allPlaylists() {
-        return container.allInstances(Playlist.class);
+    public List<PlaylistItem> allPlaylistItems() {
+        return container.allInstances(PlaylistItem.class);
     }
 
     // //////////////////////////////////////
     // Create (action)
     // //////////////////////////////////////
 
-    @MemberOrder(sequence = "2")
-    public Playlist newPlaylist(
-            final DisplayGroup displayGroup,
-            final @Named("Name") String name,
-            final @Named("Start date") LocalDate startDate,
-            final @Named("Start time") Time startTime,
-            final @Named("End date") @Optional LocalDate endDate,
-            final @Named("Repeat") PlaylistRepeat repeat) {
-        final Playlist obj = container.newTransientInstance(Playlist.class);
-        obj.setDisplayGroup(displayGroup);
-        obj.setName(name);
-        obj.setStartDate(startDate);
-        obj.setStartTime(startTime.time());
-        obj.setEndDate(endDate);
-        obj.setRepeatRule(repeat.rrule());
+    @NotContributed
+    public PlaylistItem newPlaylistItem(
+            final Playlist playlist,
+            final Asset asset) {
+        final PlaylistItem obj = container.newTransientInstance(PlaylistItem.class);
+        obj.setPlaylist(playlist);
+        obj.setAsset(asset);
+        obj.setSequence(1);
         container.persistIfNotAlready(obj);
+        if (!playlist.getItems().isEmpty()){
+            final PlaylistItem last = playlist.getItems().last();
+            last.setNext(obj);
+            obj.setSequence(last.getSequence()+1);
+        }
+        container.flush();
         return obj;
     }
 

@@ -28,16 +28,18 @@ import org.apache.isis.objectstore.jdo.datanucleus.service.support.IsisJdoSuppor
 import org.estatio.dscm.dom.Assets;
 import org.estatio.dscm.dom.DisplayGroups;
 import org.estatio.dscm.dom.Displays;
+import org.estatio.dscm.dom.PlaylistItems;
 import org.estatio.dscm.dom.Playlists;
 import org.estatio.dscm.dom.Publishers;
+import org.estatio.dscm.services.SyncService;
 
 /**
  * Holds an instance of an {@link IsisSystemForTest} as a {@link ThreadLocal} on
  * the current thread, initialized with ToDo app's domain services.
  */
-public class SimpleAppSystemInitializer {
+public class DSCMSystemInitializer {
 
-    private SimpleAppSystemInitializer() {
+    private DSCMSystemInitializer() {
     }
 
     public static IsisSystemForTest initIsft() {
@@ -62,9 +64,11 @@ public class SimpleAppSystemInitializer {
                     new Assets(),
                     new Publishers(),
                     new Playlists(),
+                    new PlaylistItems(),
                     new ClockService(),
                     new WrapperFactoryDefault(),
-                    new IsisJdoSupportImpl());
+                    new IsisJdoSupportImpl(),
+                    new SyncService());
         }
 
         private IsisConfiguration testConfiguration() {

@@ -16,27 +16,18 @@
  *  specific language governing permissions and limitations
  *  under the License.
  */
-package webapp.prototyping;
+package org.estatio.dscm.webapp;
 
-import org.apache.isis.applib.AbstractService;
-import org.apache.isis.applib.annotation.Named;
-import org.apache.isis.applib.annotation.Prototype;
-import org.apache.isis.core.runtime.fixtures.FixturesInstallerDelegate;
+import com.google.inject.Singleton;
 
-import org.estatio.dscm.fixture.DemoFixture;
+import org.apache.isis.viewer.wicket.viewer.registries.components.ComponentFactoryRegistrarDefault;
 
-/**
- * Enables fixtures to be installed from the application.
- */
-@Named("Prototyping")
-public class DSCMFixturesService extends AbstractService {
+@Singleton
+public class ComponentFactoryRegistrarForSimpleApp extends ComponentFactoryRegistrarDefault {
 
-    @Prototype
-    public String installFixtures() {
-        final FixturesInstallerDelegate installer = new FixturesInstallerDelegate().withOverride();
-        installer.addFixture(new DemoFixture());
-        installer.installFixtures();
-        return "Example fixtures installed";
+    @Override
+    public void addComponentFactories(ComponentFactoryList componentFactories) {
+        super.addComponentFactories(componentFactories);
+        // currently no replacements
     }
-  
 }

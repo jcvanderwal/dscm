@@ -22,47 +22,45 @@ import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
 import integration.tests.DSCMIntegTest;
 
-import java.util.List;
-
 import org.junit.Before;
 import org.junit.Test;
 
-import org.estatio.dscm.dom.Display;
-import org.estatio.dscm.dom.DisplayGroups;
-import org.estatio.dscm.dom.Displays;
+import org.estatio.dscm.dom.Asset;
+import org.estatio.dscm.dom.Assets;
+import org.estatio.dscm.dom.Playlist;
+import org.estatio.dscm.dom.PlaylistItem;
+import org.estatio.dscm.dom.PlaylistItems;
+import org.estatio.dscm.dom.Playlists;
 import org.estatio.dscm.fixture.DemoFixture;
 
-public class DisplaysTest_listAll_and_create extends DSCMIntegTest {
+public class PlaylistItemsTest extends DSCMIntegTest {
 
-    private Displays displays;
-    private DisplayGroups displayGroups;
+    private Playlists playlists;
+    private PlaylistItems playlistItems;
+    private Assets assets;
 
     @Before
     public void setUp() throws Exception {
-
         scenarioExecution().install(new DemoFixture());
-
-        displays = wrap(service(Displays.class));
-        displayGroups = wrap(service(DisplayGroups.class));
+        playlistItems = wrap(service(PlaylistItems.class));
+        playlists = wrap(service(Playlists.class));
+        assets = wrap(service(Assets.class));
     }
 
     @Test
-    public void listAll() throws Exception {
-
-        final List<Display> all = displays.allDisplays();
-        assertThat(all.size(), is(8));
-
-        Display simpleObject = wrap(all.get(0));
-        assertThat(simpleObject.getName(), is("ds-tours01"));
+    public void t1_listAll() throws Exception {
+        assertThat(playlistItems.allPlaylistItems().size(), is(12));
     }
 
     @Test
-    public void create() throws Exception {
+    public void t2_new() throws Exception {
 
-        displays.newDisplay("Faz", displayGroups.allDisplayGroups().get(0));
+        Playlist playlist = playlists.allPlaylists().get(0);
+        Asset asset = assets.allAssets().get(0);
+        PlaylistItem lastItem = playlist.getItems().last();
+        playlistItems.newPlaylistItem(playlist, asset);
+        assertThat(playlist.getItems().last().getPrevious(), is(lastItem));
 
-        final List<Display> all = displays.allDisplays();
-        assertThat(all.size(), is(9));
     }
 
 }

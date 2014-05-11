@@ -16,7 +16,7 @@ O *  Licensed to the Apache Software Foundation (ASF) under one or more
  */
 package integration.glue;
 
-import integration.SimpleAppSystemInitializer;
+import integration.DSCMSystemInitializer;
 import cucumber.api.java.After;
 import cucumber.api.java.Before;
 
@@ -35,7 +35,7 @@ public class BootstrappingGlue extends CukeGlueAbstract {
     @Before(value={"@integration"}, order=100)
     public void beforeScenarioIntegrationScope() {
         org.apache.log4j.PropertyConfigurator.configure("logging.properties");
-        SimpleAppSystemInitializer.initIsft();
+        DSCMSystemInitializer.initIsft();
         
         before(ScenarioExecutionScope.INTEGRATION);
     }

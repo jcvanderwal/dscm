@@ -16,18 +16,25 @@
  *  specific language governing permissions and limitations
  *  under the License.
  */
-package webapp;
+package integration.tests;
 
-import com.google.inject.Singleton;
+import integration.DSCMSystemInitializer;
 
-import org.apache.isis.viewer.wicket.viewer.registries.components.ComponentFactoryRegistrarDefault;
+import org.junit.BeforeClass;
 
-@Singleton
-public class ComponentFactoryRegistrarForSimpleApp extends ComponentFactoryRegistrarDefault {
+import org.apache.isis.core.integtestsupport.IntegrationTestAbstract;
+import org.apache.isis.core.integtestsupport.scenarios.ScenarioExecutionForIntegration;
 
-    @Override
-    public void addComponentFactories(ComponentFactoryList componentFactories) {
-        super.addComponentFactories(componentFactories);
-        // currently no replacements
+public abstract class SimpleAppIntegTest extends IntegrationTestAbstract {
+
+    
+    @BeforeClass
+    public static void initClass() {
+        org.apache.log4j.PropertyConfigurator.configure("logging.properties");
+        DSCMSystemInitializer.initIsft();
+        
+        // instantiating will install onto ThreadLocal
+        new ScenarioExecutionForIntegration();
     }
+
 }

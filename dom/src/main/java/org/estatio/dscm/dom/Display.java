@@ -23,6 +23,7 @@ import javax.jdo.annotations.IdentityType;
 import javax.jdo.annotations.VersionStrategy;
 
 import org.apache.isis.applib.annotation.Bookmarkable;
+import org.apache.isis.applib.annotation.Immutable;
 import org.apache.isis.applib.annotation.MemberOrder;
 import org.apache.isis.applib.annotation.Title;
 import org.apache.isis.applib.util.ObjectContracts;
@@ -36,6 +37,7 @@ import org.apache.isis.applib.util.ObjectContracts;
         strategy = VersionStrategy.VERSION_NUMBER,
         column = "version")
 @Bookmarkable
+@Immutable
 public class Display implements Comparable<Display> {
 
     private String name;
@@ -53,7 +55,7 @@ public class Display implements Comparable<Display> {
 
     // //////////////////////////////////////
 
-    public DisplayGroup displayGroup;
+    private DisplayGroup displayGroup;
 
     @Column(name = "displayGroupId", allowsNull = "false")
     public DisplayGroup getDisplayGroup() {

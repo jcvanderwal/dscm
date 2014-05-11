@@ -36,6 +36,7 @@ import org.apache.isis.applib.annotation.Bounded;
 import org.apache.isis.applib.annotation.DescribedAs;
 import org.apache.isis.applib.annotation.Disabled;
 import org.apache.isis.applib.annotation.Hidden;
+import org.apache.isis.applib.annotation.Immutable;
 import org.apache.isis.applib.annotation.MemberOrder;
 import org.apache.isis.applib.annotation.Named;
 import org.apache.isis.applib.annotation.Optional;
@@ -55,6 +56,7 @@ import org.apache.isis.applib.util.ObjectContracts;
         column = "version")
 @Bookmarkable
 @Bounded
+@Immutable
 public class DisplayGroup implements Comparable<DisplayGroup> {
 
     private String name;

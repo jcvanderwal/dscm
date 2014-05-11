@@ -27,16 +27,6 @@ uncomment to add a logo (in an ../images directory relative to this file)
 	background-position: 0 50%;
 }
 
-/*
-#header {
-	width: 73%;
-	float: left;
-	height: 60px;
-	background: transparent url("../images/logo.png") left center no-repeat;
-	margin-left: 5px;
-}
-
-*/
 #header h1 {
 	display: none;
 }
@@ -79,7 +69,6 @@ div.x-key span.scalarName {
 /*
 Overrides for the default overlay
 */
-
 #applicationActions .cssMenuPanel .menuh a:link, 
 #applicationActions .cssMenuPanel .menuh a:visited, 
 #applicationActions .cssMenuPanel .menuh a:active, 
@@ -88,7 +77,3 @@ Overrides for the default overlay
     font-size: 1em;
     font-weight: normal;
 }
-
-/*
-
-*/

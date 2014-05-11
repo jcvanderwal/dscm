@@ -27,6 +27,7 @@ import javax.jdo.annotations.VersionStrategy;
 
 import org.apache.isis.applib.annotation.Bookmarkable;
 import org.apache.isis.applib.annotation.Bounded;
+import org.apache.isis.applib.annotation.Immutable;
 import org.apache.isis.applib.annotation.MemberOrder;
 import org.apache.isis.applib.annotation.Render;
 import org.apache.isis.applib.annotation.Render.Type;
@@ -43,6 +44,7 @@ import org.apache.isis.applib.util.ObjectContracts;
         column = "version")
 @Bookmarkable
 @Bounded
+@Immutable
 public class Publisher implements Comparable<Publisher> {
 
     private String name;
@@ -60,7 +62,7 @@ public class Publisher implements Comparable<Publisher> {
 
     // //////////////////////////////////////
 
-    @Persistent(mappedBy = "publisher", dependentElement = "true")
+    @Persistent(mappedBy = "publisher")
     private SortedSet<Asset> assets = new TreeSet<Asset>();
 
     @MemberOrder(sequence = "1")
@@ -72,7 +74,7 @@ public class Publisher implements Comparable<Publisher> {
     public void setAssets(final SortedSet<Asset> assets) {
         this.assets = assets;
     }
-
+    
     // //////////////////////////////////////
 
     @Override

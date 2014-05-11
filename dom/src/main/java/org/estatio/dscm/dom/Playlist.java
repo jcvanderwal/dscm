@@ -18,14 +18,39 @@
  */
 package org.estatio.dscm.dom;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.SortedSet;
+import java.util.TreeSet;
+
+import javax.inject.Inject;
 import javax.jdo.annotations.IdentityType;
+import javax.jdo.annotations.Persistent;
 import javax.jdo.annotations.VersionStrategy;
 
+import org.apache.commons.lang3.ObjectUtils;
+import org.joda.time.Interval;
+import org.joda.time.LocalDate;
+import org.joda.time.LocalDateTime;
+import org.joda.time.LocalTime;
+
+import org.apache.isis.applib.AbstractContainedObject;
 import org.apache.isis.applib.annotation.Bookmarkable;
 import org.apache.isis.applib.annotation.Bounded;
+import org.apache.isis.applib.annotation.Hidden;
+import org.apache.isis.applib.annotation.Immutable;
 import org.apache.isis.applib.annotation.MemberOrder;
+import org.apache.isis.applib.annotation.MultiLine;
+import org.apache.isis.applib.annotation.Named;
+import org.apache.isis.applib.annotation.Optional;
+import org.apache.isis.applib.annotation.Programmatic;
+import org.apache.isis.applib.annotation.Render;
+import org.apache.isis.applib.annotation.Render.Type;
 import org.apache.isis.applib.annotation.Title;
+import org.apache.isis.applib.services.clock.ClockService;
 import org.apache.isis.applib.util.ObjectContracts;
+
+import org.estatio.dscm.utils.CalendarUtils;
 
 @javax.jdo.annotations.PersistenceCapable(
         identityType = IdentityType.DATASTORE)
@@ -37,13 +62,28 @@ import org.apache.isis.applib.util.ObjectContracts;
         column = "version")
 @Bookmarkable
 @Bounded
-public class Playlist implements Comparable<Playlist> {
+@Immutable
+public class Playlist extends AbstractContainedObject implements Comparable<Playlist> {
+
+    private DisplayGroup displayGroup;
+
+    @javax.jdo.annotations.Column(name = "displayGroupId", allowsNull = "false")
+    @MemberOrder(sequence = "1")
+    public DisplayGroup getDisplayGroup() {
+        return displayGroup;
+    }
+
+    public void setDisplayGroup(final DisplayGroup displayGroup) {
+        this.displayGroup = displayGroup;
+    }
+
+    // //////////////////////////////////////
 
     private String name;
 
     @javax.jdo.annotations.Column(allowsNull = "false")
     @Title(sequence = "1")
-    @MemberOrder(sequence = "1")
+    @MemberOrder(sequence = "2")
     public String getName() {
         return name;
     }
@@ -52,8 +92,156 @@ public class Playlist implements Comparable<Playlist> {
         this.name = name;
     }
 
+    // //////////////////////////////////////
+
+    private LocalDate startDate;
+
+    @MemberOrder(sequence = "3")
+    @javax.jdo.annotations.Column(allowsNull = "false")
+    public LocalDate getStartDate() {
+        return startDate;
+    }
+
+    public void setStartDate(LocalDate startDate) {
+        this.startDate = startDate;
+    }
+
+    private LocalTime startTime;
+
+    @MemberOrder(sequence = "4")
+    @javax.jdo.annotations.Column(allowsNull = "false")
+    public LocalTime getStartTime() {
+        return startTime;
+    }
+
+    public void setStartTime(LocalTime startTime) {
+        this.startTime = startTime;
+    }
+
+    // //////////////////////////////////////
+
+    private LocalDate endDate;
+
+    @Optional
+    @MemberOrder(sequence = "5")
+    public LocalDate getEndDate() {
+        return endDate;
+    }
+
+    public void setEndDate(final LocalDate endDate) {
+        this.endDate = endDate;
+    }
+
+    // //////////////////////////////////////
+
+    private String repeatRule;
+
+    @Hidden
+    @Optional
+    public String getRepeatRule() {
+        return repeatRule;
+    }
+
+    public void setRepeatRule(final String repeatRule) {
+        this.repeatRule = repeatRule;
+    }
+
+    // //////////////////////////////////////
+
+    @MultiLine(numberOfLines = 10)
+    @MemberOrder(sequence = "6")
+    public String getNextOccurences() {
+        StringBuilder builder = new StringBuilder();
+        for (LocalDateTime occurence : nextOccurences(null)) {
+            builder.append(occurence.toString("yyyy-MM-dd HH:mm"));
+            builder.append("\n");
+        }
+        return builder.toString();
+    }
+
+    @Programmatic
+    public List<LocalDateTime> nextOccurences(LocalDate endDate) {
+        List<LocalDateTime> nextList = new ArrayList<LocalDateTime>();
+
+        List<Interval> intervals = CalendarUtils.intervalsInRange(
+                ObjectUtils.max(getStartDate(), clockService.now()),
+                ObjectUtils.min(endDate, getEndDate(), clockService.now().plusDays(7)),
+                getRepeatRule());
+        for (Interval interval : intervals) {
+            nextList.add(new LocalDateTime(
+                    interval.getStartMillis()).
+                    withHourOfDay(getStartTime().getHourOfDay()).
+                    withMinuteOfHour(getStartTime().getMinuteOfHour()));
+        }
+
+        return nextList;
+    }
+
+    // //////////////////////////////////////
+
+    @Persistent(mappedBy = "playlist")
+    private SortedSet<PlaylistItem> items = new TreeSet<PlaylistItem>();
+
+    @Render(Type.EAGERLY)
+    public SortedSet<PlaylistItem> getItems() {
+        return items;
+    }
+
+    public void setItems(final SortedSet<PlaylistItem> items) {
+        this.items = items;
+    }
+
+    // //////////////////////////////////////
+
+    public Playlist newItem(Asset asset) {
+        playlistItems.newPlaylistItem(this, asset);
+        return this;
+    }
+
+    public List<Asset> choices0NewItem() {
+        return assets.findAssetByDisplaygroup(getDisplayGroup());
+    }
+
+    // //////////////////////////////////////
+
+    public Object remove(
+            @Named("Are you sure?") Boolean confirm) {
+        if (confirm) {
+            doRemove();
+            return null;
+        }
+        return this;
+    }
+
+    protected void doRemove() {
+        removeAllItems();
+        getContainer().remove(this);
+        getContainer().flush();
+    }
+
+    @Programmatic
+    public void removeAllItems() {
+        for (PlaylistItem item : getItems()) {
+            item.doRemove();
+        }
+    }
+
+    // //////////////////////////////////////
+
     @Override
     public int compareTo(Playlist other) {
-        return ObjectContracts.compare(this, other, "name");
+        return ObjectContracts.compare(this, other, "startDate,startTime");
     }
+
+    // //////////////////////////////////////
+
+    @Inject
+    PlaylistItems playlistItems;
+
+    @Inject
+    ClockService clockService;
+
+    @Inject
+    Assets assets;
+
 }

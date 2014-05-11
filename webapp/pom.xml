@@ -28,7 +28,7 @@
     <artifactId>dscm-webapp</artifactId>
     <name>DSCM</name>
 
-    <description>This module runs both the Wicket viewer and the Restfulobjects viewer in a single webapp configured to run using the datanucleus object store.</description>
+    <description>Digital Signage Content Manager</description>
 
     <packaging>war</packaging>
 
@@ -91,8 +91,8 @@
 
             <plugin>
                 <artifactId>maven-war-plugin</artifactId>
+                <version>2.4</version>
                 <configuration>
-                    <warName>dscm</warName>
                     <archive>
                         <manifest>
                             <addClasspath>false</addClasspath>
@@ -228,15 +228,14 @@
         <dependency>
             <groupId>org.hsqldb</groupId>
             <artifactId>hsqldb</artifactId>
+            <version>2.3.2</version>
         </dependency>
 
-        <!-- 
         <dependency>
             <groupId>postgresql</groupId>
             <artifactId>postgresql</artifactId>
             <version>9.1-901.jdbc4</version>
         </dependency>
-         -->
 
         <!-- 
         mvn install:install-file -Dfile=sqljdbc4.jar \

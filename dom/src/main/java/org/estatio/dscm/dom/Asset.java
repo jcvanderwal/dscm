@@ -27,11 +27,14 @@ import javax.jdo.annotations.VersionStrategy;
 
 import org.joda.time.LocalDate;
 
-import org.apache.isis.applib.DomainObjectContainer;
+import org.apache.isis.applib.AbstractDomainObject;
 import org.apache.isis.applib.annotation.Bookmarkable;
+import org.apache.isis.applib.annotation.Bounded;
 import org.apache.isis.applib.annotation.Hidden;
+import org.apache.isis.applib.annotation.Immutable;
 import org.apache.isis.applib.annotation.MemberOrder;
 import org.apache.isis.applib.annotation.Optional;
+import org.apache.isis.applib.annotation.Programmatic;
 import org.apache.isis.applib.annotation.Title;
 import org.apache.isis.applib.annotation.Where;
 import org.apache.isis.applib.util.ObjectContracts;
@@ -45,8 +48,20 @@ import org.apache.isis.applib.value.Blob;
 @javax.jdo.annotations.Version(
         strategy = VersionStrategy.VERSION_NUMBER,
         column = "version")
+@javax.jdo.annotations.Queries({
+        @javax.jdo.annotations.Query(name = "findByName", language = "JDOQL",
+                value = "SELECT "
+                        + "FROM org.estatio.dscm.dom.Asset "
+                        + "WHERE name == :name"),
+        @javax.jdo.annotations.Query(name = "findByDisplayGroup", language = "JDOQL",
+                value = "SELECT "
+                        + "FROM org.estatio.dscm.dom.Asset "
+                        + "WHERE (displayGroup == null || displayGroup == :displayGroup)")
+})
 @Bookmarkable
-public class Asset implements Comparable<Asset> {
+@Immutable
+@Bounded
+public class Asset extends AbstractDomainObject implements Comparable<Asset> {
 
     private String name;
 
@@ -63,11 +78,25 @@ public class Asset implements Comparable<Asset> {
 
     // //////////////////////////////////////
 
+    private String description;
+
+    @MemberOrder(sequence = "2")
+    @Optional
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(final String description) {
+        this.description = description;
+    }
+
+    // //////////////////////////////////////
+
     private LocalDate startDate;
 
     @Persistent
     @Column(allowsNull = "false")
-    @MemberOrder(sequence = "2")
+    @MemberOrder(sequence = "3")
     public LocalDate getStartDate() {
         return startDate;
     }
@@ -83,7 +112,7 @@ public class Asset implements Comparable<Asset> {
     @Persistent
     @Optional
     @Column(allowsNull = "true")
-    @MemberOrder(sequence = "3")
+    @MemberOrder(sequence = "4")
     public LocalDate getExpiryDate() {
         return expiryDate;
     }
@@ -97,7 +126,7 @@ public class Asset implements Comparable<Asset> {
     private BigDecimal duration;
 
     @Optional
-    @MemberOrder(sequence = "4")
+    @MemberOrder(sequence = "5")
     public BigDecimal getDuration() {
         return duration;
     }
@@ -111,7 +140,7 @@ public class Asset implements Comparable<Asset> {
     private Publisher publisher;
 
     @Column(name = "publisherId", allowsNull = "false")
-    @MemberOrder(sequence = "5")
+    @MemberOrder(sequence = "6")
     public Publisher getPublisher() {
         return publisher;
     }
@@ -122,11 +151,25 @@ public class Asset implements Comparable<Asset> {
 
     // //////////////////////////////////////
 
+    private DisplayGroup displayGroup;
+
+    @Optional
+    @javax.jdo.annotations.Column(name = "displayGroupId", allowsNull = "true")
+    public DisplayGroup getDisplayGroup() {
+        return displayGroup;
+    }
+
+    public void setDisplayGroup(final DisplayGroup displayGroup) {
+        this.displayGroup = displayGroup;
+    }
+
+    // //////////////////////////////////////
+
     @javax.jdo.annotations.Persistent(defaultFetchGroup = "false")
     private Blob file;
 
     @Optional
-    @MemberOrder(sequence = "6")
+    @MemberOrder(sequence = "7")
     @Hidden(where = Where.ALL_TABLES)
     public Blob getFile() {
         return file;
@@ -138,13 +181,23 @@ public class Asset implements Comparable<Asset> {
 
     // //////////////////////////////////////
 
+    public void remove(Boolean confirm) {
+        if (confirm) {
+            doRemove();
+        }
+    }
+
+    @Programmatic
+    public void doRemove() {
+        getContainer().remove(this);
+        getContainer().flush();
+    }
+
+    // //////////////////////////////////////
+
     @Override
     public int compareTo(Asset other) {
         return ObjectContracts.compare(this, other, "name");
     }
-
-    @javax.inject.Inject
-    @SuppressWarnings("unused")
-    private DomainObjectContainer container;
 
 }

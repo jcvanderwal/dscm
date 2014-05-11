@@ -16,17 +16,12 @@
  *  specific language governing permissions and limitations
  *  under the License.
  */
-package webapp;
+package org.estatio.dscm.webapp;
 
-import java.io.IOException;
 import java.io.InputStream;
-import java.nio.charset.Charset;
-import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
 
-import com.google.common.base.Joiner;
-import com.google.common.io.Resources;
 import com.google.inject.AbstractModule;
 import com.google.inject.Module;
 import com.google.inject.name.Names;
@@ -39,17 +34,15 @@ import org.apache.wicket.request.Response;
 import org.apache.wicket.request.http.WebRequest;
 
 import org.apache.isis.viewer.wicket.ui.app.registry.ComponentFactoryRegistrar;
-import org.apache.isis.viewer.wicket.ui.pages.PageClassList;
 import org.apache.isis.viewer.wicket.viewer.IsisWicketApplication;
 import org.apache.isis.viewer.wicket.viewer.integration.wicket.AuthenticatedWebSessionForIsis;
-import org.apache.isis.viewer.wicket.viewer.registries.pages.PageClassListDefault;
-
 
 /**
  * As specified in <tt>web.xml</tt>.
  * 
  * <p>
  * See:
+ * 
  * <pre>
  * &lt;filter>
  *   &lt;filter-name>wicket&lt;/filter-name>
@@ -67,7 +60,8 @@ public class DSCMApplication extends IsisWicketApplication {
     private static final long serialVersionUID = 1L;
 
     /**
-     * uncomment for a (slightly hacky) way of allowing logins using query args, eg:
+     * uncomment for a (slightly hacky) way of allowing logins using query args,
+     * eg:
      * 
      * <tt>?user=sven&pass=pass</tt>
      * 
@@ -75,13 +69,13 @@ public class DSCMApplication extends IsisWicketApplication {
      * for demos only, obvious.
      */
     private final static boolean DEMO_MODE_USING_CREDENTIALS_AS_QUERYARGS = false;
-    
+
     @Override
     public Session newSession(final Request request, final Response response) {
-        if(!DEMO_MODE_USING_CREDENTIALS_AS_QUERYARGS) {
+        if (!DEMO_MODE_USING_CREDENTIALS_AS_QUERYARGS) {
             return super.newSession(request, response);
-        } 
-        
+        }
+
         // else demo mode
         final AuthenticatedWebSessionForIsis s = (AuthenticatedWebSessionForIsis) super.newSession(request, response);
         final org.apache.wicket.util.string.StringValue user = request.getRequestParameters().getParameterValue("user");
@@ -92,9 +86,9 @@ public class DSCMApplication extends IsisWicketApplication {
 
     @Override
     public WebRequest newWebRequest(HttpServletRequest servletRequest, String filterPath) {
-        if(!DEMO_MODE_USING_CREDENTIALS_AS_QUERYARGS) {
+        if (!DEMO_MODE_USING_CREDENTIALS_AS_QUERYARGS) {
             return super.newWebRequest(servletRequest, filterPath);
-        } 
+        }
 
         // else demo mode
         try {
@@ -107,16 +101,16 @@ public class DSCMApplication extends IsisWicketApplication {
         WebRequest request = super.newWebRequest(servletRequest, filterPath);
         return request;
     }
-    
+
     @Override
     protected Module newIsisWicketModule() {
         final Module isisDefaults = super.newIsisWicketModule();
-        
+
         final Module simpleOverrides = new AbstractModule() {
             @Override
             protected void configure() {
                 bind(ComponentFactoryRegistrar.class).to(ComponentFactoryRegistrarForSimpleApp.class);
-                
+
                 bind(String.class).annotatedWith(Names.named("applicationName")).toInstance("ECP DSCM");
                 bind(String.class).annotatedWith(Names.named("applicationCss")).toInstance("css/application.css");
                 bind(String.class).annotatedWith(Names.named("applicationJs")).toInstance("scripts/application.js");

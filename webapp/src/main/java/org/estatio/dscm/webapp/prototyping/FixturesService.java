@@ -16,25 +16,25 @@
  *  specific language governing permissions and limitations
  *  under the License.
  */
-package integration.tests;
+package org.estatio.dscm.webapp.prototyping;
 
-import integration.DSCMSystemInitializer;
+import org.apache.isis.applib.AbstractService;
+import org.apache.isis.applib.annotation.Named;
+import org.apache.isis.core.runtime.fixtures.FixturesInstallerDelegate;
 
-import org.junit.BeforeClass;
+import org.estatio.dscm.fixture.DemoFixture;
 
-import org.apache.isis.core.integtestsupport.IntegrationTestAbstract;
-import org.apache.isis.core.integtestsupport.scenarios.ScenarioExecutionForIntegration;
+/**
+ * Enables fixtures to be installed from the application.
+ */
+@Named("Fixtures")
+public class FixturesService extends AbstractService {
 
-public abstract class DSCMIntegTest extends IntegrationTestAbstract {
-
-    
-    @BeforeClass
-    public static void initClass() {
-        org.apache.log4j.PropertyConfigurator.configure("logging.properties");
-        DSCMSystemInitializer.initIsft();
-        
-        // instantiating will install onto ThreadLocal
-        new ScenarioExecutionForIntegration();
+    public String installFixtures() {
+        final FixturesInstallerDelegate installer = new FixturesInstallerDelegate().withOverride();
+        installer.addFixture(new DemoFixture());
+        installer.installFixtures();
+        return "Example fixtures installed";
     }
-
+  
 }

@@ -29,9 +29,17 @@ import org.apache.isis.applib.annotation.ActionSemantics.Of;
 import org.apache.isis.applib.annotation.Bookmarkable;
 import org.apache.isis.applib.annotation.MemberOrder;
 import org.apache.isis.applib.annotation.Named;
+import org.apache.isis.applib.annotation.Optional;
+import org.apache.isis.applib.annotation.Programmatic;
 import org.apache.isis.applib.value.Blob;
 
-public class Assets {
+import org.estatio.dscm.EstatioDomainService;
+
+public class Assets extends EstatioDomainService<Asset> {
+
+    public Assets() {
+        super(Assets.class, Asset.class);
+    }
 
     public String getId() {
         return "asset";
@@ -45,7 +53,7 @@ public class Assets {
     @ActionSemantics(Of.SAFE)
     @MemberOrder(sequence = "1")
     public List<Asset> allAssets() {
-        return container.allInstances(Asset.class);
+        return allInstances(Asset.class);
     }
 
     // //////////////////////////////////////
@@ -55,11 +63,12 @@ public class Assets {
     @MemberOrder(sequence = "2")
     public Asset newAsset(
             final @Named("Name") String name,
-            final @Named("Duration (seconds)") BigDecimal duration,
             final Publisher publisher,
-            final @Named("Start date") LocalDate startDate, 
-            final @Named("Expiry date") LocalDate expiryDate, 
-            final @Named("File") Blob file) {
+            final DisplayGroup displayGroup,
+            final @Named("Start date") LocalDate startDate,
+            final @Named("Expiry date") @Optional LocalDate expiryDate,
+            final @Named("File") Blob file,
+            final @Named("Duration (seconds)") @Optional BigDecimal duration) {
         final Asset obj = container.newTransientInstance(Asset.class);
         obj.setName(name);
         obj.setDuration(duration);
@@ -69,6 +78,16 @@ public class Assets {
         obj.setFile(file);
         container.persistIfNotAlready(obj);
         return obj;
+    }
+
+    @Programmatic
+    public Asset findAssetByName(final String name) {
+        return firstMatch("findByName", "name", name);
+    }
+
+    @Programmatic
+    public List<Asset> findAssetByDisplaygroup(final DisplayGroup displayGroup) {
+        return allMatches("findByDisplayGroup", "displayGroup", displayGroup);
     }
 
     // //////////////////////////////////////
