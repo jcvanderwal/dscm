@@ -24,6 +24,7 @@ import integration.tests.DSCMIntegTest;
 
 import org.junit.Before;
 import org.junit.BeforeClass;
+import org.junit.Ignore;
 import org.junit.Test;
 
 import org.estatio.dscm.services.SyncService;
@@ -43,7 +44,8 @@ public class SyncServiceTest extends DSCMIntegTest {
     }
 
     @Test
-    public void filesFrFolder() throws Exception {
+    @Ignore
+    public void filesForFolder() throws Exception {
         assertThat(syncService.filesForFolder("/Users/jvanderwal/Dropbox/dscm/assets").size(), is(10));
 
     }

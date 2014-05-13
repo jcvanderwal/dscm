@@ -45,7 +45,7 @@ public class AssetsTest_finders extends DSCMIntegTest {
 
     @Test
     public void findAssets_byReference() throws Exception {
-        assertThat(assets.findAssetByName("PDH General").getName(), is("PDH General"));
+        assertThat(assets.findAssetByName("hd_dolby_bit_harvest.m2ts").getName(), is("hd_dolby_bit_harvest.m2ts"));
 
     }
 

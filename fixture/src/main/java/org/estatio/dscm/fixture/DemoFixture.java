@@ -19,14 +19,21 @@
 
 package org.estatio.dscm.fixture;
 
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.InputStream;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.activation.MimetypesFileTypeMap;
+
+import org.apache.commons.io.IOUtils;
 import org.joda.time.LocalDate;
 
 import org.apache.isis.applib.fixtures.AbstractFixture;
 import org.apache.isis.applib.services.clock.ClockService;
+import org.apache.isis.applib.value.Blob;
 import org.apache.isis.objectstore.jdo.applib.service.support.IsisJdoSupport;
 
 import org.estatio.dscm.dom.Asset;
@@ -63,12 +70,13 @@ public class DemoFixture extends AbstractFixture {
         publisherList.add(publishers.newPublisher("Canal-Pub"));
 
         List<Asset> aList = new ArrayList<Asset>();
-        aList.add(assets.newAsset("PDH General", publisherList.get(0), null, clockService.now(), null, null, new BigDecimal("20")));
-        aList.add(assets.newAsset("PDH Activities", publisherList.get(0), null, clockService.now(), null, null, new BigDecimal("20")));
-        aList.add(assets.newAsset("McDonalds spring deals", publisherList.get(1), null, clockService.now(), null, null, new BigDecimal("20")));
-        aList.add(assets.newAsset("FNAC", publisherList.get(1), null, clockService.now(), null, null, new BigDecimal("20")));
-        aList.add(assets.newAsset("Sephora", publisherList.get(1), null, clockService.now(), null, null, new BigDecimal("20")));
-        aList.add(assets.newAsset("Celio", publisherList.get(1), null, clockService.now(), null, null, new BigDecimal("20")));
+        aList.add(assets.newAsset(
+                resourceAsBlob("hd_dolby_bit_harvest.m2ts"),
+                publisherList.get(0),
+                null,
+                clockService.now(),
+                null,
+                new BigDecimal("20")));
 
         DisplayGroup displayGroupT = createDisplayGroup("Tours");
         displayGroupT.setLocation("Les Atlantes, Tours, France");
@@ -101,6 +109,24 @@ public class DemoFixture extends AbstractFixture {
         for (Asset asset : aList) {
             playlistItems.newPlaylistItem(p2, asset);
         }
+    }
+
+    private Blob resourceAsBlob(String fileName) {
+        try {
+            InputStream is;
+            is = getClass().getResourceAsStream("/"+fileName);
+            final String mimeType = new MimetypesFileTypeMap().getContentType(fileName);
+            Blob blob = new Blob(fileName, mimeType, IOUtils.toByteArray(is));
+            return blob;
+        } catch (FileNotFoundException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        } catch (IOException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+        return null;
+
     }
 
     // //////////////////////////////////////

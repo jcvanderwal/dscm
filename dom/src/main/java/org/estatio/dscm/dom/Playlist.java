@@ -18,6 +18,7 @@
  */
 package org.estatio.dscm.dom;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.SortedSet;
@@ -130,6 +131,17 @@ public class Playlist extends AbstractContainedObject implements Comparable<Play
 
     public void setEndDate(final LocalDate endDate) {
         this.endDate = endDate;
+    }
+
+    // //////////////////////////////////////
+
+    @MemberOrder(sequence = "5")
+    public BigDecimal getTotalDuration() {
+        BigDecimal total = BigDecimal.ZERO;
+        for (PlaylistItem item : getItems()) {
+            total = total.add(item.getDuration());
+        }
+        return total;
     }
 
     // //////////////////////////////////////

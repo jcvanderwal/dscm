@@ -37,7 +37,6 @@ import org.joda.time.LocalDateTime;
 
 import org.apache.isis.applib.annotation.Named;
 import org.apache.isis.applib.annotation.Programmatic;
-import org.apache.isis.applib.annotation.Prototype;
 import org.apache.isis.applib.services.clock.ClockService;
 import org.apache.isis.applib.value.Blob;
 
@@ -75,7 +74,6 @@ public class SyncService {
         }
     }
 
-    @Prototype
     public void importAssetsAndCreatePlaylist() {
         final String path = properties.get("dscm.server.path");
         Publisher publisher = publishers.allPublishers().get(0);
@@ -96,7 +94,7 @@ public class SyncService {
                     is = new FileInputStream(file);
                     final String mimeType = new MimetypesFileTypeMap().getContentType(file);
                     Blob blob = new Blob(file.getName(), mimeType, IOUtils.toByteArray(is));
-                    asset = assets.newAsset(file.getName(), publisher, null, clockService.now(), null, blob, null);
+                    asset = assets.newAsset(blob, publisher, null, clockService.now(), null, null);
                     for (Playlist playlist : playlists.allPlaylists()) {
                         playlist.newItem(asset);
                     }

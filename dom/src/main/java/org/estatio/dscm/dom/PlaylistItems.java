@@ -27,16 +27,23 @@ import org.apache.isis.applib.annotation.Bookmarkable;
 import org.apache.isis.applib.annotation.Hidden;
 import org.apache.isis.applib.annotation.MemberOrder;
 import org.apache.isis.applib.annotation.NotContributed;
+import org.apache.isis.applib.annotation.Programmatic;
+
+import org.estatio.dscm.EstatioDomainService;
 
 @Hidden
-public class PlaylistItems {
+public class PlaylistItems extends EstatioDomainService<PlaylistItem> {
+
+    public PlaylistItems() {
+        super(PlaylistItems.class, PlaylistItem.class);
+    }
 
     public String getId() {
         return "PlaylistItemItem";
     }
 
     public String iconName() {
-        return "PlaylistItemItem";
+        return "PlaylistItem";
     }
 
     @Bookmarkable
@@ -44,6 +51,13 @@ public class PlaylistItems {
     @MemberOrder(sequence = "1")
     public List<PlaylistItem> allPlaylistItems() {
         return container.allInstances(PlaylistItem.class);
+    }
+
+    // //////////////////////////////////////
+
+    @Programmatic
+    public List<PlaylistItem> findByAsset(final Asset asset) {
+        return allMatches("findByAsset", "asset", asset);
     }
 
     // //////////////////////////////////////
@@ -59,10 +73,10 @@ public class PlaylistItems {
         obj.setAsset(asset);
         obj.setSequence(1);
         container.persistIfNotAlready(obj);
-        if (!playlist.getItems().isEmpty()){
+        if (!playlist.getItems().isEmpty()) {
             final PlaylistItem last = playlist.getItems().last();
             last.setNext(obj);
-            obj.setSequence(last.getSequence()+1);
+            obj.setSequence(last.getSequence() + 1);
         }
         container.flush();
         return obj;

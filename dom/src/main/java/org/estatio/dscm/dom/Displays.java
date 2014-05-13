@@ -20,14 +20,20 @@ package org.estatio.dscm.dom;
 
 import java.util.List;
 
-import org.apache.isis.applib.DomainObjectContainer;
 import org.apache.isis.applib.annotation.ActionSemantics;
 import org.apache.isis.applib.annotation.ActionSemantics.Of;
 import org.apache.isis.applib.annotation.Bookmarkable;
 import org.apache.isis.applib.annotation.MemberOrder;
 import org.apache.isis.applib.annotation.Named;
+import org.apache.isis.applib.annotation.NotInServiceMenu;
 
-public class Displays {
+import org.estatio.dscm.EstatioDomainService;
+
+public class Displays extends EstatioDomainService<Display> {
+
+    public Displays() {
+        super(Displays.class, Display.class);
+    }
 
     public String getId() {
         return "display";
@@ -41,7 +47,7 @@ public class Displays {
     @ActionSemantics(Of.SAFE)
     @MemberOrder(sequence = "1")
     public List<Display> allDisplays() {
-        return container.allInstances(Display.class);
+        return getContainer().allInstances(Display.class);
     }
 
     // //////////////////////////////////////
@@ -52,18 +58,21 @@ public class Displays {
     public Display newDisplay(
             final @Named("Name") String name,
             final DisplayGroup displayGroup) {
-        final Display obj = container.newTransientInstance(Display.class);
+        final Display obj = getContainer().newTransientInstance(Display.class);
         obj.setName(name);
         obj.setDisplayGroup(displayGroup);
-        container.persistIfNotAlready(obj);
+        getContainer().persistIfNotAlready(obj);
         return obj;
     }
 
-    // //////////////////////////////////////
-    // Injected services
-    // //////////////////////////////////////
+    @NotInServiceMenu
+    public void remove(Display display, @Named("Are you sure?") Boolean confirm) {
+        getContainer().remove(display);
+        getContainer().flush();
+    }
 
-    @javax.inject.Inject
-    DomainObjectContainer container;
+    public boolean hideRemove(Display display, Boolean confirm) {
+        return !getContainer().getUser().hasRole(".*admin_role");
+    }
 
 }

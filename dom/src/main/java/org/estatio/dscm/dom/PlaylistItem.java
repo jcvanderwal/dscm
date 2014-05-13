@@ -18,6 +18,8 @@
  */
 package org.estatio.dscm.dom;
 
+import java.math.BigDecimal;
+
 import javax.jdo.annotations.Column;
 import javax.jdo.annotations.IdentityType;
 import javax.jdo.annotations.Persistent;
@@ -43,6 +45,11 @@ import org.estatio.dscm.DomainObject;
 @javax.jdo.annotations.Version(
         strategy = VersionStrategy.VERSION_NUMBER,
         column = "version")
+@javax.jdo.annotations.Queries(@javax.jdo.annotations.Query(
+        name = "findByAsset", language = "JDOQL",
+        value = "SELECT "
+                + "FROM org.estatio.dscm.dom.PlaylistItem "
+                + "WHERE asset == :asset"))
 @Bookmarkable
 @Immutable
 public class PlaylistItem
@@ -93,17 +100,9 @@ public class PlaylistItem
 
     // //////////////////////////////////////
 
-    private PlaylistItem next;
-
-    @Column(name = "nextPlaylistItemId", allowsNull = "true")
-    @MemberOrder(sequence = "5")
-    @Hidden(where = Where.ALL_TABLES)
-    public PlaylistItem getNext() {
-        return next;
-    }
-
-    public void setNext(final PlaylistItem next) {
-        this.next = next;
+    @MemberOrder(sequence = "3.5")
+    public BigDecimal getDuration() {
+        return getAsset().getDuration();
     }
 
     // //////////////////////////////////////
@@ -120,6 +119,21 @@ public class PlaylistItem
 
     public void setPrevious(final PlaylistItem previous) {
         this.previous = previous;
+    }
+
+    // //////////////////////////////////////
+
+    private PlaylistItem next;
+
+    @Column(name = "nextPlaylistItemId", allowsNull = "true")
+    @MemberOrder(sequence = "5")
+    @Hidden(where = Where.ALL_TABLES)
+    public PlaylistItem getNext() {
+        return next;
+    }
+
+    public void setNext(final PlaylistItem next) {
+        this.next = next;
     }
 
     // //////////////////////////////////////

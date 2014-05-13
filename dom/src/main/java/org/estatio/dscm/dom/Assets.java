@@ -31,6 +31,7 @@ import org.apache.isis.applib.annotation.MemberOrder;
 import org.apache.isis.applib.annotation.Named;
 import org.apache.isis.applib.annotation.Optional;
 import org.apache.isis.applib.annotation.Programmatic;
+import org.apache.isis.applib.services.clock.ClockService;
 import org.apache.isis.applib.value.Blob;
 
 import org.estatio.dscm.EstatioDomainService;
@@ -62,15 +63,14 @@ public class Assets extends EstatioDomainService<Asset> {
 
     @MemberOrder(sequence = "2")
     public Asset newAsset(
-            final @Named("Name") String name,
+            final @Named("File") Blob file,
             final Publisher publisher,
             final DisplayGroup displayGroup,
             final @Named("Start date") LocalDate startDate,
             final @Named("Expiry date") @Optional LocalDate expiryDate,
-            final @Named("File") Blob file,
-            final @Named("Duration (seconds)") @Optional BigDecimal duration) {
+            final @Named("Duration (seconds)") BigDecimal duration) {
         final Asset obj = container.newTransientInstance(Asset.class);
-        obj.setName(name);
+        obj.setName(file.getName());
         obj.setDuration(duration);
         obj.setPublisher(publisher);
         obj.setStartDate(startDate);
@@ -78,6 +78,10 @@ public class Assets extends EstatioDomainService<Asset> {
         obj.setFile(file);
         container.persistIfNotAlready(obj);
         return obj;
+    }
+
+    public LocalDate default3NewAsset() {
+        return clockService.now();
     }
 
     @Programmatic
@@ -97,4 +101,6 @@ public class Assets extends EstatioDomainService<Asset> {
     @javax.inject.Inject
     DomainObjectContainer container;
 
+    @javax.inject.Inject
+    ClockService clockService;
 }

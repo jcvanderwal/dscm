@@ -20,6 +20,7 @@ package org.estatio.dscm.dom;
 
 import java.math.BigDecimal;
 
+import javax.inject.Inject;
 import javax.jdo.annotations.Column;
 import javax.jdo.annotations.IdentityType;
 import javax.jdo.annotations.Persistent;
@@ -36,7 +37,6 @@ import org.apache.isis.applib.annotation.MemberOrder;
 import org.apache.isis.applib.annotation.Optional;
 import org.apache.isis.applib.annotation.Programmatic;
 import org.apache.isis.applib.annotation.Title;
-import org.apache.isis.applib.annotation.Where;
 import org.apache.isis.applib.util.ObjectContracts;
 import org.apache.isis.applib.value.Blob;
 
@@ -128,7 +128,7 @@ public class Asset extends AbstractDomainObject implements Comparable<Asset> {
     @Optional
     @MemberOrder(sequence = "5")
     public BigDecimal getDuration() {
-        return duration;
+        return duration == null ? BigDecimal.ZERO : duration;
     }
 
     public void setDuration(BigDecimal duration) {
@@ -162,6 +162,12 @@ public class Asset extends AbstractDomainObject implements Comparable<Asset> {
     public void setDisplayGroup(final DisplayGroup displayGroup) {
         this.displayGroup = displayGroup;
     }
+    
+    // //////////////////////////////////////
+    
+    public Blob download() {
+        return getFile();
+    }
 
     // //////////////////////////////////////
 
@@ -170,7 +176,7 @@ public class Asset extends AbstractDomainObject implements Comparable<Asset> {
 
     @Optional
     @MemberOrder(sequence = "7")
-    @Hidden(where = Where.ALL_TABLES)
+    @Hidden
     public Blob getFile() {
         return file;
     }
@@ -187,6 +193,11 @@ public class Asset extends AbstractDomainObject implements Comparable<Asset> {
         }
     }
 
+    public String disableRemove(Boolean confirm) {
+        return playlistItems.findByAsset(this).isEmpty() ? null : "Asset is used in a playlist";
+    }
+    
+    
     @Programmatic
     public void doRemove() {
         getContainer().remove(this);
@@ -200,4 +211,9 @@ public class Asset extends AbstractDomainObject implements Comparable<Asset> {
         return ObjectContracts.compare(this, other, "name");
     }
 
+    // //////////////////////////////////////
+    
+    @Inject
+    private PlaylistItems playlistItems;
+    
 }

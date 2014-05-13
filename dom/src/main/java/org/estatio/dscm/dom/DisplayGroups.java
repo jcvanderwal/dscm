@@ -26,6 +26,7 @@ import org.apache.isis.applib.annotation.ActionSemantics.Of;
 import org.apache.isis.applib.annotation.Bookmarkable;
 import org.apache.isis.applib.annotation.MemberOrder;
 import org.apache.isis.applib.annotation.Named;
+import org.apache.isis.applib.annotation.NotInServiceMenu;
 
 public class DisplayGroups {
 
@@ -55,6 +56,16 @@ public class DisplayGroups {
         obj.setName(name);
         container.persistIfNotAlready(obj);
         return obj;
+    }
+
+    @NotInServiceMenu
+    public void remove(DisplayGroup displayGroup, @Named("Are you sure?") Boolean confirm) {
+        container.remove(displayGroup);
+        container.flush();
+    }
+
+    public boolean hideRemove(DisplayGroup displayGroup, Boolean confirm) {
+        return !container.getUser().hasRole(".*admin_role");
     }
 
     // //////////////////////////////////////
