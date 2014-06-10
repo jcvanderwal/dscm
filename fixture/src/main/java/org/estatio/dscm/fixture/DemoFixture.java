@@ -98,13 +98,13 @@ public class DemoFixture extends AbstractFixture {
         DisplayGroup dg2 = createDisplayGroup("Les Atlantes, Tours");
         dg2.setLocation("Les Atlantes, Tours, France");
 
-        Playlist p1 = playlists.newPlaylist(displayGroupAms, "Morning", new LocalDate(2014, 4, 14), Time.T0900, new LocalDate(2014, 5, 14), PlaylistRepeat.DAILY);
+        Playlist p1 = playlists.newPlaylist(displayGroupAms, new LocalDate(2014, 4, 14), Time.T0900, new LocalDate(2014, 5, 14), PlaylistRepeat.DAILY, null);
 
         for (Asset asset : aList) {
             playlistItems.newPlaylistItem(p1, asset);
         }
 
-        Playlist p2 = playlists.newPlaylist(displayGroupAms, "Afternoon", new LocalDate(2014, 4, 14), Time.T1300, new LocalDate(2014, 5, 14), PlaylistRepeat.EVERY_WEEKDAY);
+        Playlist p2 = playlists.newPlaylist(displayGroupAms, new LocalDate(2014, 4, 14), Time.T1300, new LocalDate(2014, 5, 14), PlaylistRepeat.EVERY_WEEKDAY, null);
 
         for (Asset asset : aList) {
             playlistItems.newPlaylistItem(p2, asset);
@@ -114,7 +114,7 @@ public class DemoFixture extends AbstractFixture {
     private Blob resourceAsBlob(String fileName) {
         try {
             InputStream is;
-            is = getClass().getResourceAsStream("/"+fileName);
+            is = getClass().getResourceAsStream("/" + fileName);
             final String mimeType = new MimetypesFileTypeMap().getContentType(fileName);
             Blob blob = new Blob(fileName, mimeType, IOUtils.toByteArray(is));
             return blob;

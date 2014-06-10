@@ -23,13 +23,31 @@ public class PlaylistTest_nextOccurences {
         playlist.setStartDate(new LocalDate(2014, 5, 1));
         playlist.setStartTime(new LocalTime("09:00"));
         playlist.setRepeatRule("RRULE:FREQ=DAILY");
-        playlist.clockService = new ClockService();
 
     }
 
     @Test
     public void happyCase() throws Exception {
+        playlist.clockService = new ClockService() {
+            @Override
+            public LocalDate now() {
+                return new LocalDate(2014, 5, 1);
+            }
+        };
         final List<LocalDateTime> nextOccurences = playlist.nextOccurences(new LocalDate(2014, 6, 1));
         assertThat(nextOccurences.size(), is(7));
     }
+
+    @Test
+    public void happyCase2() throws Exception {
+        playlist.clockService = new ClockService() {
+            @Override
+            public LocalDate now() {
+                return new LocalDate(2014, 6, 1);
+            }
+        };
+        final List<LocalDateTime> nextOccurences = playlist.nextOccurences(new LocalDate(2014, 6, 1));
+        assertThat(nextOccurences.size(), is(7));
+    }
+
 }

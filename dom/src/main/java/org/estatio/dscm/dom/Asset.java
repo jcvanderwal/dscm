@@ -119,7 +119,7 @@ public class Asset extends AbstractDomainObject implements Comparable<Asset> {
 
     public void setExpiryDate(final LocalDate expiryDate) {
         this.expiryDate = expiryDate;
-    }
+    }   
 
     // //////////////////////////////////////
 
@@ -162,7 +162,7 @@ public class Asset extends AbstractDomainObject implements Comparable<Asset> {
     public void setDisplayGroup(final DisplayGroup displayGroup) {
         this.displayGroup = displayGroup;
     }
-    
+        
     // //////////////////////////////////////
     
     public Blob download() {

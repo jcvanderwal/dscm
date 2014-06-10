@@ -25,6 +25,7 @@ import java.util.SortedSet;
 import java.util.TreeSet;
 
 import javax.inject.Inject;
+import javax.jdo.annotations.Column;
 import javax.jdo.annotations.IdentityType;
 import javax.jdo.annotations.Persistent;
 import javax.jdo.annotations.VersionStrategy;
@@ -47,7 +48,6 @@ import org.apache.isis.applib.annotation.Optional;
 import org.apache.isis.applib.annotation.Programmatic;
 import org.apache.isis.applib.annotation.Render;
 import org.apache.isis.applib.annotation.Render.Type;
-import org.apache.isis.applib.annotation.Title;
 import org.apache.isis.applib.services.clock.ClockService;
 import org.apache.isis.applib.util.ObjectContracts;
 
@@ -76,21 +76,6 @@ public class Playlist extends AbstractContainedObject implements Comparable<Play
 
     public void setDisplayGroup(final DisplayGroup displayGroup) {
         this.displayGroup = displayGroup;
-    }
-
-    // //////////////////////////////////////
-
-    private String name;
-
-    @javax.jdo.annotations.Column(allowsNull = "false")
-    @Title(sequence = "1")
-    @MemberOrder(sequence = "2")
-    public String getName() {
-        return name;
-    }
-
-    public void setName(final String name) {
-        this.name = name;
     }
 
     // //////////////////////////////////////
@@ -135,6 +120,25 @@ public class Playlist extends AbstractContainedObject implements Comparable<Play
 
     // //////////////////////////////////////
 
+    private BigDecimal duration;
+
+    @Column(allowsNull = "false")
+    public BigDecimal getDuration() {
+        return duration;
+    }
+
+    public void setDuration(BigDecimal duration) {
+        this.duration = duration;
+    }
+
+    public String validateDuration(final BigDecimal duration) {
+        if (duration.compareTo(BigDecimal.ZERO) > 0)
+            return null;
+        return "Duration can't be zero";
+    }
+
+    // //////////////////////////////////////
+
     @MemberOrder(sequence = "5")
     public BigDecimal getTotalDuration() {
         BigDecimal total = BigDecimal.ZERO;
@@ -164,7 +168,7 @@ public class Playlist extends AbstractContainedObject implements Comparable<Play
     @MemberOrder(sequence = "6")
     public String getNextOccurences() {
         StringBuilder builder = new StringBuilder();
-        for (LocalDateTime occurence : nextOccurences(null)) {
+        for (LocalDateTime occurence : nextOccurences(clockService.now().plusDays(7))) {
             builder.append(occurence.toString("yyyy-MM-dd HH:mm"));
             builder.append("\n");
         }
@@ -174,18 +178,20 @@ public class Playlist extends AbstractContainedObject implements Comparable<Play
     @Programmatic
     public List<LocalDateTime> nextOccurences(LocalDate endDate) {
         List<LocalDateTime> nextList = new ArrayList<LocalDateTime>();
-
-        List<Interval> intervals = CalendarUtils.intervalsInRange(
-                ObjectUtils.max(getStartDate(), clockService.now()),
-                ObjectUtils.min(endDate, getEndDate(), clockService.now().plusDays(7)),
-                getRepeatRule());
-        for (Interval interval : intervals) {
-            nextList.add(new LocalDateTime(
-                    interval.getStartMillis()).
-                    withHourOfDay(getStartTime().getHourOfDay()).
-                    withMinuteOfHour(getStartTime().getMinuteOfHour()));
+        if (getEndDate() == null || getEndDate().compareTo(clockService.now()) >= 0) {
+            final LocalDate start = getStartDate().isAfter(clockService.now()) ? getStartDate() : clockService.now();
+            final LocalDate end = ObjectUtils.min(endDate, getEndDate());
+            List<Interval> intervals = CalendarUtils.intervalsInRange(
+                    start,
+                    end,
+                    getRepeatRule());
+            for (Interval interval : intervals) {
+                nextList.add(new LocalDateTime(
+                        interval.getStartMillis()).
+                        withHourOfDay(getStartTime().getHourOfDay()).
+                        withMinuteOfHour(getStartTime().getMinuteOfHour()));
+            }
         }
-
         return nextList;
     }
 

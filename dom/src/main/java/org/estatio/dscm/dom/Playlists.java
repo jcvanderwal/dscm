@@ -18,6 +18,7 @@
  */
 package org.estatio.dscm.dom;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 import org.joda.time.LocalDate;
@@ -54,14 +55,12 @@ public class Playlists {
     @MemberOrder(sequence = "2")
     public Playlist newPlaylist(
             final DisplayGroup displayGroup,
-            final @Named("Name") String name,
             final @Named("Start date") LocalDate startDate,
             final @Named("Start time") Time startTime,
             final @Named("End date") @Optional LocalDate endDate,
-            final @Named("Repeat") PlaylistRepeat repeat) {
+            final @Named("Repeat") PlaylistRepeat repeat, BigDecimal duration) {
         final Playlist obj = container.newTransientInstance(Playlist.class);
         obj.setDisplayGroup(displayGroup);
-        obj.setName(name);
         obj.setStartDate(startDate);
         obj.setStartTime(startTime.time());
         obj.setEndDate(endDate);
