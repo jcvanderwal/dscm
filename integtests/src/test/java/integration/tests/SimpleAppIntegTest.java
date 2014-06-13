@@ -18,7 +18,7 @@
  */
 package integration.tests;
 
-import integration.DSCMSystemInitializer;
+import integration.DscmSystemInitializer;
 
 import org.junit.BeforeClass;
 
@@ -31,7 +31,7 @@ public abstract class SimpleAppIntegTest extends IntegrationTestAbstract {
     @BeforeClass
     public static void initClass() {
         org.apache.log4j.PropertyConfigurator.configure("logging.properties");
-        DSCMSystemInitializer.initIsft();
+        DscmSystemInitializer.initIsft();
         
         // instantiating will install onto ThreadLocal
         new ScenarioExecutionForIntegration();

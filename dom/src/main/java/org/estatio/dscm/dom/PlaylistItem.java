@@ -25,6 +25,8 @@ import javax.jdo.annotations.IdentityType;
 import javax.jdo.annotations.Persistent;
 import javax.jdo.annotations.VersionStrategy;
 
+import org.estatio.dscm.DomainObject;
+
 import org.apache.isis.applib.annotation.Bookmarkable;
 import org.apache.isis.applib.annotation.Hidden;
 import org.apache.isis.applib.annotation.Immutable;
@@ -35,8 +37,6 @@ import org.apache.isis.applib.annotation.Title;
 import org.apache.isis.applib.annotation.Where;
 import org.apache.isis.applib.util.ObjectContracts;
 
-import org.estatio.dscm.DomainObject;
-
 @javax.jdo.annotations.PersistenceCapable(
         identityType = IdentityType.DATASTORE)
 @javax.jdo.annotations.DatastoreIdentity(
@@ -45,11 +45,18 @@ import org.estatio.dscm.DomainObject;
 @javax.jdo.annotations.Version(
         strategy = VersionStrategy.VERSION_NUMBER,
         column = "version")
-@javax.jdo.annotations.Queries(@javax.jdo.annotations.Query(
-        name = "findByAsset", language = "JDOQL",
-        value = "SELECT "
-                + "FROM org.estatio.dscm.dom.PlaylistItem "
-                + "WHERE asset == :asset"))
+@javax.jdo.annotations.Queries({
+        @javax.jdo.annotations.Query(
+                name = "findByAsset", language = "JDOQL",
+                value = "SELECT "
+                        + "FROM org.estatio.dscm.dom.PlaylistItem "
+                        + "WHERE asset == :asset"),
+        @javax.jdo.annotations.Query(
+                name = "findByPlaylist", language = "JDOQL",
+                value = "SELECT "
+                        + "FROM org.estatio.dscm.dom.PlaylistItem "
+                        + "WHERE playlist == :playlist")
+})
 @Bookmarkable
 @Immutable
 public class PlaylistItem

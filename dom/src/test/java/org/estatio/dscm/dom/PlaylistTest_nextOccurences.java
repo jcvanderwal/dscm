@@ -35,7 +35,7 @@ public class PlaylistTest_nextOccurences {
             }
         };
         final List<LocalDateTime> nextOccurences = playlist.nextOccurences(new LocalDate(2014, 6, 1));
-        assertThat(nextOccurences.size(), is(7));
+        assertThat(nextOccurences.size(), is(31));
     }
 
     @Test
@@ -47,7 +47,7 @@ public class PlaylistTest_nextOccurences {
             }
         };
         final List<LocalDateTime> nextOccurences = playlist.nextOccurences(new LocalDate(2014, 6, 1));
-        assertThat(nextOccurences.size(), is(7));
+        assertThat(nextOccurences.size(), is(1));
     }
 
 }

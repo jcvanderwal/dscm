@@ -20,7 +20,7 @@ package integration.tests.services;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
-import integration.tests.DSCMIntegTest;
+import integration.tests.DscmIntegTest;
 
 import org.junit.Before;
 import org.junit.BeforeClass;
@@ -29,7 +29,7 @@ import org.junit.Test;
 
 import org.estatio.dscm.services.SyncService;
 
-public class SyncServiceTest extends DSCMIntegTest {
+public class SyncServiceTest extends DscmIntegTest {
 
     private SyncService syncService;
 

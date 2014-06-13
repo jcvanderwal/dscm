@@ -23,6 +23,7 @@ import java.util.TreeSet;
 
 import javax.jdo.annotations.IdentityType;
 import javax.jdo.annotations.Persistent;
+import javax.jdo.annotations.Query;
 import javax.jdo.annotations.VersionStrategy;
 
 import org.apache.isis.applib.annotation.Bookmarkable;
@@ -42,6 +43,9 @@ import org.apache.isis.applib.util.ObjectContracts;
 @javax.jdo.annotations.Version(
         strategy = VersionStrategy.VERSION_NUMBER,
         column = "version")
+@Query(name = "findByName", language = "JDOQL",
+        value = "SELECT FROM org.estatio.dscm.dom.Publisher "
+                + "WHERE name.matches(:name)")
 @Bookmarkable
 @Bounded
 @Immutable
@@ -74,7 +78,7 @@ public class Publisher implements Comparable<Publisher> {
     public void setAssets(final SortedSet<Asset> assets) {
         this.assets = assets;
     }
-    
+
     // //////////////////////////////////////
 
     @Override

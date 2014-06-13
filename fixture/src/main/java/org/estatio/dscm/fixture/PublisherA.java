@@ -19,17 +19,26 @@
 
 package org.estatio.dscm.fixture;
 
+import org.estatio.dscm.dom.Publishers;
+
 import org.apache.isis.applib.fixturescripts.DiscoverableFixtureScript;
 
-public class DemoFixture extends DiscoverableFixtureScript {
+public class PublisherA extends DiscoverableFixtureScript {
 
-    public DemoFixture() {
-        super(null, "demo");
+    static final String NAME = "Eurocommercial Properties";
+
+    public PublisherA() {
+        super(null, "publisherA");
     }
 
     @Override
     protected void execute(ExecutionContext executionContext) {
-        execute(new TeardownFixture(), executionContext);
-        execute(new PlaylistsAndItems(), executionContext);
+        publishers.newPublisher(NAME);
     }
+
+    // //////////////////////////////////////
+
+    @javax.inject.Inject
+    private Publishers publishers;
+
 }

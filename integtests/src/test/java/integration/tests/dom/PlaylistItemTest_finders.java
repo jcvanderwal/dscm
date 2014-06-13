@@ -20,7 +20,7 @@ package integration.tests.dom;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
-import integration.tests.DSCMIntegTest;
+import integration.tests.DscmIntegTest;
 
 import org.junit.Before;
 import org.junit.BeforeClass;
@@ -31,7 +31,7 @@ import org.estatio.dscm.dom.Assets;
 import org.estatio.dscm.dom.PlaylistItems;
 import org.estatio.dscm.fixture.DemoFixture;
 
-public class PlaylistItemTest_finders extends DSCMIntegTest {
+public class PlaylistItemTest_finders extends DscmIntegTest {
 
     private PlaylistItems items;
 

@@ -1,0 +1,75 @@
+{
+  "columns": [
+    {
+      "span": 4,
+      "memberGroups": {}
+    },
+    {
+      "span": 4,
+      "memberGroups": {}
+    },
+    {
+      "span": 4,
+      "memberGroups": {}
+    },
+    {
+      "span": 4,
+      "collections": {
+        "morningCommercials": {
+          "paged": {
+            "value": 12
+          },
+          "render": {
+            "value": "EAGERLY"
+          }
+        },
+        "morningFillers": {
+          "paged": {
+            "value": 12
+          },
+          "render": {
+            "value": "EAGERLY"
+          }
+        },
+        "afternoonCommercials": {
+          "paged": {
+            "value": 12
+          },
+          "render": {
+            "value": "EAGERLY"
+          }
+        },
+        "afternoonFillers": {
+          "paged": {
+            "value": 12
+          },
+          "render": {
+            "value": "EAGERLY"
+          }
+        }
+      }
+    }
+  ],
+  "actions": {
+    "downloadLayout": {
+      "named": {
+        "value": "Download Layout"
+      }
+    },
+    "injectEventBusService": {
+      "named": {
+        "value": "Inject Event Bus Service"
+      }
+    },
+    "viewModelInit": {
+      "named": {
+        "value": "View Model Init"
+      }
+    },
+    "viewModelMemento": {
+      "named": {
+        "value": "View Model Memento"
+      }
+    }
+  }
+}

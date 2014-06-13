@@ -16,18 +16,29 @@
  *  specific language governing permissions and limitations
  *  under the License.
  */
-package org.estatio.dscm.webapp;
 
-import com.google.inject.Singleton;
+package org.estatio.dscm.fixture;
 
-import org.apache.isis.viewer.wicket.viewer.registries.components.ComponentFactoryRegistrarDefault;
+import org.estatio.dscm.dom.Publishers;
 
-@Singleton
-public class ComponentFactoryRegistrarForSimpleApp extends ComponentFactoryRegistrarDefault {
+import org.apache.isis.applib.fixturescripts.DiscoverableFixtureScript;
+
+public class PublisherB extends DiscoverableFixtureScript {
+
+    private static final String NAME = "Canal-Pub";
+
+    public PublisherB() {
+        super(null, "publisherB");
+    }
 
     @Override
-    public void addComponentFactories(ComponentFactoryList componentFactories) {
-        super.addComponentFactories(componentFactories);
-        // currently no replacements
+    protected void execute(ExecutionContext executionContext) {
+        publishers.newPublisher(NAME);
     }
+
+    // //////////////////////////////////////
+
+    @javax.inject.Inject
+    private Publishers publishers;
+
 }

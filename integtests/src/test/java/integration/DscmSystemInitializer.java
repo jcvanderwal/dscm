@@ -16,15 +16,6 @@
  */
 package integration;
 
-import org.apache.isis.applib.services.clock.ClockService;
-import org.apache.isis.core.commons.config.IsisConfiguration;
-import org.apache.isis.core.commons.config.IsisConfigurationDefault;
-import org.apache.isis.core.integtestsupport.IsisSystemForTest;
-import org.apache.isis.core.wrapper.WrapperFactoryDefault;
-import org.apache.isis.objectstore.jdo.datanucleus.DataNucleusObjectStore;
-import org.apache.isis.objectstore.jdo.datanucleus.DataNucleusPersistenceMechanismInstaller;
-import org.apache.isis.objectstore.jdo.datanucleus.service.support.IsisJdoSupportImpl;
-
 import org.estatio.dscm.dom.Assets;
 import org.estatio.dscm.dom.DisplayGroups;
 import org.estatio.dscm.dom.Displays;
@@ -33,13 +24,23 @@ import org.estatio.dscm.dom.Playlists;
 import org.estatio.dscm.dom.Publishers;
 import org.estatio.dscm.services.SyncService;
 
+import org.apache.isis.applib.services.clock.ClockService;
+import org.apache.isis.core.commons.config.IsisConfiguration;
+import org.apache.isis.core.commons.config.IsisConfigurationDefault;
+import org.apache.isis.core.integtestsupport.IsisSystemForTest;
+import org.apache.isis.core.wrapper.WrapperFactoryDefault;
+import org.apache.isis.objectstore.jdo.datanucleus.DataNucleusObjectStore;
+import org.apache.isis.objectstore.jdo.datanucleus.DataNucleusPersistenceMechanismInstaller;
+import org.apache.isis.objectstore.jdo.datanucleus.service.eventbus.EventBusServiceJdo;
+import org.apache.isis.objectstore.jdo.datanucleus.service.support.IsisJdoSupportImpl;
+
 /**
  * Holds an instance of an {@link IsisSystemForTest} as a {@link ThreadLocal} on
  * the current thread, initialized with ToDo app's domain services.
  */
-public class DSCMSystemInitializer {
+public class DscmSystemInitializer {
 
-    private DSCMSystemInitializer() {
+    private DscmSystemInitializer() {
     }
 
     public static IsisSystemForTest initIsft() {
@@ -58,18 +59,16 @@ public class DSCMSystemInitializer {
             with(testConfiguration());
             with(new DataNucleusPersistenceMechanismInstaller());
 
+            withServicesIn("org.estatio"
+                    , "org.apache.isis.core.wrapper"
+                    , "org.apache.isis.applib"
+                    , "org.apache.isis.core.metamodel.services"
+                    , "org.apache.isis.core.runtime.services");
+
             withServices(
-                    new Displays(),
-                    new DisplayGroups(),
-                    new Assets(),
-                    new Publishers(),
-                    new Playlists(),
-                    new PlaylistItems(),
-                    new ClockService(),
-                    new WrapperFactoryDefault(),
                     new IsisJdoSupportImpl(),
-                    new SyncService());
-        }
+                    new EventBusServiceJdo());
+         }
 
         private IsisConfiguration testConfiguration() {
             final IsisConfigurationDefault testConfiguration = new IsisConfigurationDefault();

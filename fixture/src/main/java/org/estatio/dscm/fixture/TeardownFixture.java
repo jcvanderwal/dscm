@@ -19,17 +19,39 @@
 
 package org.estatio.dscm.fixture;
 
+import javax.inject.Inject;
+
+import org.estatio.dscm.dom.Asset;
+import org.estatio.dscm.dom.Display;
+import org.estatio.dscm.dom.DisplayGroup;
+import org.estatio.dscm.dom.Playlist;
+import org.estatio.dscm.dom.PlaylistItem;
+import org.estatio.dscm.dom.Publisher;
+
 import org.apache.isis.applib.fixturescripts.DiscoverableFixtureScript;
+import org.apache.isis.objectstore.jdo.applib.service.support.IsisJdoSupport;
 
-public class DemoFixture extends DiscoverableFixtureScript {
+public class TeardownFixture extends DiscoverableFixtureScript {
 
-    public DemoFixture() {
-        super(null, "demo");
+    public TeardownFixture() {
+        super(null, "teardown");
     }
 
     @Override
     protected void execute(ExecutionContext executionContext) {
-        execute(new TeardownFixture(), executionContext);
-        execute(new PlaylistsAndItems(), executionContext);
+        delete(PlaylistItem.class);
+        delete(Playlist.class);
+        delete(Display.class);
+        delete(DisplayGroup.class);
+        delete(Asset.class);
+        delete(Publisher.class);
     }
+
+    private void delete(Class cls) {
+        isisJdoSupport.executeUpdate(String.format("DELETE FROM \"%s\"", cls.getSimpleName()));
+    }
+
+    @Inject
+    private IsisJdoSupport isisJdoSupport;
+
 }

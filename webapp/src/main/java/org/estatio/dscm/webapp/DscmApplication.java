@@ -55,7 +55,7 @@ import org.apache.isis.viewer.wicket.viewer.integration.wicket.AuthenticatedWebS
  * </pre>
  * 
  */
-public class DSCMApplication extends IsisWicketApplication {
+public class DscmApplication extends IsisWicketApplication {
 
     private static final long serialVersionUID = 1L;
 
@@ -109,7 +109,7 @@ public class DSCMApplication extends IsisWicketApplication {
         final Module simpleOverrides = new AbstractModule() {
             @Override
             protected void configure() {
-                bind(ComponentFactoryRegistrar.class).to(ComponentFactoryRegistrarForSimpleApp.class);
+                bind(ComponentFactoryRegistrar.class).to(DscmComponentFactoryRegistrar.class);
 
                 bind(String.class).annotatedWith(Names.named("applicationName")).toInstance("ECP DSCM");
                 bind(String.class).annotatedWith(Names.named("applicationCss")).toInstance("css/application.css");

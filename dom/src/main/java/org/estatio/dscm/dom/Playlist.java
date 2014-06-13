@@ -119,27 +119,28 @@ public class Playlist extends AbstractContainedObject implements Comparable<Play
     }
 
     // //////////////////////////////////////
-
+    
     private BigDecimal duration;
-
+    
     @Column(allowsNull = "false")
+    @MemberOrder(sequence = "6")
     public BigDecimal getDuration() {
         return duration;
     }
-
+    
     public void setDuration(BigDecimal duration) {
         this.duration = duration;
     }
-
+    
     public String validateDuration(final BigDecimal duration) {
         if (duration.compareTo(BigDecimal.ZERO) > 0)
             return null;
         return "Duration can't be zero";
     }
-
+    
     // //////////////////////////////////////
 
-    @MemberOrder(sequence = "5")
+    @MemberOrder(sequence = "7")
     public BigDecimal getTotalDuration() {
         BigDecimal total = BigDecimal.ZERO;
         for (PlaylistItem item : getItems()) {

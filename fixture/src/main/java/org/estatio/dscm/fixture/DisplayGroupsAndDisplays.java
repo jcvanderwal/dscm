@@ -19,17 +19,38 @@
 
 package org.estatio.dscm.fixture;
 
+import org.estatio.dscm.dom.DisplayGroup;
+import org.estatio.dscm.dom.DisplayGroups;
+import org.estatio.dscm.dom.Displays;
+
 import org.apache.isis.applib.fixturescripts.DiscoverableFixtureScript;
 
-public class DemoFixture extends DiscoverableFixtureScript {
+public class DisplayGroupsAndDisplays extends DiscoverableFixtureScript {
 
-    public DemoFixture() {
-        super(null, "demo");
+    public DisplayGroupsAndDisplays() {
+        super(null, "pdh");
     }
 
     @Override
     protected void execute(ExecutionContext executionContext) {
-        execute(new TeardownFixture(), executionContext);
-        execute(new PlaylistsAndItems(), executionContext);
+        createDisplayAndDisplayGroups("Passage Du Havre, Paris", "ds-pduhavre", 3);
     }
+
+    // //////////////////////////////////////
+
+    private void createDisplayAndDisplayGroups(final String name, final String prefix, final int count) {
+        DisplayGroup dg = displaysGroups.newDisplayGroup(name);
+        for (int i = 0; i < count; i++) {
+            displays.newDisplay(prefix.concat(String.format("%02d", count)), dg);
+        }
+    }
+
+    // //////////////////////////////////////
+
+    @javax.inject.Inject
+    private Displays displays;
+
+    @javax.inject.Inject
+    private DisplayGroups displaysGroups;
+
 }

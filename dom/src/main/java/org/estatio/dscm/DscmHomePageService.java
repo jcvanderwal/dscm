@@ -16,25 +16,31 @@
  *  specific language governing permissions and limitations
  *  under the License.
  */
-package integration.tests;
+package org.estatio.dscm;
 
-import integration.DSCMSystemInitializer;
+import org.apache.isis.applib.annotation.ActionSemantics;
+import org.apache.isis.applib.annotation.ActionSemantics.Of;
+import org.apache.isis.applib.annotation.DomainService;
+import org.apache.isis.applib.annotation.Hidden;
+import org.apache.isis.applib.annotation.HomePage;
 
-import org.junit.BeforeClass;
+@DomainService(menuOrder = "90")
+@Hidden
+public class DscmHomePageService extends EstatioService<DscmHomePageService> {
 
-import org.apache.isis.core.integtestsupport.IntegrationTestAbstract;
-import org.apache.isis.core.integtestsupport.scenarios.ScenarioExecutionForIntegration;
+    public DscmHomePageService() {
+        super(DscmHomePageService.class);
+    }
 
-public abstract class DSCMIntegTest extends IntegrationTestAbstract {
+    @Override
+    public String iconName() {
+        return "Dashboard";
+    }
 
-    
-    @BeforeClass
-    public static void initClass() {
-        org.apache.log4j.PropertyConfigurator.configure("logging.properties");
-        DSCMSystemInitializer.initIsft();
-        
-        // instantiating will install onto ThreadLocal
-        new ScenarioExecutionForIntegration();
+    @ActionSemantics(Of.SAFE)
+    @HomePage
+    public DscmDashboard lookup() {
+        return newViewModelInstance(DscmDashboard.class, "dashboard");
     }
 
 }

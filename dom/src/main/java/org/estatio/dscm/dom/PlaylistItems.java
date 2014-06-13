@@ -24,6 +24,7 @@ import org.apache.isis.applib.DomainObjectContainer;
 import org.apache.isis.applib.annotation.ActionSemantics;
 import org.apache.isis.applib.annotation.ActionSemantics.Of;
 import org.apache.isis.applib.annotation.Bookmarkable;
+import org.apache.isis.applib.annotation.DomainService;
 import org.apache.isis.applib.annotation.Hidden;
 import org.apache.isis.applib.annotation.MemberOrder;
 import org.apache.isis.applib.annotation.NotContributed;
@@ -32,6 +33,7 @@ import org.apache.isis.applib.annotation.Programmatic;
 import org.estatio.dscm.EstatioDomainService;
 
 @Hidden
+@DomainService
 public class PlaylistItems extends EstatioDomainService<PlaylistItem> {
 
     public PlaylistItems() {
@@ -39,7 +41,7 @@ public class PlaylistItems extends EstatioDomainService<PlaylistItem> {
     }
 
     public String getId() {
-        return "PlaylistItemItem";
+        return "playlistItemItem";
     }
 
     public String iconName() {

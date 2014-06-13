@@ -16,20 +16,25 @@
  *  specific language governing permissions and limitations
  *  under the License.
  */
+package integration.tests;
 
-package org.estatio.dscm.fixture;
+import integration.DscmSystemInitializer;
 
-import org.apache.isis.applib.fixturescripts.DiscoverableFixtureScript;
+import org.junit.BeforeClass;
 
-public class DemoFixture extends DiscoverableFixtureScript {
+import org.apache.isis.core.integtestsupport.IntegrationTestAbstract;
+import org.apache.isis.core.integtestsupport.scenarios.ScenarioExecutionForIntegration;
 
-    public DemoFixture() {
-        super(null, "demo");
+public abstract class DscmIntegTest extends IntegrationTestAbstract {
+
+    
+    @BeforeClass
+    public static void initClass() {
+        org.apache.log4j.PropertyConfigurator.configure("logging.properties");
+        DscmSystemInitializer.initIsft();
+        
+        // instantiating will install onto ThreadLocal
+        new ScenarioExecutionForIntegration();
     }
 
-    @Override
-    protected void execute(ExecutionContext executionContext) {
-        execute(new TeardownFixture(), executionContext);
-        execute(new PlaylistsAndItems(), executionContext);
-    }
 }

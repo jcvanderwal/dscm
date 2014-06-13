@@ -20,14 +20,18 @@ package org.estatio.dscm.dom;
 
 import java.util.List;
 
+import org.apache.isis.applib.AbstractFactoryAndRepository;
 import org.apache.isis.applib.DomainObjectContainer;
 import org.apache.isis.applib.annotation.ActionSemantics;
 import org.apache.isis.applib.annotation.ActionSemantics.Of;
 import org.apache.isis.applib.annotation.Bookmarkable;
+import org.apache.isis.applib.annotation.DomainService;
 import org.apache.isis.applib.annotation.MemberOrder;
 import org.apache.isis.applib.annotation.Named;
+import org.apache.isis.applib.query.QueryDefault;
 
-public class Publishers {
+@DomainService
+public class Publishers extends AbstractFactoryAndRepository {
 
     public String getId() {
         return "publisher";
@@ -63,5 +67,9 @@ public class Publishers {
 
     @javax.inject.Inject
     DomainObjectContainer container;
+
+    public Publisher findByName(String name) {
+        return firstMatch(new QueryDefault<Publisher>(Publisher.class, "findByName", "name", name));
+    }
 
 }

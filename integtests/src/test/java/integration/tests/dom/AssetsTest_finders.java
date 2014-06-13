@@ -20,7 +20,7 @@ package integration.tests.dom;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
-import integration.tests.DSCMIntegTest;
+import integration.tests.DscmIntegTest;
 
 import org.junit.Before;
 import org.junit.BeforeClass;
@@ -29,7 +29,7 @@ import org.junit.Test;
 import org.estatio.dscm.dom.Assets;
 import org.estatio.dscm.fixture.DemoFixture;
 
-public class AssetsTest_finders extends DSCMIntegTest {
+public class AssetsTest_finders extends DscmIntegTest {
 
     private Assets assets;
 
