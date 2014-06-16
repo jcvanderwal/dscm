@@ -19,9 +19,9 @@
 
 package org.estatio.dscm.fixture;
 
-import org.estatio.dscm.dom.DisplayGroup;
-import org.estatio.dscm.dom.DisplayGroups;
-import org.estatio.dscm.dom.Displays;
+import org.estatio.dscm.dom.display.DisplayGroup;
+import org.estatio.dscm.dom.display.DisplayGroups;
+import org.estatio.dscm.dom.display.Displays;
 
 import org.apache.isis.applib.fixturescripts.DiscoverableFixtureScript;
 

@@ -21,17 +21,19 @@ package org.estatio.dscm.fixture;
 
 import javax.inject.Inject;
 
-import org.estatio.dscm.dom.Asset;
-import org.estatio.dscm.dom.Assets;
-import org.estatio.dscm.dom.DisplayGroups;
-import org.estatio.dscm.dom.Playlist;
-import org.estatio.dscm.dom.PlaylistItems;
-import org.estatio.dscm.dom.PlaylistRepeat;
-import org.estatio.dscm.dom.Playlists;
-import org.estatio.dscm.dom.Time;
 import org.joda.time.LocalDate;
 
 import org.apache.isis.applib.fixturescripts.DiscoverableFixtureScript;
+
+import org.estatio.dscm.dom.asset.Asset;
+import org.estatio.dscm.dom.asset.Assets;
+import org.estatio.dscm.dom.display.DisplayGroups;
+import org.estatio.dscm.dom.playlist.Playlist;
+import org.estatio.dscm.dom.playlist.PlaylistItems;
+import org.estatio.dscm.dom.playlist.PlaylistRepeat;
+import org.estatio.dscm.dom.playlist.PlaylistType;
+import org.estatio.dscm.dom.playlist.Playlists;
+import org.estatio.dscm.dom.playlist.Time;
 
 public class PlaylistsAndItems extends DiscoverableFixtureScript {
 
@@ -46,13 +48,15 @@ public class PlaylistsAndItems extends DiscoverableFixtureScript {
         execute(new DisplayGroupsAndDisplays(), executionContext);
         execute(new AssetA(), executionContext);
 
-        create(Time.T0800);
-        create(Time.T1300);
+        create(Time.T0800, PlaylistType.MAIN);
+        create(Time.T1300, PlaylistType.MAIN);
+        create(Time.T0800, PlaylistType.FILLERS);
+        create(Time.T1300, PlaylistType.FILLERS);
 
     }
 
-    private void create(Time time) {
-        Playlist p1 = playlists.newPlaylist(displayGroups.allDisplayGroups().get(0), new LocalDate(1980, 1, 1), time, null, PlaylistRepeat.DAILY, null);
+    private void create(Time time, PlaylistType type) {
+        Playlist p1 = playlists.newPlaylist(displayGroups.allDisplayGroups().get(0), type, new LocalDate(1980, 1, 1), time, null, PlaylistRepeat.DAILY, null);
         for (Asset asset : assets.allAssets()) {
             playlistItems.newPlaylistItem(p1, asset);
         }

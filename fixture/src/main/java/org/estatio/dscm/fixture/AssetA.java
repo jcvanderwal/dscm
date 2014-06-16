@@ -27,8 +27,9 @@ import java.math.BigDecimal;
 import javax.activation.MimetypesFileTypeMap;
 
 import org.apache.commons.io.IOUtils;
-import org.estatio.dscm.dom.Assets;
-import org.estatio.dscm.dom.Publishers;
+
+import org.estatio.dscm.dom.asset.Assets;
+import org.estatio.dscm.dom.publisher.Publishers;
 
 import org.apache.isis.applib.fixturescripts.DiscoverableFixtureScript;
 import org.apache.isis.applib.services.clock.ClockService;

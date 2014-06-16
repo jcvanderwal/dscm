@@ -16,12 +16,12 @@
  */
 package integration;
 
-import org.estatio.dscm.dom.Assets;
-import org.estatio.dscm.dom.DisplayGroups;
-import org.estatio.dscm.dom.Displays;
-import org.estatio.dscm.dom.PlaylistItems;
-import org.estatio.dscm.dom.Playlists;
-import org.estatio.dscm.dom.Publishers;
+import org.estatio.dscm.dom.asset.Assets;
+import org.estatio.dscm.dom.display.DisplayGroups;
+import org.estatio.dscm.dom.display.Displays;
+import org.estatio.dscm.dom.playlist.PlaylistItems;
+import org.estatio.dscm.dom.playlist.Playlists;
+import org.estatio.dscm.dom.publisher.Publishers;
 import org.estatio.dscm.services.SyncService;
 
 import org.apache.isis.applib.services.clock.ClockService;

@@ -19,7 +19,7 @@
 
 package org.estatio.dscm.fixture;
 
-import org.estatio.dscm.dom.Publishers;
+import org.estatio.dscm.dom.publisher.Publishers;
 
 import org.apache.isis.applib.fixturescripts.DiscoverableFixtureScript;
 

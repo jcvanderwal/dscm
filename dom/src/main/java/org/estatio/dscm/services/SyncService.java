@@ -35,20 +35,22 @@ import javax.inject.Inject;
 import org.apache.commons.io.IOUtils;
 import org.joda.time.LocalDateTime;
 
+import org.apache.isis.applib.annotation.DomainService;
 import org.apache.isis.applib.annotation.Named;
 import org.apache.isis.applib.annotation.Programmatic;
 import org.apache.isis.applib.services.clock.ClockService;
 import org.apache.isis.applib.value.Blob;
 
-import org.estatio.dscm.dom.Asset;
-import org.estatio.dscm.dom.Assets;
-import org.estatio.dscm.dom.Display;
-import org.estatio.dscm.dom.Playlist;
-import org.estatio.dscm.dom.PlaylistItem;
-import org.estatio.dscm.dom.Playlists;
-import org.estatio.dscm.dom.Publisher;
-import org.estatio.dscm.dom.Publishers;
+import org.estatio.dscm.dom.asset.Asset;
+import org.estatio.dscm.dom.asset.Assets;
+import org.estatio.dscm.dom.display.Display;
+import org.estatio.dscm.dom.playlist.Playlist;
+import org.estatio.dscm.dom.playlist.PlaylistItem;
+import org.estatio.dscm.dom.playlist.Playlists;
+import org.estatio.dscm.dom.publisher.Publisher;
+import org.estatio.dscm.dom.publisher.Publishers;
 
+@DomainService
 @Named("Administration")
 public class SyncService {
 

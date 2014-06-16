@@ -21,12 +21,12 @@ package org.estatio.dscm.fixture;
 
 import javax.inject.Inject;
 
-import org.estatio.dscm.dom.Asset;
-import org.estatio.dscm.dom.Display;
-import org.estatio.dscm.dom.DisplayGroup;
-import org.estatio.dscm.dom.Playlist;
-import org.estatio.dscm.dom.PlaylistItem;
-import org.estatio.dscm.dom.Publisher;
+import org.estatio.dscm.dom.asset.Asset;
+import org.estatio.dscm.dom.display.Display;
+import org.estatio.dscm.dom.display.DisplayGroup;
+import org.estatio.dscm.dom.playlist.Playlist;
+import org.estatio.dscm.dom.playlist.PlaylistItem;
+import org.estatio.dscm.dom.publisher.Publisher;
 
 import org.apache.isis.applib.fixturescripts.DiscoverableFixtureScript;
 import org.apache.isis.objectstore.jdo.applib.service.support.IsisJdoSupport;

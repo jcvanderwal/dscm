@@ -16,7 +16,7 @@
  *  specific language governing permissions and limitations
  *  under the License.
  */
-package org.estatio.dscm.dom;
+package org.estatio.dscm.dom.asset;
 
 import java.math.BigDecimal;
 
@@ -40,6 +40,10 @@ import org.apache.isis.applib.annotation.Title;
 import org.apache.isis.applib.util.ObjectContracts;
 import org.apache.isis.applib.value.Blob;
 
+import org.estatio.dscm.dom.display.DisplayGroup;
+import org.estatio.dscm.dom.playlist.PlaylistItems;
+import org.estatio.dscm.dom.publisher.Publisher;
+
 @javax.jdo.annotations.PersistenceCapable(
         identityType = IdentityType.DATASTORE)
 @javax.jdo.annotations.DatastoreIdentity(
@@ -51,7 +55,7 @@ import org.apache.isis.applib.value.Blob;
 @javax.jdo.annotations.Queries({
         @javax.jdo.annotations.Query(name = "findByName", language = "JDOQL",
                 value = "SELECT "
-                        + "FROM org.estatio.dscm.dom.Asset "
+                        + "FROM org.estatio.dscm.dom.asset.Asset "
                         + "WHERE name == :name"),
         @javax.jdo.annotations.Query(name = "findByDisplayGroup", language = "JDOQL",
                 value = "SELECT "

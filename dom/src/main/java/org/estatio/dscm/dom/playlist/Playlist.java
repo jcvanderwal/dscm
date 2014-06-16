@@ -16,7 +16,7 @@
  *  specific language governing permissions and limitations
  *  under the License.
  */
-package org.estatio.dscm.dom;
+package org.estatio.dscm.dom.playlist;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -48,9 +48,13 @@ import org.apache.isis.applib.annotation.Optional;
 import org.apache.isis.applib.annotation.Programmatic;
 import org.apache.isis.applib.annotation.Render;
 import org.apache.isis.applib.annotation.Render.Type;
+import org.apache.isis.applib.annotation.Title;
 import org.apache.isis.applib.services.clock.ClockService;
 import org.apache.isis.applib.util.ObjectContracts;
 
+import org.estatio.dscm.dom.asset.Asset;
+import org.estatio.dscm.dom.asset.Assets;
+import org.estatio.dscm.dom.display.DisplayGroup;
 import org.estatio.dscm.utils.CalendarUtils;
 
 @javax.jdo.annotations.PersistenceCapable(
@@ -61,6 +65,13 @@ import org.estatio.dscm.utils.CalendarUtils;
 @javax.jdo.annotations.Version(
         strategy = VersionStrategy.VERSION_NUMBER,
         column = "version")
+@javax.jdo.annotations.Query(name = "findByStartDateAndStartTimeAndType", language = "JDOQL",
+        value = "SELECT FROM org.estatio.dscm.dom.playlist.Playlist "
+                + "WHERE displayGroup == :displayGroup "
+                + "&& startDate == :startDate "
+                + "&& startTime == :startTime "
+                + "&& type == :type")
+@javax.jdo.annotations.Unique(name = "Playlist_displayGroup_startDate_startTime_type_UNQ", members = "displayGroup,startDate,startTime,type")
 @Bookmarkable
 @Bounded
 @Immutable
@@ -70,6 +81,7 @@ public class Playlist extends AbstractContainedObject implements Comparable<Play
 
     @javax.jdo.annotations.Column(name = "displayGroupId", allowsNull = "false")
     @MemberOrder(sequence = "1")
+    @Title(sequence = "1")
     public DisplayGroup getDisplayGroup() {
         return displayGroup;
     }
@@ -84,6 +96,7 @@ public class Playlist extends AbstractContainedObject implements Comparable<Play
 
     @MemberOrder(sequence = "3")
     @javax.jdo.annotations.Column(allowsNull = "false")
+    @Title(sequence = "2")
     public LocalDate getStartDate() {
         return startDate;
     }
@@ -96,6 +109,7 @@ public class Playlist extends AbstractContainedObject implements Comparable<Play
 
     @MemberOrder(sequence = "4")
     @javax.jdo.annotations.Column(allowsNull = "false")
+    @Title(sequence = "3")
     public LocalTime getStartTime() {
         return startTime;
     }
@@ -119,25 +133,38 @@ public class Playlist extends AbstractContainedObject implements Comparable<Play
     }
 
     // //////////////////////////////////////
-    
+
+    private PlaylistType type;
+
+    @javax.jdo.annotations.Column(allowsNull = "false")
+    public PlaylistType getType() {
+        return type;
+    }
+
+    public void setType(PlaylistType type) {
+        this.type = type;
+    }
+
+    // //////////////////////////////////////
+
     private BigDecimal duration;
-    
+
     @Column(allowsNull = "false")
     @MemberOrder(sequence = "6")
     public BigDecimal getDuration() {
         return duration;
     }
-    
+
     public void setDuration(BigDecimal duration) {
         this.duration = duration;
     }
-    
+
     public String validateDuration(final BigDecimal duration) {
         if (duration.compareTo(BigDecimal.ZERO) > 0)
             return null;
         return "Duration can't be zero";
     }
-    
+
     // //////////////////////////////////////
 
     @MemberOrder(sequence = "7")

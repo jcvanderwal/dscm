@@ -16,36 +16,40 @@
  *  specific language governing permissions and limitations
  *  under the License.
  */
-package org.estatio.dscm.dom;
+package org.estatio.dscm.dom.display;
 
 import java.util.List;
 
-import org.apache.isis.applib.AbstractFactoryAndRepository;
-import org.apache.isis.applib.DomainObjectContainer;
 import org.apache.isis.applib.annotation.ActionSemantics;
 import org.apache.isis.applib.annotation.ActionSemantics.Of;
 import org.apache.isis.applib.annotation.Bookmarkable;
 import org.apache.isis.applib.annotation.DomainService;
 import org.apache.isis.applib.annotation.MemberOrder;
 import org.apache.isis.applib.annotation.Named;
-import org.apache.isis.applib.query.QueryDefault;
+import org.apache.isis.applib.annotation.NotInServiceMenu;
+
+import org.estatio.dscm.EstatioDomainService;
 
 @DomainService
-public class Publishers extends AbstractFactoryAndRepository {
+public class Displays extends EstatioDomainService<Display> {
+
+    public Displays() {
+        super(Displays.class, Display.class);
+    }
 
     public String getId() {
-        return "publisher";
+        return "display";
     }
 
     public String iconName() {
-        return "Publisher";
+        return "Display";
     }
 
     @Bookmarkable
     @ActionSemantics(Of.SAFE)
     @MemberOrder(sequence = "1")
-    public List<Publisher> allPublishers() {
-        return container.allInstances(Publisher.class);
+    public List<Display> allDisplays() {
+        return getContainer().allInstances(Display.class);
     }
 
     // //////////////////////////////////////
@@ -53,23 +57,24 @@ public class Publishers extends AbstractFactoryAndRepository {
     // //////////////////////////////////////
 
     @MemberOrder(sequence = "2")
-    public Publisher newPublisher(
-            final @Named("Name") String name) {
-        final Publisher obj = container.newTransientInstance(Publisher.class);
+    public Display newDisplay(
+            final @Named("Name") String name,
+            final DisplayGroup displayGroup) {
+        final Display obj = getContainer().newTransientInstance(Display.class);
         obj.setName(name);
-        container.persistIfNotAlready(obj);
+        obj.setDisplayGroup(displayGroup);
+        getContainer().persistIfNotAlready(obj);
         return obj;
     }
 
-    // //////////////////////////////////////
-    // Injected services
-    // //////////////////////////////////////
+    @NotInServiceMenu
+    public void remove(Display display, @Named("Are you sure?") Boolean confirm) {
+        getContainer().remove(display);
+        getContainer().flush();
+    }
 
-    @javax.inject.Inject
-    DomainObjectContainer container;
-
-    public Publisher findByName(String name) {
-        return firstMatch(new QueryDefault<Publisher>(Publisher.class, "findByName", "name", name));
+    public boolean hideRemove(Display display, Boolean confirm) {
+        return !getContainer().getUser().hasRole(".*admin_role");
     }
 
 }

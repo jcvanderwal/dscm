@@ -25,12 +25,12 @@ import integration.tests.DscmIntegTest;
 import org.junit.Before;
 import org.junit.Test;
 
-import org.estatio.dscm.dom.Asset;
-import org.estatio.dscm.dom.Assets;
-import org.estatio.dscm.dom.Playlist;
-import org.estatio.dscm.dom.PlaylistItem;
-import org.estatio.dscm.dom.PlaylistItems;
-import org.estatio.dscm.dom.Playlists;
+import org.estatio.dscm.dom.asset.Asset;
+import org.estatio.dscm.dom.asset.Assets;
+import org.estatio.dscm.dom.playlist.Playlist;
+import org.estatio.dscm.dom.playlist.PlaylistItem;
+import org.estatio.dscm.dom.playlist.PlaylistItems;
+import org.estatio.dscm.dom.playlist.Playlists;
 import org.estatio.dscm.fixture.DemoFixture;
 
 public class PlaylistItemsTest extends DscmIntegTest {

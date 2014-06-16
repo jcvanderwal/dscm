@@ -16,7 +16,7 @@
  *  specific language governing permissions and limitations
  *  under the License.
  */
-package org.estatio.dscm.dom;
+package org.estatio.dscm.dom.publisher;
 
 import java.util.SortedSet;
 import java.util.TreeSet;
@@ -35,6 +35,8 @@ import org.apache.isis.applib.annotation.Render.Type;
 import org.apache.isis.applib.annotation.Title;
 import org.apache.isis.applib.util.ObjectContracts;
 
+import org.estatio.dscm.dom.asset.Asset;
+
 @javax.jdo.annotations.PersistenceCapable(
         identityType = IdentityType.DATASTORE)
 @javax.jdo.annotations.DatastoreIdentity(
@@ -44,7 +46,7 @@ import org.apache.isis.applib.util.ObjectContracts;
         strategy = VersionStrategy.VERSION_NUMBER,
         column = "version")
 @Query(name = "findByName", language = "JDOQL",
-        value = "SELECT FROM org.estatio.dscm.dom.Publisher "
+        value = "SELECT FROM org.estatio.dscm.dom.publisher.Publisher "
                 + "WHERE name.matches(:name)")
 @Bookmarkable
 @Bounded

@@ -27,9 +27,9 @@ import java.util.List;
 import org.junit.Before;
 import org.junit.Test;
 
-import org.estatio.dscm.dom.Display;
-import org.estatio.dscm.dom.DisplayGroups;
-import org.estatio.dscm.dom.Displays;
+import org.estatio.dscm.dom.display.Display;
+import org.estatio.dscm.dom.display.DisplayGroups;
+import org.estatio.dscm.dom.display.Displays;
 import org.estatio.dscm.fixture.DemoFixture;
 
 public class DisplaysTest_listAll_and_create extends DscmIntegTest {

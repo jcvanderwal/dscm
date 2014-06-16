@@ -1,4 +1,4 @@
-package org.estatio.dscm.dom;
+package org.estatio.dscm.dom.playlist;
 
 public enum PlaylistRepeat {
 

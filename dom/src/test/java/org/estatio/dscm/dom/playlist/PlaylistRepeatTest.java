@@ -1,4 +1,4 @@
-package org.estatio.dscm.dom;
+package org.estatio.dscm.dom.playlist;
 
 import org.junit.Before;
 import org.junit.Test;

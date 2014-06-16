@@ -22,7 +22,7 @@ import java.util.List;
 
 import javax.inject.Inject;
 
-import org.estatio.dscm.dom.Assets;
+import org.estatio.dscm.dom.asset.Assets;
 
 import org.apache.isis.applib.annotation.DomainService;
 import org.apache.isis.applib.annotation.MemberOrder;

@@ -19,48 +19,51 @@
 package integration.tests.dom;
 
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
 import integration.tests.DscmIntegTest;
 
 import javax.inject.Inject;
 
+import org.joda.time.LocalDate;
+import org.joda.time.LocalTime;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
-import org.estatio.dscm.dom.asset.Assets;
-import org.estatio.dscm.dom.playlist.PlaylistItems;
+import org.estatio.dscm.dom.display.DisplayGroup;
+import org.estatio.dscm.dom.display.DisplayGroups;
+import org.estatio.dscm.dom.playlist.PlaylistType;
 import org.estatio.dscm.dom.playlist.Playlists;
-import org.estatio.dscm.fixture.DemoFixture;
+import org.estatio.dscm.fixture.PlaylistsAndItems;
 
-public class PlaylistItemTest_finders extends DscmIntegTest {
+public class PlaylistsTest_finders extends DscmIntegTest {
 
-    @Inject
-    private PlaylistItems items;
-    
-    @Inject
-    private Assets assets;
-    
     @Inject
     private Playlists playlists;
 
+    @Inject
+    private DisplayGroups displayGroups;
+
+    private DisplayGroup displayGroup;
+
     @BeforeClass
     public static void setupTransactionalData() {
-        scenarioExecution().install(new DemoFixture());
+        scenarioExecution().install(new PlaylistsAndItems());
     }
 
     @Before
     public void setUp() throws Exception {
+        displayGroup = displayGroups.allDisplayGroups().get(0);
     }
 
     @Test
-    public void findByAsset() throws Exception {
-        assertNotNull(items.findByAsset(assets.allAssets().get(0)));
+    public void findByStartDateAndSTartTimeAndType_happyCase() throws Exception {
+        assertNotNull(playlists.findByStartDateAndStartTimeAndType(displayGroup, new LocalDate(1980, 1, 1), new LocalTime("13:00"), PlaylistType.MAIN));
     }
 
     @Test
-    public void findByPlaylist() throws Exception {
-        assertNotNull(items.findByPlaylist(playlists.allPlaylists().get(0)));
+    public void findByStartDateAndSTartTimeAndType_nothingFound() throws Exception {
+        assertNull(playlists.findByStartDateAndStartTimeAndType(displayGroup, new LocalDate(1980, 1, 1), new LocalTime("14:00"), PlaylistType.MAIN));
     }
-
 
 }

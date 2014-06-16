@@ -16,7 +16,7 @@
  *  specific language governing permissions and limitations
  *  under the License.
  */
-package org.estatio.dscm.dom;
+package org.estatio.dscm.dom.display;
 
 import javax.jdo.annotations.Column;
 import javax.jdo.annotations.IdentityType;

@@ -26,7 +26,7 @@ import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
-import org.estatio.dscm.dom.Assets;
+import org.estatio.dscm.dom.asset.Assets;
 import org.estatio.dscm.fixture.DemoFixture;
 
 public class AssetsTest_finders extends DscmIntegTest {

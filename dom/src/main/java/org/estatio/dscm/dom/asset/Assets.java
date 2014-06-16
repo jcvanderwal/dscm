@@ -16,7 +16,7 @@
  *  specific language governing permissions and limitations
  *  under the License.
  */
-package org.estatio.dscm.dom;
+package org.estatio.dscm.dom.asset;
 
 import java.math.BigDecimal;
 import java.util.List;
@@ -36,6 +36,8 @@ import org.apache.isis.applib.services.clock.ClockService;
 import org.apache.isis.applib.value.Blob;
 
 import org.estatio.dscm.EstatioDomainService;
+import org.estatio.dscm.dom.display.DisplayGroup;
+import org.estatio.dscm.dom.publisher.Publisher;
 
 @DomainService
 public class Assets extends EstatioDomainService<Asset> {

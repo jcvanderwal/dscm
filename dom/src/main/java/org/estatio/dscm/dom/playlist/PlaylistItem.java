@@ -16,7 +16,7 @@
  *  specific language governing permissions and limitations
  *  under the License.
  */
-package org.estatio.dscm.dom;
+package org.estatio.dscm.dom.playlist;
 
 import java.math.BigDecimal;
 
@@ -26,6 +26,7 @@ import javax.jdo.annotations.Persistent;
 import javax.jdo.annotations.VersionStrategy;
 
 import org.estatio.dscm.DomainObject;
+import org.estatio.dscm.dom.asset.Asset;
 
 import org.apache.isis.applib.annotation.Bookmarkable;
 import org.apache.isis.applib.annotation.Hidden;
@@ -49,12 +50,12 @@ import org.apache.isis.applib.util.ObjectContracts;
         @javax.jdo.annotations.Query(
                 name = "findByAsset", language = "JDOQL",
                 value = "SELECT "
-                        + "FROM org.estatio.dscm.dom.PlaylistItem "
+                        + "FROM org.estatio.dscm.dom.playlist.PlaylistItem "
                         + "WHERE asset == :asset"),
         @javax.jdo.annotations.Query(
                 name = "findByPlaylist", language = "JDOQL",
                 value = "SELECT "
-                        + "FROM org.estatio.dscm.dom.PlaylistItem "
+                        + "FROM org.estatio.dscm.dom.playlist.PlaylistItem "
                         + "WHERE playlist == :playlist")
 })
 @Bookmarkable

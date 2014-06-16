@@ -16,14 +16,14 @@
  *  specific language governing permissions and limitations
  *  under the License.
  */
-package org.estatio.dscm.dom;
+package org.estatio.dscm.dom.playlist;
 
 import java.math.BigDecimal;
 import java.util.List;
 
 import org.joda.time.LocalDate;
+import org.joda.time.LocalTime;
 
-import org.apache.isis.applib.DomainObjectContainer;
 import org.apache.isis.applib.annotation.ActionSemantics;
 import org.apache.isis.applib.annotation.ActionSemantics.Of;
 import org.apache.isis.applib.annotation.Bookmarkable;
@@ -32,8 +32,15 @@ import org.apache.isis.applib.annotation.MemberOrder;
 import org.apache.isis.applib.annotation.Named;
 import org.apache.isis.applib.annotation.Optional;
 
+import org.estatio.dscm.EstatioDomainService;
+import org.estatio.dscm.dom.display.DisplayGroup;
+
 @DomainService
-public class Playlists {
+public class Playlists extends EstatioDomainService<Playlist> {
+
+    public Playlists() {
+        super(Playlists.class, Playlist.class);
+    }
 
     public String getId() {
         return "playlist";
@@ -47,35 +54,42 @@ public class Playlists {
     @ActionSemantics(Of.SAFE)
     @MemberOrder(sequence = "1")
     public List<Playlist> allPlaylists() {
-        return container.allInstances(Playlist.class);
+        return getContainer().allInstances(Playlist.class);
     }
 
     // //////////////////////////////////////
-    // Create (action)
+
+    public Playlist findByStartDateAndStartTimeAndType(
+            final DisplayGroup displayGroup,
+            final LocalDate startDate,
+            final LocalTime startTime,
+            final PlaylistType type) {
+        return firstMatch("findByStartDateAndStartTimeAndType",
+                "displayGroup", displayGroup,
+                "startDate", startDate,
+                "startTime", startTime,
+                "type", type);
+    }
+
     // //////////////////////////////////////
 
     @MemberOrder(sequence = "2")
     public Playlist newPlaylist(
             final DisplayGroup displayGroup,
+            final PlaylistType type,
             final @Named("Start date") LocalDate startDate,
             final @Named("Start time") Time startTime,
             final @Named("End date") @Optional LocalDate endDate,
-            final @Named("Repeat") PlaylistRepeat repeat, BigDecimal duration) {
-        final Playlist obj = container.newTransientInstance(Playlist.class);
+            final @Named("Repeat") PlaylistRepeat repeat, final @Named("Duration") @Optional BigDecimal duration) {
+        final Playlist obj = getContainer().newTransientInstance(Playlist.class);
         obj.setDisplayGroup(displayGroup);
         obj.setStartDate(startDate);
         obj.setStartTime(startTime.time());
         obj.setEndDate(endDate);
         obj.setRepeatRule(repeat.rrule());
-        container.persistIfNotAlready(obj);
+        obj.setType(type);
+        getContainer().persistIfNotAlready(obj);
         return obj;
     }
-
-    // //////////////////////////////////////
-    // Injected services
-    // //////////////////////////////////////
-
-    @javax.inject.Inject
-    DomainObjectContainer container;
 
 }

@@ -16,7 +16,7 @@
  *  specific language governing permissions and limitations
  *  under the License.
  */
-package org.estatio.dscm.dom;
+package org.estatio.dscm.dom.playlist;
 
 import java.util.List;
 
@@ -31,6 +31,7 @@ import org.apache.isis.applib.annotation.NotContributed;
 import org.apache.isis.applib.annotation.Programmatic;
 
 import org.estatio.dscm.EstatioDomainService;
+import org.estatio.dscm.dom.asset.Asset;
 
 @Hidden
 @DomainService
@@ -62,8 +63,11 @@ public class PlaylistItems extends EstatioDomainService<PlaylistItem> {
         return allMatches("findByAsset", "asset", asset);
     }
 
-    // //////////////////////////////////////
-    // Create (action)
+    @Programmatic
+    public List<PlaylistItem> findByPlaylist(Playlist playlist) {
+        return allMatches("findByPlaylist", "playlist", playlist);
+    }
+
     // //////////////////////////////////////
 
     @NotContributed

@@ -1,4 +1,4 @@
-package org.estatio.dscm.dom;
+package org.estatio.dscm.dom.playlist;
 
 import org.joda.time.LocalTime;
 
