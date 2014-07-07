@@ -17,7 +17,7 @@
  *  under the License.
  */
 
-package org.estatio.dscm.fixture;
+package org.estatio.dscm.fixture.display;
 
 import org.estatio.dscm.dom.display.DisplayGroup;
 import org.estatio.dscm.dom.display.DisplayGroups;

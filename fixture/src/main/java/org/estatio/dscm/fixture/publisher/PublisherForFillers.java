@@ -17,18 +17,18 @@
  *  under the License.
  */
 
-package org.estatio.dscm.fixture;
+package org.estatio.dscm.fixture.publisher;
 
 import org.estatio.dscm.dom.publisher.Publishers;
 
 import org.apache.isis.applib.fixturescripts.DiscoverableFixtureScript;
 
-public class PublisherForCommercials extends DiscoverableFixtureScript {
+public class PublisherForFillers extends DiscoverableFixtureScript {
 
-    static final String NAME = "Canal-Pub";
+    public static final String NAME = "Eurocommercial Properties";
 
-    public PublisherForCommercials() {
-        super(null, "publisherB");
+    public PublisherForFillers() {
+        super(null, "publisherA");
     }
 
     @Override

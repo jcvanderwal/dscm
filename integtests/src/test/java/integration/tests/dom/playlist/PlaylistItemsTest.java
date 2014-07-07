@@ -16,51 +16,51 @@
  *  specific language governing permissions and limitations
  *  under the License.
  */
-package integration.tests.smoke;
+package integration.tests.dom.playlist;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
 import integration.tests.DscmIntegTest;
 
-import java.util.List;
-
 import org.junit.Before;
 import org.junit.Test;
 
-import org.estatio.dscm.dom.display.Display;
-import org.estatio.dscm.dom.display.DisplayGroups;
-import org.estatio.dscm.dom.display.Displays;
+import org.estatio.dscm.dom.asset.Asset;
+import org.estatio.dscm.dom.asset.Assets;
+import org.estatio.dscm.dom.playlist.Playlist;
+import org.estatio.dscm.dom.playlist.PlaylistItem;
+import org.estatio.dscm.dom.playlist.PlaylistItems;
+import org.estatio.dscm.dom.playlist.Playlists;
 import org.estatio.dscm.fixture.DemoFixture;
 
-public class DisplaysTest_listAll_and_create extends DscmIntegTest {
+public class PlaylistItemsTest extends DscmIntegTest {
 
-    private Displays displays;
-    private DisplayGroups displayGroups;
+    private Playlists playlists;
+    private PlaylistItems playlistItems;
+    private Assets assets;
 
     @Before
     public void setUp() throws Exception {
-
         scenarioExecution().install(new DemoFixture());
-
-        displays = wrap(service(Displays.class));
-        displayGroups = wrap(service(DisplayGroups.class));
+        playlistItems = wrap(service(PlaylistItems.class));
+        playlists = wrap(service(Playlists.class));
+        assets = wrap(service(Assets.class));
     }
 
     @Test
-    public void step1_listAll() throws Exception {
-
-        final List<Display> all = displays.allDisplays();
-        assertThat(all.size(), is(3));
-
+    public void t1_listAll() throws Exception {
+        assertThat(playlistItems.allPlaylistItems().size(), is(8));
     }
 
     @Test
-    public void step2_create() throws Exception {
+    public void t2_new() throws Exception {
 
-        displays.newDisplay("Faz", displayGroups.allDisplayGroups().get(0));
+        Playlist playlist = playlists.allPlaylists().get(0);
+        Asset asset = assets.allAssets().get(0);
+        PlaylistItem lastItem = playlist.getItems().last();
+        playlistItems.newPlaylistItem(playlist, asset);
+        assertThat(playlist.getItems().last().getPrevious(), is(lastItem));
 
-        final List<Display> all = displays.allDisplays();
-        assertThat(all.size(), is(4));
     }
 
 }

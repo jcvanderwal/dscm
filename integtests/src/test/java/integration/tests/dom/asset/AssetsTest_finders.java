@@ -16,7 +16,7 @@
  *  specific language governing permissions and limitations
  *  under the License.
  */
-package integration.tests.services;
+package integration.tests.dom.asset;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
@@ -24,31 +24,34 @@ import integration.tests.DscmIntegTest;
 
 import org.junit.Before;
 import org.junit.BeforeClass;
-import org.junit.Ignore;
 import org.junit.Test;
 
-import org.estatio.dscm.services.SyncService;
+import org.estatio.dscm.dom.asset.Assets;
+import org.estatio.dscm.fixture.DemoFixture;
 
-public class SyncServiceTest extends DscmIntegTest {
+public class AssetsTest_finders extends DscmIntegTest {
 
-    private SyncService syncService;
+    private Assets assets;
 
     @BeforeClass
     public static void setupTransactionalData() {
-        // scenarioExecution().install(new DemoFixture());
+        scenarioExecution().install(new DemoFixture());
     }
 
     @Before
     public void setUp() throws Exception {
-        syncService = service(SyncService.class);
+        assets = service(Assets.class);
     }
 
     @Test
-    @Ignore
-    public void filesForFolder() throws Exception {
-        String path = syncService.getProperties().get("dscm.server.path");
-        assertThat(syncService.filesForFolder(path.concat("/displays/ds-pduhavre03/playlists")).size(), is(14));
+    public void findAssets_byReference() throws Exception {
+        assertThat(assets.findAssetByName("hd_dolby_bit_harvest.m2ts").getName(), is("hd_dolby_bit_harvest.m2ts"));
 
+    }
+
+    @Test
+    public void findAll() throws Exception {
+        assertThat(assets.allAssets().size(), is(2));
     }
 
 }

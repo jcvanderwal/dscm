@@ -21,15 +21,15 @@ package org.estatio.dscm.fixture;
 
 import javax.inject.Inject;
 
+import org.apache.isis.applib.fixturescripts.DiscoverableFixtureScript;
+import org.apache.isis.applib.services.jdosupport.IsisJdoSupport;
+
 import org.estatio.dscm.dom.asset.Asset;
 import org.estatio.dscm.dom.display.Display;
 import org.estatio.dscm.dom.display.DisplayGroup;
 import org.estatio.dscm.dom.playlist.Playlist;
 import org.estatio.dscm.dom.playlist.PlaylistItem;
 import org.estatio.dscm.dom.publisher.Publisher;
-
-import org.apache.isis.applib.fixturescripts.DiscoverableFixtureScript;
-import org.apache.isis.objectstore.jdo.applib.service.support.IsisJdoSupport;
 
 public class TeardownFixture extends DiscoverableFixtureScript {
 
@@ -47,7 +47,7 @@ public class TeardownFixture extends DiscoverableFixtureScript {
         delete(Publisher.class);
     }
 
-    private void delete(Class cls) {
+    private void delete(Class<?> cls) {
         isisJdoSupport.executeUpdate(String.format("DELETE FROM \"%s\"", cls.getSimpleName()));
     }
 

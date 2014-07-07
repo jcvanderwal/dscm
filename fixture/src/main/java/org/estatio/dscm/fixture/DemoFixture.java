@@ -21,6 +21,8 @@ package org.estatio.dscm.fixture;
 
 import org.apache.isis.applib.fixturescripts.DiscoverableFixtureScript;
 
+import org.estatio.dscm.fixture.playlist.PlaylistsAndItems;
+
 public class DemoFixture extends DiscoverableFixtureScript {
 
     public DemoFixture() {

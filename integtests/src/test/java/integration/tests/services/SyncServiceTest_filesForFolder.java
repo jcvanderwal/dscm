@@ -16,51 +16,39 @@
  *  specific language governing permissions and limitations
  *  under the License.
  */
-package integration.tests.dom;
+package integration.tests.services;
 
-import static org.junit.Assert.assertNotNull;
+import static org.hamcrest.CoreMatchers.is;
+import static org.junit.Assert.assertThat;
 import integration.tests.DscmIntegTest;
-
-import javax.inject.Inject;
 
 import org.junit.Before;
 import org.junit.BeforeClass;
+import org.junit.Ignore;
 import org.junit.Test;
 
-import org.estatio.dscm.dom.asset.Assets;
-import org.estatio.dscm.dom.playlist.PlaylistItems;
-import org.estatio.dscm.dom.playlist.Playlists;
-import org.estatio.dscm.fixture.DemoFixture;
+import org.estatio.dscm.services.SyncService;
 
-public class PlaylistItemTest_finders extends DscmIntegTest {
+public class SyncServiceTest_filesForFolder extends DscmIntegTest {
 
-    @Inject
-    private PlaylistItems items;
-    
-    @Inject
-    private Assets assets;
-    
-    @Inject
-    private Playlists playlists;
+    private SyncService syncService;
 
     @BeforeClass
     public static void setupTransactionalData() {
-        scenarioExecution().install(new DemoFixture());
+        // scenarioExecution().install(new DemoFixture());
     }
 
     @Before
     public void setUp() throws Exception {
+        syncService = service(SyncService.class);
     }
 
     @Test
-    public void findByAsset() throws Exception {
-        assertNotNull(items.findByAsset(assets.allAssets().get(0)));
-    }
+    @Ignore
+    public void filesForFolder() throws Exception {
+        String path = syncService.getProperties().get("dscm.server.path");
+        assertThat(syncService.filesForFolder(path.concat("/displays/ds-pduhavre03/playlists")).size(), is(14));
 
-    @Test
-    public void findByPlaylist() throws Exception {
-        assertNotNull(items.findByPlaylist(playlists.allPlaylists().get(0)));
     }
-
 
 }

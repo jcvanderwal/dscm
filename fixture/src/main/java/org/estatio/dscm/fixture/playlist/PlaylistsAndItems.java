@@ -17,7 +17,7 @@
  *  under the License.
  */
 
-package org.estatio.dscm.fixture;
+package org.estatio.dscm.fixture.playlist;
 
 import java.math.BigDecimal;
 
@@ -36,24 +36,27 @@ import org.estatio.dscm.dom.playlist.PlaylistRepeat;
 import org.estatio.dscm.dom.playlist.PlaylistType;
 import org.estatio.dscm.dom.playlist.Playlists;
 import org.estatio.dscm.dom.playlist.Time;
+import org.estatio.dscm.fixture.asset.AssetForCommercial;
+import org.estatio.dscm.fixture.asset.AssetForFiller;
+import org.estatio.dscm.fixture.display.DisplayGroupsAndDisplays;
 
 public class PlaylistsAndItems extends DiscoverableFixtureScript {
 
-    public PlaylistsAndItems() {
+    private static final Time AFTERNOON = Time.T1300;
 
-        super(null, "playlistsAndItems");
-    }
+    public static final Time MORNING = Time.T0800;
 
     @Override
     protected void execute(ExecutionContext executionContext) {
 
         execute(new DisplayGroupsAndDisplays(), executionContext);
-        execute(new AssetFixture(), executionContext);
+        execute(new AssetForFiller(), executionContext);
+        execute(new AssetForCommercial(), executionContext);
 
-        create(Time.T0800, PlaylistType.MAIN, new BigDecimal(60));
-        create(Time.T1300, PlaylistType.MAIN, new BigDecimal(60));
-        create(Time.T0800, PlaylistType.FILLERS, BigDecimal.ZERO);
-        create(Time.T1300, PlaylistType.FILLERS, BigDecimal.ZERO);
+        create(MORNING, PlaylistType.MAIN, new BigDecimal(60));
+        create(AFTERNOON, PlaylistType.MAIN, new BigDecimal(60));
+        create(MORNING, PlaylistType.FILLERS, BigDecimal.ZERO);
+        create(AFTERNOON, PlaylistType.FILLERS, BigDecimal.ZERO);
 
     }
 

@@ -61,8 +61,7 @@ public class SyncService {
     public Map<String, String> getProperties() {
         return properties;
     }
-    
-    
+
     @Programmatic
     @PostConstruct
     public void init(final Map<String, String> properties) {
@@ -73,12 +72,13 @@ public class SyncService {
         final String path = properties.get("dscm.player.path");
         path.toLowerCase();
 
-        // copy assets
-        // remove all playlists
-
         for (Playlist playlist : playlists.allPlaylists()) {
-            for (Display display : playlist.getDisplayGroup().getDisplays()) {
-                writePlaylist(display, playlist);
+            if (playlist.getType() == PlaylistType.MAIN) {
+                for (Display display : playlist.getDisplayGroup().getDisplays()) {
+                    for (LocalDateTime dateTime : playlist.nextOccurences(clockService.now().plusDays(7))) {
+                        writePlaylist(display, dateTime, effectiveItems(playlist, dateTime));
+                    }
+                }
             }
         }
     }
@@ -133,27 +133,33 @@ public class SyncService {
         return fileList;
     }
 
-    private void writePlaylist(Display display, Playlist playlist) {
-        for (LocalDateTime time : playlist.nextOccurences(clockService.now().plusDays(7))) {
-            if (playlist.getType() == PlaylistType.MAIN) {
-                String filename = properties.get("dscm.server.path").concat("/displays").concat("/" + display.getName()).concat("/playlists").concat("/" + time.toString("yyyyMMddhhmm"));
-                File file = new File(filename);
-                file.getParentFile().mkdirs();
-                try {
-                    if (!file.exists()) {
-                        file.createNewFile();
-                    }
-                    FileWriter writer;
-                    writer = new FileWriter(file);
-                    for (PlaylistItem item : playlist.getItems()) {
-                        writer.write("asset/".concat(item.getAsset().getFile().getName().concat("\n")));
-                    }
-                    writer.close();
-                } catch (IOException e) {
-                    // TODO Auto-generated catch block
-                    e.printStackTrace();
-                }
+    public List<PlaylistItem> effectiveItems(Playlist playlist, LocalDateTime dateTime) {
+        List<PlaylistItem> items = new ArrayList<PlaylistItem>();
+        // Add items here
+        return items;
+    }
+
+    private void writePlaylist(Display display, LocalDateTime dateTime, List<PlaylistItem> items) {
+        String filename = properties.get("dscm.server.path")
+                .concat("/displays")
+                .concat("/" + display.getName())
+                .concat("/playlists")
+                .concat("/" + dateTime.toString("yyyyMMddhhmm"));
+        try {
+            File file = new File(filename);
+            file.getParentFile().mkdirs();
+            if (!file.exists()) {
+                file.createNewFile();
             }
+            FileWriter writer;
+            writer = new FileWriter(file);
+            for (PlaylistItem item : items) {
+                writer.write("asset/".concat(item.getAsset().getFile().getName().concat("\n")));
+            }
+            writer.close();
+        } catch (IOException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
         }
     }
 

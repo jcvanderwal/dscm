@@ -16,25 +16,29 @@
  *  specific language governing permissions and limitations
  *  under the License.
  */
-package integration.tests;
 
-import integration.DscmSystemInitializer;
+package org.estatio.dscm.fixture.publisher;
 
-import org.junit.BeforeClass;
+import org.estatio.dscm.dom.publisher.Publishers;
 
-import org.apache.isis.core.integtestsupport.IntegrationTestAbstract;
-import org.apache.isis.core.integtestsupport.scenarios.ScenarioExecutionForIntegration;
+import org.apache.isis.applib.fixturescripts.DiscoverableFixtureScript;
 
-public abstract class SimpleAppIntegTest extends IntegrationTestAbstract {
+public class PublisherForCommercials extends DiscoverableFixtureScript {
 
-    
-    @BeforeClass
-    public static void initClass() {
-        org.apache.log4j.PropertyConfigurator.configure("logging.properties");
-        DscmSystemInitializer.initIsft();
-        
-        // instantiating will install onto ThreadLocal
-        new ScenarioExecutionForIntegration();
+    public static final String NAME = "Canal-Pub";
+
+    public PublisherForCommercials() {
+        super(null, "publisherB");
     }
+
+    @Override
+    protected void execute(ExecutionContext executionContext) {
+        publishers.newPublisher(NAME);
+    }
+
+    // //////////////////////////////////////
+
+    @javax.inject.Inject
+    private Publishers publishers;
 
 }

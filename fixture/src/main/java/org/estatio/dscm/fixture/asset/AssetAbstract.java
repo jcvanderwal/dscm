@@ -17,7 +17,7 @@
  *  under the License.
  */
 
-package org.estatio.dscm.fixture;
+package org.estatio.dscm.fixture.asset;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -35,24 +35,16 @@ import org.apache.isis.applib.value.Blob;
 import org.estatio.dscm.dom.asset.Assets;
 import org.estatio.dscm.dom.publisher.Publishers;
 
-public class AssetFixture extends DiscoverableFixtureScript {
+public abstract class AssetAbstract extends DiscoverableFixtureScript {
 
-    public AssetFixture() {
-        super(null, "pdh");
-    }
-
-    @Override
-    protected void execute(ExecutionContext executionContext) {
-        execute(new PublisherForFillers(), executionContext);
-        execute(new PublisherForCommercials(), executionContext);
-
-        createAsset("hd_distributor_stage_6-DWEU.m2ts", PublisherForFillers.NAME);
-        createAsset("hd_dolby_bit_harvest.m2ts", PublisherForCommercials.NAME);
-    }
-
-    private void createAsset(String fileName, String publisherName) {
-
-        assets.newAsset(resourceAsBlob(fileName), publishers.findByName(publisherName), null, clockService.now(), null, new BigDecimal("20"));
+    protected void createAsset(String fileName, String publisherName) {
+        assets.newAsset(
+                resourceAsBlob(fileName),
+                publishers.findByName(publisherName),
+                null,
+                clockService.now(),
+                null,
+                new BigDecimal("10"));
     }
 
     private Blob resourceAsBlob(String fileName) {

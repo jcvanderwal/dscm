@@ -16,22 +16,32 @@
  *  specific language governing permissions and limitations
  *  under the License.
  */
-package integration.tests.dom;
+package integration.tests.dom.playlist;
 
-import static org.hamcrest.CoreMatchers.is;
-import static org.junit.Assert.assertThat;
+import static org.junit.Assert.assertNotNull;
 import integration.tests.DscmIntegTest;
+
+import javax.inject.Inject;
 
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
 import org.estatio.dscm.dom.asset.Assets;
+import org.estatio.dscm.dom.playlist.PlaylistItems;
+import org.estatio.dscm.dom.playlist.Playlists;
 import org.estatio.dscm.fixture.DemoFixture;
 
-public class AssetsTest_finders extends DscmIntegTest {
+public class PlaylistItemsTest_finders extends DscmIntegTest {
 
+    @Inject
+    private PlaylistItems items;
+    
+    @Inject
     private Assets assets;
+    
+    @Inject
+    private Playlists playlists;
 
     @BeforeClass
     public static void setupTransactionalData() {
@@ -40,18 +50,17 @@ public class AssetsTest_finders extends DscmIntegTest {
 
     @Before
     public void setUp() throws Exception {
-        assets = service(Assets.class);
     }
 
     @Test
-    public void findAssets_byReference() throws Exception {
-        assertThat(assets.findAssetByName("hd_dolby_bit_harvest.m2ts").getName(), is("hd_dolby_bit_harvest.m2ts"));
-
+    public void findByAsset() throws Exception {
+        assertNotNull(items.findByAsset(assets.allAssets().get(0)));
     }
 
     @Test
-    public void findAll() throws Exception {
-        assertThat(assets.allAssets().size(), is(2));
+    public void findByPlaylist() throws Exception {
+        assertNotNull(items.findByPlaylist(playlists.allPlaylists().get(0)));
     }
+
 
 }

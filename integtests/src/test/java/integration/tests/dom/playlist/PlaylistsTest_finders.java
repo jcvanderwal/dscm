@@ -16,7 +16,7 @@
  *  specific language governing permissions and limitations
  *  under the License.
  */
-package integration.tests.dom;
+package integration.tests.dom.playlist;
 
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
@@ -34,7 +34,7 @@ import org.estatio.dscm.dom.display.DisplayGroup;
 import org.estatio.dscm.dom.display.DisplayGroups;
 import org.estatio.dscm.dom.playlist.PlaylistType;
 import org.estatio.dscm.dom.playlist.Playlists;
-import org.estatio.dscm.fixture.PlaylistsAndItems;
+import org.estatio.dscm.fixture.playlist.PlaylistsAndItems;
 
 public class PlaylistsTest_finders extends DscmIntegTest {
 

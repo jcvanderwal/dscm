@@ -27,12 +27,11 @@ import org.apache.isis.core.integtestsupport.scenarios.ScenarioExecutionForInteg
 
 public abstract class DscmIntegTest extends IntegrationTestAbstract {
 
-    
     @BeforeClass
     public static void initClass() {
         org.apache.log4j.PropertyConfigurator.configure("logging.properties");
         DscmSystemInitializer.initIsft();
-        
+
         // instantiating will install onto ThreadLocal
         new ScenarioExecutionForIntegration();
     }
