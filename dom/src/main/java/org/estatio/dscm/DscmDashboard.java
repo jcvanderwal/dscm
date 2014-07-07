@@ -18,12 +18,9 @@
  */
 package org.estatio.dscm;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import javax.inject.Inject;
-
-import org.joda.time.LocalTime;
 
 import org.apache.isis.applib.annotation.Named;
 import org.apache.isis.applib.annotation.Render;
@@ -31,9 +28,6 @@ import org.apache.isis.applib.annotation.Render.Type;
 
 import org.estatio.dscm.dom.display.DisplayGroups;
 import org.estatio.dscm.dom.playlist.Playlist;
-import org.estatio.dscm.dom.playlist.PlaylistConstants;
-import org.estatio.dscm.dom.playlist.PlaylistItem;
-import org.estatio.dscm.dom.playlist.PlaylistItems;
 import org.estatio.dscm.dom.playlist.PlaylistType;
 import org.estatio.dscm.dom.playlist.Playlists;
 
@@ -62,42 +56,19 @@ public class DscmDashboard extends EstatioViewModel {
     // //////////////////////////////////////
 
     @Render(Type.EAGERLY)
-    public List<PlaylistItem> getMorningCommercials() {
-        return findItems(PlaylistConstants.MORNING_START_TIME, PlaylistType.MAIN);
+    public List<Playlist> getCommercials() {
+        return playlists.findByDisplayGroupAndType(displayGroups.allDisplayGroups().get(0), PlaylistType.MAIN);
     }
 
     @Render(Type.EAGERLY)
-    public List<PlaylistItem> getAfternoonCommercials() {
-        return findItems(PlaylistConstants.AFTERNOON_START_TIME, PlaylistType.MAIN);
-    }
-
-    @Render(Type.EAGERLY)
-    public List<PlaylistItem> getMorningFillers() {
-        return findItems(PlaylistConstants.MORNING_START_TIME, PlaylistType.FILLERS);
-    }
-
-    @Render(Type.EAGERLY)
-    public List<PlaylistItem> getAfternoonFillers() {
-        return findItems(PlaylistConstants.AFTERNOON_START_TIME, PlaylistType.FILLERS);
-    }
-
-    // //////////////////////////////////////
-    
-    private List<PlaylistItem> findItems(final LocalTime startTime, final PlaylistType type) {
-        final Playlist playlist = playlists.findByStartDateAndStartTimeAndType(displayGroups.allDisplayGroups().get(0), PlaylistConstants.START_DATE, startTime, type);
-        if (playlist == null) {
-            return new ArrayList<PlaylistItem>();
-        }
-        return playlistItems.findByPlaylist(playlist);
+    public List<Playlist> getFillers() {
+        return playlists.findByDisplayGroupAndType(displayGroups.allDisplayGroups().get(0), PlaylistType.FILLERS);
     }
 
     // //////////////////////////////////////
 
     @Inject
     private Playlists playlists;
-
-    @Inject
-    private PlaylistItems playlistItems;
 
     @Inject
     private DisplayGroups displayGroups;

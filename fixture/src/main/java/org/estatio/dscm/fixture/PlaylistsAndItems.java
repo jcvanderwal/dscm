@@ -19,6 +19,8 @@
 
 package org.estatio.dscm.fixture;
 
+import java.math.BigDecimal;
+
 import javax.inject.Inject;
 
 import org.joda.time.LocalDate;
@@ -39,7 +41,7 @@ public class PlaylistsAndItems extends DiscoverableFixtureScript {
 
     public PlaylistsAndItems() {
 
-        super(null, "pdh");
+        super(null, "playlistsAndItems");
     }
 
     @Override
@@ -48,15 +50,24 @@ public class PlaylistsAndItems extends DiscoverableFixtureScript {
         execute(new DisplayGroupsAndDisplays(), executionContext);
         execute(new AssetA(), executionContext);
 
-        create(Time.T0800, PlaylistType.MAIN);
-        create(Time.T1300, PlaylistType.MAIN);
-        create(Time.T0800, PlaylistType.FILLERS);
-        create(Time.T1300, PlaylistType.FILLERS);
+        create(Time.T0800, PlaylistType.MAIN, new BigDecimal(60));
+        create(Time.T1300, PlaylistType.MAIN, new BigDecimal(60));
+        create(Time.T0800, PlaylistType.FILLERS, BigDecimal.ZERO);
+        create(Time.T1300, PlaylistType.FILLERS, BigDecimal.ZERO);
 
     }
 
-    private void create(Time time, PlaylistType type) {
-        Playlist p1 = playlists.newPlaylist(displayGroups.allDisplayGroups().get(0), type, new LocalDate(1980, 1, 1), time, null, PlaylistRepeat.DAILY, null);
+    // //////////////////////////////////////
+
+    private void create(Time time, PlaylistType type, BigDecimal loopDuration) {
+        Playlist p1 = playlists.newPlaylist(
+                displayGroups.allDisplayGroups().get(0),
+                type,
+                new LocalDate(1980, 1, 1),
+                time,
+                null,
+                PlaylistRepeat.DAILY,
+                loopDuration);
         for (Asset asset : assets.allAssets()) {
             playlistItems.newPlaylistItem(p1, asset);
         }

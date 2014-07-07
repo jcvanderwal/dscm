@@ -21,7 +21,6 @@ package org.estatio.dscm;
 import org.apache.isis.applib.AbstractViewModel;
 import org.apache.isis.applib.services.bookmark.BookmarkService;
 import org.apache.isis.applib.services.clock.ClockService;
-import org.apache.isis.applib.services.eventbus.EventBusService;
 import org.apache.isis.applib.services.memento.MementoService;
 
 public abstract class EstatioViewModel extends AbstractViewModel {
@@ -35,27 +34,6 @@ public abstract class EstatioViewModel extends AbstractViewModel {
     }
     
     // //////////////////////////////////////
-
-    
-    /**
-     * a default value is used to prevent null pointers for objects 
-     * being initialized where the service has not yet been injected into.
-     */
-    private EventBusService eventBusService = EventBusService.NOOP;
-    protected EventBusService getEventBusService() {
-        return eventBusService;
-    }
-    /**
-     * Unlike domain services, domain objects are NOT automatically registered
-     * with the {@link EventBusService}; Isis makes no guarantees as to whether
-     * a subscribing domain object is in memory or not to receive the event.
-     */
-    public final void injectEventBusService(final EventBusService eventBusService) {
-        this.eventBusService = eventBusService;
-    }    
-
-    // //////////////////////////////////////
-
     
     private MementoService mementoService;
     protected MementoService getMementoService() {

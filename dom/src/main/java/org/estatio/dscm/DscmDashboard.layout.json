@@ -15,7 +15,7 @@
     {
       "span": 4,
       "collections": {
-        "morningCommercials": {
+        "commercials": {
           "paged": {
             "value": 12
           },
@@ -23,23 +23,7 @@
             "value": "EAGERLY"
           }
         },
-        "morningFillers": {
-          "paged": {
-            "value": 12
-          },
-          "render": {
-            "value": "EAGERLY"
-          }
-        },
-        "afternoonCommercials": {
-          "paged": {
-            "value": 12
-          },
-          "render": {
-            "value": "EAGERLY"
-          }
-        },
-        "afternoonFillers": {
+        "fillers": {
           "paged": {
             "value": 12
           },

@@ -58,12 +58,12 @@ public class PlaylistsTest_finders extends DscmIntegTest {
 
     @Test
     public void findByStartDateAndSTartTimeAndType_happyCase() throws Exception {
-        assertNotNull(playlists.findByStartDateAndStartTimeAndType(displayGroup, new LocalDate(1980, 1, 1), new LocalTime("13:00"), PlaylistType.MAIN));
+        assertNotNull(playlists.findByDisplayGroupAndStartDateTimeAndType(displayGroup, new LocalDate(1980, 1, 1), new LocalTime("13:00"), PlaylistType.MAIN));
     }
 
     @Test
     public void findByStartDateAndSTartTimeAndType_nothingFound() throws Exception {
-        assertNull(playlists.findByStartDateAndStartTimeAndType(displayGroup, new LocalDate(1980, 1, 1), new LocalTime("14:00"), PlaylistType.MAIN));
+        assertNull(playlists.findByDisplayGroupAndStartDateTimeAndType(displayGroup, new LocalDate(1980, 1, 1), new LocalTime("14:00"), PlaylistType.MAIN));
     }
 
 }

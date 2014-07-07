@@ -48,9 +48,9 @@ import org.apache.isis.applib.annotation.Optional;
 import org.apache.isis.applib.annotation.Programmatic;
 import org.apache.isis.applib.annotation.Render;
 import org.apache.isis.applib.annotation.Render.Type;
-import org.apache.isis.applib.annotation.Title;
 import org.apache.isis.applib.services.clock.ClockService;
 import org.apache.isis.applib.util.ObjectContracts;
+import org.apache.isis.applib.util.TitleBuffer;
 
 import org.estatio.dscm.dom.asset.Asset;
 import org.estatio.dscm.dom.asset.Assets;
@@ -65,23 +65,37 @@ import org.estatio.dscm.utils.CalendarUtils;
 @javax.jdo.annotations.Version(
         strategy = VersionStrategy.VERSION_NUMBER,
         column = "version")
-@javax.jdo.annotations.Query(name = "findByStartDateAndStartTimeAndType", language = "JDOQL",
-        value = "SELECT FROM org.estatio.dscm.dom.playlist.Playlist "
-                + "WHERE displayGroup == :displayGroup "
-                + "&& startDate == :startDate "
-                + "&& startTime == :startTime "
-                + "&& type == :type")
+@javax.jdo.annotations.Queries({
+        @javax.jdo.annotations.Query(name = "findByDisplayGroupAndStartDateTimeAndType", language = "JDOQL",
+                value = "SELECT FROM org.estatio.dscm.dom.playlist.Playlist "
+                        + "WHERE displayGroup == :displayGroup "
+                        + "&& startDate == :startDate "
+                        + "&& startTime == :startTime "
+                        + "&& type == :type"),
+        @javax.jdo.annotations.Query(name = "findByDisplayGroupAndType", language = "JDOQL",
+                value = "SELECT FROM org.estatio.dscm.dom.playlist.Playlist "
+                        + "WHERE displayGroup == :displayGroup "
+                        + "&& type == :type")
+})
 @javax.jdo.annotations.Unique(name = "Playlist_displayGroup_startDate_startTime_type_UNQ", members = "displayGroup,startDate,startTime,type")
 @Bookmarkable
 @Bounded
 @Immutable
 public class Playlist extends AbstractContainedObject implements Comparable<Playlist> {
 
+    public String title() {
+        TitleBuffer tb = new TitleBuffer();
+        return tb
+                .append(getContainer().titleOf(getDisplayGroup()))
+                .append(" ", getStartDate().toString("yyyy-MM-dd"))
+                .append(" ", getStartTime().toString("hh:mm"))
+                .toString();
+    }
+
     private DisplayGroup displayGroup;
 
     @javax.jdo.annotations.Column(name = "displayGroupId", allowsNull = "false")
     @MemberOrder(sequence = "1")
-    @Title(sequence = "1")
     public DisplayGroup getDisplayGroup() {
         return displayGroup;
     }
@@ -96,7 +110,6 @@ public class Playlist extends AbstractContainedObject implements Comparable<Play
 
     @MemberOrder(sequence = "3")
     @javax.jdo.annotations.Column(allowsNull = "false")
-    @Title(sequence = "2")
     public LocalDate getStartDate() {
         return startDate;
     }
@@ -109,7 +122,6 @@ public class Playlist extends AbstractContainedObject implements Comparable<Play
 
     @MemberOrder(sequence = "4")
     @javax.jdo.annotations.Column(allowsNull = "false")
-    @Title(sequence = "3")
     public LocalTime getStartTime() {
         return startTime;
     }
@@ -137,6 +149,7 @@ public class Playlist extends AbstractContainedObject implements Comparable<Play
     private PlaylistType type;
 
     @javax.jdo.annotations.Column(allowsNull = "false")
+    @MemberOrder(sequence = "6")
     public PlaylistType getType() {
         return type;
     }
@@ -147,19 +160,19 @@ public class Playlist extends AbstractContainedObject implements Comparable<Play
 
     // //////////////////////////////////////
 
-    private BigDecimal duration;
+    private BigDecimal loopDuration;
 
     @Column(allowsNull = "false")
-    @MemberOrder(sequence = "6")
-    public BigDecimal getDuration() {
-        return duration;
+    @MemberOrder(sequence = "7")
+    public BigDecimal getLoopDuration() {
+        return loopDuration;
     }
 
-    public void setDuration(BigDecimal duration) {
-        this.duration = duration;
+    public void setLoopDuration(BigDecimal duration) {
+        this.loopDuration = duration;
     }
 
-    public String validateDuration(final BigDecimal duration) {
+    public String validateLoopDuration(final BigDecimal duration) {
         if (duration.compareTo(BigDecimal.ZERO) > 0)
             return null;
         return "Duration can't be zero";
@@ -167,7 +180,7 @@ public class Playlist extends AbstractContainedObject implements Comparable<Play
 
     // //////////////////////////////////////
 
-    @MemberOrder(sequence = "7")
+    @MemberOrder(sequence = "8")
     public BigDecimal getTotalDuration() {
         BigDecimal total = BigDecimal.ZERO;
         for (PlaylistItem item : getItems()) {
@@ -193,7 +206,7 @@ public class Playlist extends AbstractContainedObject implements Comparable<Play
     // //////////////////////////////////////
 
     @MultiLine(numberOfLines = 10)
-    @MemberOrder(sequence = "6")
+    @MemberOrder(sequence = "9")
     public String getNextOccurences() {
         StringBuilder builder = new StringBuilder();
         for (LocalDateTime occurence : nextOccurences(clockService.now().plusDays(7))) {
