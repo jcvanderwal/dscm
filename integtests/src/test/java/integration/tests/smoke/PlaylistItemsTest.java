@@ -49,7 +49,7 @@ public class PlaylistItemsTest extends DscmIntegTest {
 
     @Test
     public void t1_listAll() throws Exception {
-        assertThat(playlistItems.allPlaylistItems().size(), is(2));
+        assertThat(playlistItems.allPlaylistItems().size(), is(8));
     }
 
     @Test

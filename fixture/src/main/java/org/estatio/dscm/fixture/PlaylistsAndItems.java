@@ -48,7 +48,7 @@ public class PlaylistsAndItems extends DiscoverableFixtureScript {
     protected void execute(ExecutionContext executionContext) {
 
         execute(new DisplayGroupsAndDisplays(), executionContext);
-        execute(new AssetA(), executionContext);
+        execute(new AssetFixture(), executionContext);
 
         create(Time.T0800, PlaylistType.MAIN, new BigDecimal(60));
         create(Time.T1300, PlaylistType.MAIN, new BigDecimal(60));

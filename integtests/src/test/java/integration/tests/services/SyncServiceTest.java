@@ -46,7 +46,8 @@ public class SyncServiceTest extends DscmIntegTest {
     @Test
     @Ignore
     public void filesForFolder() throws Exception {
-        assertThat(syncService.filesForFolder("/Users/jvanderwal/Dropbox/dscm/assets").size(), is(10));
+        String path = syncService.getProperties().get("dscm.server.path");
+        assertThat(syncService.filesForFolder(path.concat("/displays/ds-pduhavre03/playlists")).size(), is(14));
 
     }
 

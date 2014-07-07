@@ -219,9 +219,9 @@ public class Playlist extends AbstractContainedObject implements Comparable<Play
     @Programmatic
     public List<LocalDateTime> nextOccurences(LocalDate endDate) {
         List<LocalDateTime> nextList = new ArrayList<LocalDateTime>();
-        if (getEndDate() == null || getEndDate().compareTo(clockService.now()) >= 0) {
-            final LocalDate start = getStartDate().isAfter(clockService.now()) ? getStartDate() : clockService.now();
-            final LocalDate end = ObjectUtils.min(endDate, getEndDate());
+        final LocalDate start = getStartDate().isBefore(clockService.now()) ? clockService.now() : getStartDate() ;
+        final LocalDate end = ObjectUtils.min(endDate, getEndDate());
+        if (end.compareTo(start) >= 0 && end.compareTo(clockService.now()) >= 0) {
             List<Interval> intervals = CalendarUtils.intervalsInRange(
                     start,
                     end,

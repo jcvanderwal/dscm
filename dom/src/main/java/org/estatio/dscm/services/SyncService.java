@@ -46,6 +46,7 @@ import org.estatio.dscm.dom.asset.Assets;
 import org.estatio.dscm.dom.display.Display;
 import org.estatio.dscm.dom.playlist.Playlist;
 import org.estatio.dscm.dom.playlist.PlaylistItem;
+import org.estatio.dscm.dom.playlist.PlaylistType;
 import org.estatio.dscm.dom.playlist.Playlists;
 import org.estatio.dscm.dom.publisher.Publisher;
 import org.estatio.dscm.dom.publisher.Publishers;
@@ -56,6 +57,12 @@ public class SyncService {
 
     private Map<String, String> properties;
 
+    @Programmatic
+    public Map<String, String> getProperties() {
+        return properties;
+    }
+    
+    
     @Programmatic
     @PostConstruct
     public void init(final Map<String, String> properties) {
@@ -111,7 +118,6 @@ public class SyncService {
         }
     }
 
-    
     @Programmatic
     public List<File> filesForFolder(final String path) {
         return filesForFolder(new File(path));
@@ -128,27 +134,25 @@ public class SyncService {
     }
 
     private void writePlaylist(Display display, Playlist playlist) {
-        for (LocalDateTime time : playlist.nextOccurences(null)) {
-            String filename = properties.get("dscm.server.path")
-                    .concat("/displays")
-                    .concat("/" + display.getName())
-                    .concat("/playlists")
-                    .concat("/" + time.toString("yyyyMMddhhmm"));
-            File file = new File(filename);
-            file.getParentFile().mkdirs();
-            try {
-                if (!file.exists()) {
-                    file.createNewFile();
+        for (LocalDateTime time : playlist.nextOccurences(clockService.now().plusDays(7))) {
+            if (playlist.getType() == PlaylistType.MAIN) {
+                String filename = properties.get("dscm.server.path").concat("/displays").concat("/" + display.getName()).concat("/playlists").concat("/" + time.toString("yyyyMMddhhmm"));
+                File file = new File(filename);
+                file.getParentFile().mkdirs();
+                try {
+                    if (!file.exists()) {
+                        file.createNewFile();
+                    }
+                    FileWriter writer;
+                    writer = new FileWriter(file);
+                    for (PlaylistItem item : playlist.getItems()) {
+                        writer.write("asset/".concat(item.getAsset().getFile().getName().concat("\n")));
+                    }
+                    writer.close();
+                } catch (IOException e) {
+                    // TODO Auto-generated catch block
+                    e.printStackTrace();
                 }
-                FileWriter writer;
-                writer = new FileWriter(file);
-                for (PlaylistItem item : playlist.getItems()) {
-                    writer.write("asset/".concat(item.getAsset().getFile().getName().concat("\n")));
-                }
-                writer.close();
-            } catch (IOException e) {
-                // TODO Auto-generated catch block
-                e.printStackTrace();
             }
         }
     }

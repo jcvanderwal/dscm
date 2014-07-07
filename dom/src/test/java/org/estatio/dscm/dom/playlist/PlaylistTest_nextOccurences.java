@@ -29,7 +29,7 @@ public class PlaylistTest_nextOccurences {
     }
 
     @Test
-    public void happyCase() throws Exception {
+    public void fullMonth() throws Exception {
         playlist.clockService = new ClockService() {
             @Override
             public LocalDate now() {
@@ -41,7 +41,7 @@ public class PlaylistTest_nextOccurences {
     }
 
     @Test
-    public void happyCase2() throws Exception {
+    public void sameDay() throws Exception {
         playlist.clockService = new ClockService() {
             @Override
             public LocalDate now() {
@@ -50,6 +50,18 @@ public class PlaylistTest_nextOccurences {
         };
         final List<LocalDateTime> nextOccurences = playlist.nextOccurences(new LocalDate(2014, 6, 1));
         assertThat(nextOccurences.size(), is(1));
+    }
+
+    @Test
+    public void futurePlaylist() throws Exception {
+        playlist.clockService = new ClockService() {
+            @Override
+            public LocalDate now() {
+                return new LocalDate(2014, 4, 1);
+            }
+        };
+        final List<LocalDateTime> nextOccurences = playlist.nextOccurences(new LocalDate(2014, 4, 1));
+        assertThat(nextOccurences.size(), is(0));
     }
 
 }
