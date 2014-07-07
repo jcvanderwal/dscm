@@ -312,7 +312,6 @@
 				<artifactId>isis-objectstore-jdo</artifactId>
 				<version>${isis-objectstore-jdo.version}</version>
 				<type>pom</type>
-				<scope>import</scope>
 			</dependency>
 
 			<dependency>
@@ -328,7 +327,6 @@
 				<artifactId>isis-viewer-restfulobjects</artifactId>
 				<version>${isis-viewer-restfulobjects.version}</version>
 				<type>pom</type>
-				<scope>import</scope>
 			</dependency>
 
 			<dependency>
@@ -336,7 +334,6 @@
 				<artifactId>isis-security-shiro</artifactId>
 				<version>${isis-security-shiro.version}</version>
 				<type>pom</type>
-				<scope>import</scope>
 			</dependency>
 
 	        <dependency>
