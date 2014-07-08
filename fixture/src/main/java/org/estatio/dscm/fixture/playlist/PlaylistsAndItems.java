@@ -42,10 +42,12 @@ import org.estatio.dscm.fixture.display.DisplayGroupsAndDisplays;
 
 public class PlaylistsAndItems extends DiscoverableFixtureScript {
 
-    private static final Time AFTERNOON = Time.T1300;
+    public static final LocalDate DATE = new LocalDate(1980, 1, 1);
+
+    public static final Time AFTERNOON = Time.T1300;
 
     public static final Time MORNING = Time.T0800;
-
+    
     @Override
     protected void execute(ExecutionContext executionContext) {
 
@@ -66,7 +68,7 @@ public class PlaylistsAndItems extends DiscoverableFixtureScript {
         Playlist p1 = playlists.newPlaylist(
                 displayGroups.allDisplayGroups().get(0),
                 type,
-                new LocalDate(1980, 1, 1),
+                DATE,
                 time,
                 null,
                 PlaylistRepeat.DAILY,

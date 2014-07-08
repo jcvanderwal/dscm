@@ -24,6 +24,7 @@ import java.io.FileNotFoundException;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
+import java.math.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -133,18 +134,86 @@ public class SyncService {
         return fileList;
     }
 
+    /**
+     * The effective playlist items e.g. the commercials and fillers combined in
+     * cycles of 60 seconds. All videos take 10 seconds each for the time being
+     * 
+     * @param playlist
+     *            The main playlist e.g. commercial
+     * @param dateTime
+     *            The effective time
+     * @return
+     */
     public List<PlaylistItem> effectiveItems(Playlist playlist, LocalDateTime dateTime) {
         List<PlaylistItem> items = new ArrayList<PlaylistItem>();
-        // Add items here
+        List<PlaylistItem> fillers = new ArrayList<PlaylistItem>();
+
+        BigDecimal commercialDuration, cycleDuration, timeLeftInCycle;
+
+        cycleDuration = new BigDecimal(60);
+        commercialDuration = playlist.getTotalDuration();
+
+        // add commercial(s) to the effective playlist called items
+        items.addAll(playlist.getItems());
+
+        // finds all available fillers e.g. effective fillers
+        Playlist fillerPlaylist = playlists.findByDisplayGroupAndStartDateTimeAndType(
+                playlist.getDisplayGroup(),
+                playlist.getStartDate(),
+                playlist.getStartTime(),
+                PlaylistType.FILLERS);
+
+        // add available fillers to (play)list called fillers
+        fillers.addAll(fillerPlaylist.getItems());
+
+        /*
+         * calculates time left in a cycle (also in case commercial is longer
+         * than 60 sec0: timeLeftInCycle = 60 - (commercialDuration % 60)
+         * MathContext mc = new MathContext(2); // precision of 2
+         * timeLeftInCycle =
+         * cycleDuration.subtract(commercialDuration.remainder(cycleDuration,
+         * mc));
+         */
+        timeLeftInCycle = cycleDuration.subtract(commercialDuration);
+
+        /*
+         * If condition is 1, timeLeftInCycle is positive, if 0 timeLeftInCycle
+         * is 0, if -1 timeLeftInCycle is negative
+         */
+        while (timeLeftInCycle.signum() >= 0) {
+            /* if there's no time left in cycle and fillers unused */
+            if (timeLeftInCycle == BigDecimal.ZERO && fillers.size() > 1) {
+                /* TODO 1 cycle is filled, but there are fillers unused. 
+                 * What to do?
+                 */
+            }
+            /* if time left is bigger of equal than 10 seconds */
+            if (timeLeftInCycle == BigDecimal.TEN) {
+                for (int i = 0; i < fillers.size(); i++) {
+                    if (fillers.get(i).getDuration() == BigDecimal.TEN) {
+                        items.add(fillers.get(i));
+                        fillers.remove(fillers.get(i));
+                        timeLeftInCycle = timeLeftInCycle.subtract(fillers.get(i).getDuration());
+                    }
+                }
+            }
+            /* if time left is bigger than or equal to 20 seconds */
+            if (timeLeftInCycle.compareTo(new BigDecimal("20")) >= 0) {
+                for (int j = 0; j < fillers.size(); j++) {
+                    if (fillers.get(j).getDuration().compareTo(new BigDecimal("20")) >= 0) {
+                        items.add(fillers.get(j));
+                        fillers.remove(fillers.get(j));
+                        timeLeftInCycle = timeLeftInCycle.subtract(fillers.get(j).getDuration());
+                    }
+                }
+            }
+        }
+
         return items;
     }
 
     private void writePlaylist(Display display, LocalDateTime dateTime, List<PlaylistItem> items) {
-        String filename = properties.get("dscm.server.path")
-                .concat("/displays")
-                .concat("/" + display.getName())
-                .concat("/playlists")
-                .concat("/" + dateTime.toString("yyyyMMddhhmm"));
+        String filename = properties.get("dscm.server.path").concat("/displays").concat("/" + display.getName()).concat("/playlists").concat("/" + dateTime.toString("yyyyMMddhhmm"));
         try {
             File file = new File(filename);
             file.getParentFile().mkdirs();

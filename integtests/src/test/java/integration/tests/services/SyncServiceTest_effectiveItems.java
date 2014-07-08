@@ -65,9 +65,11 @@ public class SyncServiceTest_effectiveItems extends DscmIntegTest {
     @Before
     public void setUp() throws Exception {
         final DisplayGroup displayGroup = displayGroups.allDisplayGroups().get(0);
-        commercialPlaylist = playlists.findByDisplayGroupAndType(
+        commercialPlaylist = playlists.findByDisplayGroupAndStartDateTimeAndType(
                 displayGroup,
-                PlaylistType.MAIN).get(0);
+                PlaylistsAndItems.DATE,
+                PlaylistsAndItems.MORNING.time(),
+                PlaylistType.MAIN);
         fillerPlaylist = playlists.findByDisplayGroupAndType(
                 displayGroup,
                 PlaylistType.FILLERS).get(0);
@@ -80,14 +82,10 @@ public class SyncServiceTest_effectiveItems extends DscmIntegTest {
                         commercialPlaylist,
                         new LocalDate(2014, 5, 1).toLocalDateTime(PlaylistsAndItems.MORNING.time()));
         // Each asset is 10 seconds so we should have six
-        assertThat(effectiveItems.size(), is(6));
+        assertThat(effectiveItems.size(), is(2));
         // The commercial and filler are distributed evenly
         assertThat(effectiveItems.get(0), is(commercialPlaylist.getItems().first()));
         assertThat(effectiveItems.get(1), is(fillerPlaylist.getItems().first()));
-        assertThat(effectiveItems.get(2), is(commercialPlaylist.getItems().first()));
-        assertThat(effectiveItems.get(3), is(fillerPlaylist.getItems().first()));
-        assertThat(effectiveItems.get(4), is(commercialPlaylist.getItems().first()));
-        assertThat(effectiveItems.get(5), is(fillerPlaylist.getItems().first()));
 
     }
 }
