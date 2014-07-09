@@ -4,7 +4,7 @@ import org.estatio.dscm.fixture.publisher.PublisherForFillers;
 
 public class AssetForFiller extends AssetAbstract {
 
-    private static final String NAME = "hd_distributor_stage_6-DWEU.m2ts";
+    public static final String NAME = "hd_distributor_stage_6-DWEU.m2ts";
 
     @Override
     protected void execute(ExecutionContext executionContext) {

@@ -22,7 +22,6 @@ import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
 import integration.tests.DscmIntegTest;
 
-import java.math.BigDecimal;
 import java.util.List;
 
 import javax.inject.Inject;
@@ -39,6 +38,8 @@ import org.estatio.dscm.dom.playlist.PlaylistItem;
 import org.estatio.dscm.dom.playlist.PlaylistType;
 import org.estatio.dscm.dom.playlist.Playlists;
 import org.estatio.dscm.fixture.DemoFixture;
+import org.estatio.dscm.fixture.asset.AssetForCommercial;
+import org.estatio.dscm.fixture.asset.AssetForFiller;
 import org.estatio.dscm.fixture.playlist.PlaylistsAndItems;
 import org.estatio.dscm.services.SyncService;
 
@@ -80,12 +81,12 @@ public class SyncServiceTest_effectiveItems extends DscmIntegTest {
         final List<PlaylistItem> effectiveItems =
                 syncService.effectiveItems(
                         commercialPlaylist,
-                        new LocalDate(2014, 5, 1).toLocalDateTime(PlaylistsAndItems.MORNING.time()));
-        // Each asset is 10 seconds so we should have six
+                        new LocalDate(1980, 1, 1).toLocalDateTime(PlaylistsAndItems.MORNING.time()));
+        // Each asset is 10 seconds so we should have 6
         assertThat(effectiveItems.size(), is(2));
         // The commercial and filler are distributed evenly
-        assertThat(effectiveItems.get(0), is(commercialPlaylist.getItems().first()));
-        assertThat(effectiveItems.get(1), is(fillerPlaylist.getItems().first()));
+        assertThat(effectiveItems.get(0).getAsset().getName(), is(AssetForCommercial.NAME));
+        assertThat(effectiveItems.get(1).getAsset().getName(), is(AssetForFiller.NAME));
 
     }
 }

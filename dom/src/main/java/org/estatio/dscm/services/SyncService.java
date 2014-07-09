@@ -24,8 +24,9 @@ import java.io.FileNotFoundException;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
-import java.math.*;
+import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
@@ -145,71 +146,71 @@ public class SyncService {
      * @return
      */
     public List<PlaylistItem> effectiveItems(Playlist playlist, LocalDateTime dateTime) {
-        List<PlaylistItem> items = new ArrayList<PlaylistItem>();
+
+        BigDecimal cycleDuration = new BigDecimal(60);
         List<PlaylistItem> fillers = new ArrayList<PlaylistItem>();
-
-        BigDecimal commercialDuration, cycleDuration, timeLeftInCycle;
-
-        cycleDuration = new BigDecimal(60);
-        commercialDuration = playlist.getTotalDuration();
-
-        // add commercial(s) to the effective playlist called items
-        items.addAll(playlist.getItems());
-
-        // finds all available fillers e.g. effective fillers
-        Playlist fillerPlaylist = playlists.findByDisplayGroupAndStartDateTimeAndType(
+        List<PlaylistItem> commercials = new ArrayList<PlaylistItem>();
+        commercials.addAll(playlist.getItems());
+        fillers.addAll(playlists.findByDisplayGroupAndStartDateTimeAndType(
                 playlist.getDisplayGroup(),
                 playlist.getStartDate(),
                 playlist.getStartTime(),
-                PlaylistType.FILLERS);
+                PlaylistType.FILLERS).getItems());
 
-        // add available fillers to (play)list called fillers
-        fillers.addAll(fillerPlaylist.getItems());
+        return createPlaylist(commercials, fillers, cycleDuration);
+    }
 
-        /*
-         * calculates time left in a cycle (also in case commercial is longer
-         * than 60 sec0: timeLeftInCycle = 60 - (commercialDuration % 60)
-         * MathContext mc = new MathContext(2); // precision of 2
-         * timeLeftInCycle =
-         * cycleDuration.subtract(commercialDuration.remainder(cycleDuration,
-         * mc));
-         */
+    public static BigDecimal totalDurationf(List<PlaylistItem> items) {
+        BigDecimal total = BigDecimal.ZERO;
+        for (PlaylistItem item : items) {
+            total = total.add(item.getDuration());
+        }
+        return total;
+    }
+
+    public static List<PlaylistItem> createPlaylist(
+            List<PlaylistItem> commercialItems,
+            List<PlaylistItem> fillers,
+            BigDecimal cycleDuration) {
+        BigDecimal commercialDuration;
+        BigDecimal timeLeftInCycle;
+        commercialDuration = totalDurationf(commercialItems);
+        int[] fillerCount = new int[fillers.size()];
+        Arrays.fill(fillerCount, 0);
+
         timeLeftInCycle = cycleDuration.subtract(commercialDuration);
 
-        /*
-         * If condition is 1, timeLeftInCycle is positive, if 0 timeLeftInCycle
-         * is 0, if -1 timeLeftInCycle is negative
-         */
-        while (timeLeftInCycle.signum() >= 0) {
-            /* if there's no time left in cycle and fillers unused */
-            if (timeLeftInCycle == BigDecimal.ZERO && fillers.size() > 1) {
-                /* TODO 1 cycle is filled, but there are fillers unused. 
-                 * What to do?
-                 */
-            }
-            /* if time left is bigger of equal than 10 seconds */
-            if (timeLeftInCycle == BigDecimal.TEN) {
-                for (int i = 0; i < fillers.size(); i++) {
-                    if (fillers.get(i).getDuration() == BigDecimal.TEN) {
-                        items.add(fillers.get(i));
-                        fillers.remove(fillers.get(i));
-                        timeLeftInCycle = timeLeftInCycle.subtract(fillers.get(i).getDuration());
-                    }
+        /* Stop after all fillers are used */
+        while (fillerCountEqual(fillerCount) == false) {
+            for (int i = 0; i < fillers.size(); i++) {
+                /* if there's time left */
+                if (timeLeftInCycle.compareTo(BigDecimal.ZERO) > 0) {
+                    commercialItems.add(fillers.get(i));
+                    timeLeftInCycle.subtract(fillers.get(i).getDuration());
+                    fillerCount[i] += 1;
                 }
-            }
-            /* if time left is bigger than or equal to 20 seconds */
-            if (timeLeftInCycle.compareTo(new BigDecimal("20")) >= 0) {
-                for (int j = 0; j < fillers.size(); j++) {
-                    if (fillers.get(j).getDuration().compareTo(new BigDecimal("20")) >= 0) {
-                        items.add(fillers.get(j));
-                        fillers.remove(fillers.get(j));
-                        timeLeftInCycle = timeLeftInCycle.subtract(fillers.get(j).getDuration());
-                    }
+                /*
+                 * If cycle is full and the filters aren't equally used add
+                 * commercial again and reset timeLeftInCycle
+                 */
+                else if (timeLeftInCycle.compareTo(BigDecimal.ZERO) == 0 && fillerCountEqual(fillerCount) == false) {
+                    commercialItems.add(commercialItems.get(0));
+                    timeLeftInCycle = cycleDuration.subtract(commercialDuration);
                 }
             }
         }
 
-        return items;
+        return commercialItems;
+    }
+
+    private static boolean fillerCountEqual(int[] fillerCount) {
+        for (int j = 0; j < fillerCount.length; j++) {
+            if (fillerCount[0] != fillerCount[j]) {
+                return false;
+            }
+        }
+
+        return true;
     }
 
     private void writePlaylist(Display display, LocalDateTime dateTime, List<PlaylistItem> items) {

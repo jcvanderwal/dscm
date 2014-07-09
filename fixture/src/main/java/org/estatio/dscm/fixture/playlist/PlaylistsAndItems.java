@@ -27,7 +27,6 @@ import org.joda.time.LocalDate;
 
 import org.apache.isis.applib.fixturescripts.DiscoverableFixtureScript;
 
-import org.estatio.dscm.dom.asset.Asset;
 import org.estatio.dscm.dom.asset.Assets;
 import org.estatio.dscm.dom.display.DisplayGroups;
 import org.estatio.dscm.dom.playlist.Playlist;
@@ -47,7 +46,7 @@ public class PlaylistsAndItems extends DiscoverableFixtureScript {
     public static final Time AFTERNOON = Time.T1300;
 
     public static final Time MORNING = Time.T0800;
-    
+
     @Override
     protected void execute(ExecutionContext executionContext) {
 
@@ -55,16 +54,20 @@ public class PlaylistsAndItems extends DiscoverableFixtureScript {
         execute(new AssetForFiller(), executionContext);
         execute(new AssetForCommercial(), executionContext);
 
-        create(MORNING, PlaylistType.MAIN, new BigDecimal(60));
-        create(AFTERNOON, PlaylistType.MAIN, new BigDecimal(60));
-        create(MORNING, PlaylistType.FILLERS, BigDecimal.ZERO);
-        create(AFTERNOON, PlaylistType.FILLERS, BigDecimal.ZERO);
+        create(MORNING, PlaylistType.MAIN, new BigDecimal(60), AssetForCommercial.NAME);
+        create(AFTERNOON, PlaylistType.MAIN, new BigDecimal(60), AssetForCommercial.NAME);
+        create(MORNING, PlaylistType.FILLERS, BigDecimal.ZERO, AssetForFiller.NAME);
+        create(AFTERNOON, PlaylistType.FILLERS, BigDecimal.ZERO, AssetForFiller.NAME);
 
     }
 
     // //////////////////////////////////////
 
-    private void create(Time time, PlaylistType type, BigDecimal loopDuration) {
+    private void create(
+            Time time,
+            PlaylistType type,
+            BigDecimal loopDuration,
+            String assetName) {
         Playlist p1 = playlists.newPlaylist(
                 displayGroups.allDisplayGroups().get(0),
                 type,
@@ -73,9 +76,7 @@ public class PlaylistsAndItems extends DiscoverableFixtureScript {
                 null,
                 PlaylistRepeat.DAILY,
                 loopDuration);
-        for (Asset asset : assets.allAssets()) {
-            playlistItems.newPlaylistItem(p1, asset);
-        }
+        playlistItems.newPlaylistItem(p1, assets.findAssetByName(assetName));
     }
 
     // //////////////////////////////////////

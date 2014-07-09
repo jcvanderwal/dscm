@@ -4,7 +4,7 @@ import org.estatio.dscm.fixture.publisher.PublisherForCommercials;
 
 public class AssetForCommercial extends AssetAbstract {
 
-    private static final String NAME = "hd_dolby_bit_harvest.m2ts";
+    public static final String NAME = "hd_dolby_bit_harvest.m2ts";
 
     @Override
     protected void execute(ExecutionContext executionContext) {

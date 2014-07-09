@@ -18,7 +18,9 @@
  */
 package integration.tests.dom.playlist;
 
+import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertThat;
 import integration.tests.DscmIntegTest;
 
 import javax.inject.Inject;
@@ -36,10 +38,10 @@ public class PlaylistItemsTest_finders extends DscmIntegTest {
 
     @Inject
     private PlaylistItems items;
-    
+
     @Inject
     private Assets assets;
-    
+
     @Inject
     private Playlists playlists;
 
@@ -59,8 +61,7 @@ public class PlaylistItemsTest_finders extends DscmIntegTest {
 
     @Test
     public void findByPlaylist() throws Exception {
-        assertNotNull(items.findByPlaylist(playlists.allPlaylists().get(0)));
+        assertThat(items.findByPlaylist(playlists.allPlaylists().get(0)).size(), is(1));
     }
-
 
 }
