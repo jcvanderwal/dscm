@@ -180,10 +180,12 @@ public class SyncService {
 
         commercialDuration = totalDurationf(resultingPlaylist);
 
-        /* Stop after all fillers are used */
+        /* Stop after all fillers are equally used */
         while (!fillerManager.fillersEquallyUsed()) {
             resultingPlaylist.addAll(commercialItems);
             BigDecimal timeLeftInCycle = cycleDuration.subtract(commercialDuration);
+            
+            /* Stop after cycle is completely used */
             while (timeLeftInCycle.compareTo(BigDecimal.ZERO) > 0) {
                 PlaylistItem nextFiller = fillerManager.nextFiller(timeLeftInCycle);
                 resultingPlaylist.add(nextFiller);
