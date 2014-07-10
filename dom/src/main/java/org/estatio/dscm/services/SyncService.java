@@ -156,44 +156,7 @@ public class SyncService {
                 playlist.getStartTime(),
                 PlaylistType.FILLERS).getItems());
 
-        return createPlaylist(commercials, fillers, cycleDuration);
-    }
-
-    public static BigDecimal totalDurationf(List<PlaylistItem> items) {
-        BigDecimal total = BigDecimal.ZERO;
-        for (PlaylistItem item : items) {
-            total = total.add(item.getDuration());
-        }
-        return total;
-    }
-
-    public static List<PlaylistItem> createPlaylist(
-            List<PlaylistItem> commercialItems,
-            List<PlaylistItem> fillers,
-            BigDecimal cycleDuration) {
-
-        BigDecimal commercialDuration;
-
-        List<PlaylistItem> resultingPlaylist = new ArrayList<PlaylistItem>();
-
-        FillerManager fillerManager = new FillerManager(fillers);
-
-        commercialDuration = totalDurationf(resultingPlaylist);
-
-        /* Stop after all fillers are equally used */
-        while (!fillerManager.fillersEquallyUsed()) {
-            resultingPlaylist.addAll(commercialItems);
-            BigDecimal timeLeftInCycle = cycleDuration.subtract(commercialDuration);
-            
-            /* Stop after cycle is completely used */
-            while (timeLeftInCycle.compareTo(BigDecimal.ZERO) > 0) {
-                PlaylistItem nextFiller = fillerManager.nextFiller(timeLeftInCycle);
-                resultingPlaylist.add(nextFiller);
-                timeLeftInCycle = timeLeftInCycle.subtract(nextFiller.getDuration());
-            }
-        }
-
-        return resultingPlaylist;
+        return PlaylistGenerator.generate(commercials, fillers, cycleDuration);
     }
 
     private void writePlaylist(Display display, LocalDateTime dateTime, List<PlaylistItem> items) {

@@ -51,7 +51,7 @@ public class AssetsTest_finders extends DscmIntegTest {
 
     @Test
     public void findAll() throws Exception {
-        assertThat(assets.allAssets().size(), is(2));
+        assertThat(assets.allAssets().size(), is(4));
     }
 
 }
