@@ -181,19 +181,19 @@ public class SyncService {
         timeLeftInCycle = cycleDuration.subtract(commercialDuration);
 
         /* Stop after all fillers are used */
-        while (fillerCountEqual(fillerCount) == false) {
+        while (fillerCountEqual(fillerCount) == false && Arrays.asList(fillerCount).contains(0) == true) {
             for (int i = 0; i < fillers.size(); i++) {
                 /* if there's time left */
                 if (timeLeftInCycle.compareTo(BigDecimal.ZERO) > 0) {
                     commercialItems.add(fillers.get(i));
-                    timeLeftInCycle.subtract(fillers.get(i).getDuration());
+                    timeLeftInCycle = timeLeftInCycle.subtract(fillers.get(i).getDuration());
                     fillerCount[i] += 1;
                 }
                 /*
                  * If cycle is full and the filters aren't equally used add
                  * commercial again and reset timeLeftInCycle
                  */
-                else if (timeLeftInCycle.compareTo(BigDecimal.ZERO) == 0 && fillerCountEqual(fillerCount) == false) {
+                if (timeLeftInCycle.compareTo(BigDecimal.ZERO) == 0 && fillerCountEqual(fillerCount) == false) {
                     commercialItems.add(commercialItems.get(0));
                     timeLeftInCycle = cycleDuration.subtract(commercialDuration);
                 }

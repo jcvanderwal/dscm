@@ -29,7 +29,7 @@ public class SyncServiceTest {
     }
 
     @Test
-    public void test1() throws Exception {
+    public void testMultipleCycles() throws Exception {
         List<PlaylistItem> result = SyncService.createPlaylist(
                 createList("A10", "B10", "C10", "D10"),
                 createList("X10", "Y10", "Z10"),
