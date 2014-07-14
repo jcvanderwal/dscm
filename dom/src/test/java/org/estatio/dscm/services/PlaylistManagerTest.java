@@ -25,8 +25,8 @@ public class PlaylistManagerTest {
     public void test() {
         PlaylistManager manager = new PlaylistManager(createList("A10", "B20", "C10"));
         assertThat(manager.nextItem(new BigDecimal("20")).getAsset().getName(), is("A"));
+        assertThat(manager.nextItem(new BigDecimal("10")).getAsset().getName(), is("C"));
         assertThat(manager.nextItem(new BigDecimal("20")).getAsset().getName(), is("B"));
-        assertThat(manager.nextItem(new BigDecimal("20")).getAsset().getName(), is("C"));
         assertTrue(manager.itemsEquallyUsed());
     }
 

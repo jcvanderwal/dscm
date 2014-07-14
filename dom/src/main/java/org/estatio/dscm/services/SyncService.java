@@ -24,7 +24,6 @@ import java.io.FileNotFoundException;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
-import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -34,14 +33,6 @@ import javax.annotation.PostConstruct;
 import javax.inject.Inject;
 
 import org.apache.commons.io.IOUtils;
-import org.joda.time.LocalDateTime;
-
-import org.apache.isis.applib.annotation.DomainService;
-import org.apache.isis.applib.annotation.Named;
-import org.apache.isis.applib.annotation.Programmatic;
-import org.apache.isis.applib.services.clock.ClockService;
-import org.apache.isis.applib.value.Blob;
-
 import org.estatio.dscm.dom.asset.Asset;
 import org.estatio.dscm.dom.asset.Assets;
 import org.estatio.dscm.dom.display.Display;
@@ -51,6 +42,13 @@ import org.estatio.dscm.dom.playlist.PlaylistType;
 import org.estatio.dscm.dom.playlist.Playlists;
 import org.estatio.dscm.dom.publisher.Publisher;
 import org.estatio.dscm.dom.publisher.Publishers;
+import org.joda.time.LocalDateTime;
+
+import org.apache.isis.applib.annotation.DomainService;
+import org.apache.isis.applib.annotation.Named;
+import org.apache.isis.applib.annotation.Programmatic;
+import org.apache.isis.applib.services.clock.ClockService;
+import org.apache.isis.applib.value.Blob;
 
 @DomainService
 @Named("Administration")
@@ -146,21 +144,21 @@ public class SyncService {
      */
     public List<PlaylistItem> effectiveItems(Playlist playlist, LocalDateTime dateTime) {
 
-        BigDecimal cycleDuration = new BigDecimal(60);
         List<PlaylistItem> fillers = new ArrayList<PlaylistItem>();
         List<PlaylistItem> commercials = new ArrayList<PlaylistItem>();
         commercials.addAll(playlist.getItems());
-        fillers.addAll(playlists.findByDisplayGroupAndStartDateTimeAndType(
+        fillers.addAll(playlists.findByDisplayGroupAndDateTimeAndType(
                 playlist.getDisplayGroup(),
-                playlist.getStartDate(),
-                playlist.getStartTime(),
+                dateTime.toLocalDate(),
+                dateTime.toLocalTime(),
                 PlaylistType.FILLERS).getItems());
 
-        return PlaylistGenerator.generate(commercials, fillers, cycleDuration);
+        return PlaylistGenerator.generate(commercials, fillers, playlist.getLoopDuration());
     }
 
-    private void writePlaylist(Display display, LocalDateTime dateTime, List<PlaylistItem> items) {
-        String filename = properties.get("dscm.server.path").concat("/displays").concat("/" + display.getName()).concat("/playlists").concat("/" + dateTime.toString("yyyyMMddhhmm"));
+    @Programmatic
+    public void writePlaylist(Display display, LocalDateTime dateTime, List<PlaylistItem> items) {
+        String filename = createFilename(properties.get("dscm.server.path"), display, dateTime);
         try {
             File file = new File(filename);
             file.getParentFile().mkdirs();
@@ -177,6 +175,11 @@ public class SyncService {
             // TODO Auto-generated catch block
             e.printStackTrace();
         }
+    }
+
+    public static String createFilename(String path, Display display, LocalDateTime dateTime) {
+        String filename = path.concat("/displays").concat("/" + display.getName()).concat("/playlists").concat("/" + dateTime.toString("yyyyMMddHHmm"));
+        return filename;
     }
 
     // //////////////////////////////////////

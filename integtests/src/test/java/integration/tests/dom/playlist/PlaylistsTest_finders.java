@@ -18,23 +18,25 @@
  */
 package integration.tests.dom.playlist;
 
+import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertThat;
 import integration.tests.DscmIntegTest;
 
 import javax.inject.Inject;
 
+import org.estatio.dscm.dom.display.DisplayGroup;
+import org.estatio.dscm.dom.display.DisplayGroups;
+import org.estatio.dscm.dom.playlist.Playlist;
+import org.estatio.dscm.dom.playlist.PlaylistType;
+import org.estatio.dscm.dom.playlist.Playlists;
+import org.estatio.dscm.fixture.playlist.PlaylistsAndItems;
 import org.joda.time.LocalDate;
 import org.joda.time.LocalTime;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
-
-import org.estatio.dscm.dom.display.DisplayGroup;
-import org.estatio.dscm.dom.display.DisplayGroups;
-import org.estatio.dscm.dom.playlist.PlaylistType;
-import org.estatio.dscm.dom.playlist.Playlists;
-import org.estatio.dscm.fixture.playlist.PlaylistsAndItems;
 
 public class PlaylistsTest_finders extends DscmIntegTest {
 
@@ -64,6 +66,16 @@ public class PlaylistsTest_finders extends DscmIntegTest {
     @Test
     public void findByStartDateAndSTartTimeAndType_nothingFound() throws Exception {
         assertNull(playlists.findByDisplayGroupAndStartDateTimeAndType(displayGroup, new LocalDate(1980, 1, 1), new LocalTime("14:00"), PlaylistType.MAIN));
+    }
+
+    @Test
+    public void findByDateTimeAndType_happyCase() throws Exception {
+        assertThat(playlistFor(new LocalDate(2014, 7, 14), new LocalTime("14:00")).getStartTime(), is(new LocalTime("13:00")));
+        assertThat(playlistFor(new LocalDate(2014, 7, 14), new LocalTime("10:00")).getStartTime(), is(new LocalTime("08:00")));
+    }
+
+    private Playlist playlistFor(LocalDate date, LocalTime time) {
+        return playlists.findByDisplayGroupAndDateTimeAndType(displayGroup, date, time, PlaylistType.FILLERS);
     }
 
 }

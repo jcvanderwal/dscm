@@ -73,6 +73,19 @@ public class Playlists extends EstatioDomainService<Playlist> {
                 "type", type);
     }
 
+    @Programmatic
+    public Playlist findByDisplayGroupAndDateTimeAndType(
+            final DisplayGroup displayGroup,
+            final LocalDate date,
+            final LocalTime time,
+            final PlaylistType type) {
+        return firstMatch("findByDisplayGroupAndDateTimeAndType",
+                "displayGroup", displayGroup,
+                "date", date,
+                "time", time,
+                "type", type);
+    }
+
     // //////////////////////////////////////
 
     @Programmatic

@@ -31,6 +31,10 @@ import javax.jdo.annotations.Persistent;
 import javax.jdo.annotations.VersionStrategy;
 
 import org.apache.commons.lang3.ObjectUtils;
+import org.estatio.dscm.dom.asset.Asset;
+import org.estatio.dscm.dom.asset.Assets;
+import org.estatio.dscm.dom.display.DisplayGroup;
+import org.estatio.dscm.utils.CalendarUtils;
 import org.joda.time.Interval;
 import org.joda.time.LocalDate;
 import org.joda.time.LocalDateTime;
@@ -52,11 +56,6 @@ import org.apache.isis.applib.services.clock.ClockService;
 import org.apache.isis.applib.util.ObjectContracts;
 import org.apache.isis.applib.util.TitleBuffer;
 
-import org.estatio.dscm.dom.asset.Asset;
-import org.estatio.dscm.dom.asset.Assets;
-import org.estatio.dscm.dom.display.DisplayGroup;
-import org.estatio.dscm.utils.CalendarUtils;
-
 @javax.jdo.annotations.PersistenceCapable(
         identityType = IdentityType.DATASTORE)
 @javax.jdo.annotations.DatastoreIdentity(
@@ -72,6 +71,14 @@ import org.estatio.dscm.utils.CalendarUtils;
                         + "&& startDate == :startDate "
                         + "&& startTime == :startTime "
                         + "&& type == :type"),
+        @javax.jdo.annotations.Query(name = "findByDisplayGroupAndDateTimeAndType", language = "JDOQL",
+                value = "SELECT FROM org.estatio.dscm.dom.playlist.Playlist "
+                        + "WHERE displayGroup == :displayGroup "
+                        + "&& startDate <= :date "
+                        + "&& (endDate == null || endDate >= :date) "
+                        + "&& startTime <= :time "
+                        + "&& type == :type "
+                        + "ORDER BY startDate DESC, startTime DESC"),
         @javax.jdo.annotations.Query(name = "findByDisplayGroupAndType", language = "JDOQL",
                 value = "SELECT FROM org.estatio.dscm.dom.playlist.Playlist "
                         + "WHERE displayGroup == :displayGroup "
@@ -219,7 +226,7 @@ public class Playlist extends AbstractContainedObject implements Comparable<Play
     @Programmatic
     public List<LocalDateTime> nextOccurences(LocalDate endDate) {
         List<LocalDateTime> nextList = new ArrayList<LocalDateTime>();
-        final LocalDate start = getStartDate().isBefore(clockService.now()) ? clockService.now() : getStartDate() ;
+        final LocalDate start = getStartDate().isBefore(clockService.now()) ? clockService.now() : getStartDate();
         final LocalDate end = ObjectUtils.min(endDate, getEndDate());
         if (end.compareTo(start) >= 0 && end.compareTo(clockService.now()) >= 0) {
             List<Interval> intervals = CalendarUtils.intervalsInRange(
