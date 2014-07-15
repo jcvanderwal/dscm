@@ -21,6 +21,7 @@ package org.estatio.dscm.services;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
@@ -158,7 +159,7 @@ public class SyncService {
 
     @Programmatic
     public void writePlaylist(Display display, LocalDateTime dateTime, List<PlaylistItem> items) {
-        String filename = createFilename(properties.get("dscm.server.path"), display, dateTime);
+        String filename = createPlaylistFilename(display, dateTime);
         try {
             File file = new File(filename);
             file.getParentFile().mkdirs();
@@ -168,7 +169,9 @@ public class SyncService {
             FileWriter writer;
             writer = new FileWriter(file);
             for (PlaylistItem item : items) {
-                writer.write("asset/".concat(item.getAsset().getFile().getName().concat("\n")));
+                saveOriginAsset(item.getAsset());
+                writer.write("assets/".concat(item.getAsset().getFile().getName().concat("\n")));
+                saveDisplayAsset(display, item.getAsset());
             }
             writer.close();
         } catch (IOException e) {
@@ -177,9 +180,67 @@ public class SyncService {
         }
     }
 
-    public static String createFilename(String path, Display display, LocalDateTime dateTime) {
-        String filename = path.concat("/displays").concat("/" + display.getName()).concat("/playlists").concat("/" + dateTime.toString("yyyyMMddHHmm"));
-        return filename;
+    private void saveOriginAsset(Asset asset) {
+        // TODO Put file in <path>/assets when not there.
+        File output = new File(properties.get("dscm.server.path").concat("/assets/" + asset.getName()));
+        if (!output.isFile()) {
+            output.getParentFile().mkdirs();
+            byte[] blobArray = asset.getFile().getBytes();
+            FileOutputStream fos;
+            try {
+                fos = new FileOutputStream(output);
+                fos.write(blobArray);
+                fos.close();
+            } catch (FileNotFoundException e) {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+            } catch (IOException e) {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+            }
+        }
+    }
+
+    // Creates a symbolic link to the personal folder of every playlist
+    public void saveDisplayAsset(Display display, Asset asset) {
+        Runtime rt = Runtime.getRuntime();
+
+        String origin = createOriginAssetFilename(asset);
+        String destination = createAssetFilename(display, asset);
+
+        File displayAssetFile = new File(destination);
+        displayAssetFile.getParentFile().mkdirs();
+
+        String execCommand = String.format("ln -s %s %s", origin, destination);
+
+        try {
+            rt.exec(execCommand);
+        } catch (IOException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+    }
+
+    public String createPlaylistFilename(Display display, LocalDateTime dateTime) {
+        return properties.get("dscm.server.path")
+                .concat("/displays")
+                .concat("/" + display.getName())
+                .concat("/playlists")
+                .concat("/" + dateTime.toString("yyyyMMddHHmm"));
+    }
+
+    public String createAssetFilename(Display display, Asset asset) {
+        return properties.get("dscm.server.path")
+                .concat("/displays")
+                .concat("/" + display.getName())
+                .concat("/assets")
+                .concat("/" + asset.getFile().getName());
+    }
+
+    public String createOriginAssetFilename(Asset asset) {
+        return properties.get("dscm.server.path")
+                .concat("/assets")
+                .concat("/" + asset.getFile().getName());
     }
 
     // //////////////////////////////////////

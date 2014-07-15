@@ -36,14 +36,12 @@ import javax.inject.Inject;
 import org.estatio.dscm.dom.display.Display;
 import org.estatio.dscm.dom.display.DisplayGroup;
 import org.estatio.dscm.dom.display.DisplayGroups;
-import org.estatio.dscm.dom.playlist.Playlist;
 import org.estatio.dscm.dom.playlist.PlaylistItem;
 import org.estatio.dscm.dom.playlist.PlaylistType;
 import org.estatio.dscm.dom.playlist.Playlists;
 import org.estatio.dscm.fixture.DemoFixture;
 import org.estatio.dscm.fixture.asset.AssetForCommercial;
 import org.estatio.dscm.fixture.asset.AssetForFiller;
-import org.estatio.dscm.fixture.playlist.PlaylistsAndItems;
 import org.estatio.dscm.services.SyncService;
 import org.joda.time.LocalDateTime;
 import org.junit.Before;
@@ -78,29 +76,35 @@ public class SyncServiceTest_writePlaylist extends DscmIntegTest {
     @Test
     public void testFileExists() throws Exception {
 
-        //given
+        // given
         DisplayGroup displayGroup = displayGroups.allDisplayGroups().get(0);
         Display display = displayGroup.getDisplays().first();
         List<PlaylistItem> itemsList = new ArrayList<PlaylistItem>();
         itemsList.addAll(playlists.findByDisplayGroupAndType(displayGroup, PlaylistType.MAIN).get(0).getItems());
         itemsList.addAll(playlists.findByDisplayGroupAndType(displayGroup, PlaylistType.FILLERS).get(0).getItems());
         LocalDateTime dateTime = new LocalDateTime(2014, 5, 1, 14, 0);
-
-        //when
+        
+        // when
         syncService.writePlaylist(display, dateTime, itemsList);
 
         // then the file exists
-        String fileName = SyncService.createFilename(
-                syncService.getProperties().get("dscm.server.path"),
-                display,
-                dateTime);
+        String fileName = syncService.createPlaylistFilename(display, dateTime);
         File file = new File(fileName);
         assertTrue("Not found: " + fileName, file.isFile());
         // and the file has two rows corresponding the current fixtures
         FileReader namereader = new FileReader(file);
         BufferedReader in = new BufferedReader(namereader);
-        assertThat(in.readLine(), is("asset/" + AssetForCommercial.NAME));
-        assertThat(in.readLine(), is("asset/" + AssetForFiller.NAME));
+        assertThat(in.readLine(), is("assets/" + AssetForCommercial.NAME));
+        assertThat(in.readLine(), is("assets/" + AssetForFiller.NAME));
+        in.close();
+
+        // now confirm if assets exist
+        for (PlaylistItem item : itemsList) {
+            File origin = new File(syncService.createOriginAssetFilename(item.getAsset()));
+            assertTrue(origin.getPath(), origin.isFile());
+            File target = new File(syncService.createAssetFilename(display, item.getAsset()));
+            assertTrue(target.getPath(), target.isFile());
+        }
 
     }
 
