@@ -21,6 +21,8 @@ package org.estatio.dscm.dom.playlist;
 import java.math.BigDecimal;
 import java.util.List;
 
+import org.estatio.dscm.EstatioDomainService;
+import org.estatio.dscm.dom.display.DisplayGroup;
 import org.joda.time.LocalDate;
 import org.joda.time.LocalTime;
 
@@ -32,9 +34,7 @@ import org.apache.isis.applib.annotation.MemberOrder;
 import org.apache.isis.applib.annotation.Named;
 import org.apache.isis.applib.annotation.Optional;
 import org.apache.isis.applib.annotation.Programmatic;
-
-import org.estatio.dscm.EstatioDomainService;
-import org.estatio.dscm.dom.display.DisplayGroup;
+import org.apache.isis.applib.query.QueryDefault;
 
 @DomainService
 public class Playlists extends EstatioDomainService<Playlist> {
@@ -55,7 +55,8 @@ public class Playlists extends EstatioDomainService<Playlist> {
     @ActionSemantics(Of.SAFE)
     @MemberOrder(sequence = "1")
     public List<Playlist> allPlaylists() {
-        return getContainer().allInstances(Playlist.class);
+        // return getContainer().allInstances(Playlist.class);
+        return getContainer().allMatches(new QueryDefault<Playlist>(Playlist.class, "findAll"));
     }
 
     // //////////////////////////////////////
@@ -106,8 +107,8 @@ public class Playlists extends EstatioDomainService<Playlist> {
             final @Named("Start date") LocalDate startDate,
             final @Named("Start time") Time startTime,
             final @Named("End date") @Optional LocalDate endDate,
-            final @Named("Repeat") PlaylistRepeat repeat, 
-            final @Named("Loop duration") @Optional BigDecimal loopDuration) {
+            final @Named("Repeat") PlaylistRepeat repeat,
+            final @Named("Loop duration") BigDecimal loopDuration) {
         final Playlist obj = getContainer().newTransientInstance(Playlist.class);
         obj.setDisplayGroup(displayGroup);
         obj.setStartDate(startDate);
@@ -118,6 +119,14 @@ public class Playlists extends EstatioDomainService<Playlist> {
         obj.setLoopDuration(loopDuration);
         getContainer().persistIfNotAlready(obj);
         return obj;
+    }
+
+    public LocalDate default2NewPlaylist() {
+        return getClockService().now();
+    }
+
+    public BigDecimal default6NewPlaylist() {
+        return BigDecimal.ZERO;
     }
 
 }

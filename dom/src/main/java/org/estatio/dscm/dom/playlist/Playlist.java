@@ -30,6 +30,8 @@ import javax.jdo.annotations.IdentityType;
 import javax.jdo.annotations.Persistent;
 import javax.jdo.annotations.VersionStrategy;
 
+import com.google.common.collect.ComparisonChain;
+
 import org.apache.commons.lang3.ObjectUtils;
 import org.estatio.dscm.dom.asset.Asset;
 import org.estatio.dscm.dom.asset.Assets;
@@ -53,7 +55,6 @@ import org.apache.isis.applib.annotation.Programmatic;
 import org.apache.isis.applib.annotation.Render;
 import org.apache.isis.applib.annotation.Render.Type;
 import org.apache.isis.applib.services.clock.ClockService;
-import org.apache.isis.applib.util.ObjectContracts;
 import org.apache.isis.applib.util.TitleBuffer;
 
 @javax.jdo.annotations.PersistenceCapable(
@@ -65,6 +66,13 @@ import org.apache.isis.applib.util.TitleBuffer;
         strategy = VersionStrategy.VERSION_NUMBER,
         column = "version")
 @javax.jdo.annotations.Queries({
+        @javax.jdo.annotations.Query(name = "findAll", language = "JDOQL",
+                value = "SELECT FROM org.estatio.dscm.dom.playlist.Playlist "
+                        + "ORDER BY displayGroup.name, startDate, startTime"),
+        @javax.jdo.annotations.Query(name = "findAllActive", language = "JDOQL",
+                value = "SELECT FROM org.estatio.dscm.dom.playlist.Playlist "
+                        + "WHERE endDate == null || endDate <= :date "
+                        + "ORDER BY displayGroup, startDate, startTime"),
         @javax.jdo.annotations.Query(name = "findByDisplayGroupAndStartDateTimeAndType", language = "JDOQL",
                 value = "SELECT FROM org.estatio.dscm.dom.playlist.Playlist "
                         + "WHERE displayGroup == :displayGroup "
@@ -296,7 +304,11 @@ public class Playlist extends AbstractContainedObject implements Comparable<Play
 
     @Override
     public int compareTo(Playlist other) {
-        return ObjectContracts.compare(this, other, "startDate,startTime");
+        return ComparisonChain.start()
+                .compare(getDisplayGroup(), other.getDisplayGroup())
+                .compare(getStartDate(), other.getStartDate())
+                .compare(getStartTime(), other.getStartTime())
+                .result();
     }
 
     // //////////////////////////////////////

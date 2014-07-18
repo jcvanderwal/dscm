@@ -221,6 +221,7 @@ public class SyncService {
         }
     }
 
+    @Programmatic
     public String createPlaylistFilename(Display display, LocalDateTime dateTime) {
         return properties.get("dscm.server.path")
                 .concat("/displays")
@@ -229,6 +230,7 @@ public class SyncService {
                 .concat("/" + dateTime.toString("yyyyMMddHHmm"));
     }
 
+    @Programmatic
     public String createAssetFilename(Display display, Asset asset) {
         return properties.get("dscm.server.path")
                 .concat("/displays")
@@ -237,6 +239,7 @@ public class SyncService {
                 .concat("/" + asset.getFile().getName());
     }
 
+    @Programmatic
     public String createOriginAssetFilename(Asset asset) {
         return properties.get("dscm.server.path")
                 .concat("/assets")

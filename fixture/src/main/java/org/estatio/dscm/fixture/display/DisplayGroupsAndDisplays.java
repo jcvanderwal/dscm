@@ -27,6 +27,8 @@ import org.apache.isis.applib.fixturescripts.DiscoverableFixtureScript;
 
 public class DisplayGroupsAndDisplays extends DiscoverableFixtureScript {
 
+    public static final String DEMO_AMSTERDAM = "Demo, Amsterdam";
+
     public DisplayGroupsAndDisplays() {
         super(null, "pdh");
     }
@@ -34,6 +36,7 @@ public class DisplayGroupsAndDisplays extends DiscoverableFixtureScript {
     @Override
     protected void execute(ExecutionContext executionContext) {
         createDisplayAndDisplayGroups("Passage Du Havre, Paris", "ds-pduhavre", 3);
+        createDisplayAndDisplayGroups(DEMO_AMSTERDAM, "ds-demo", 3);
     }
 
     // //////////////////////////////////////

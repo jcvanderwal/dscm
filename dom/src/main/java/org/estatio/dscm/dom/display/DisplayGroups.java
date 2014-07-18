@@ -20,6 +20,8 @@ package org.estatio.dscm.dom.display;
 
 import java.util.List;
 
+import org.estatio.dscm.dom.playlist.Playlist;
+
 import org.apache.isis.applib.DomainObjectContainer;
 import org.apache.isis.applib.annotation.ActionSemantics;
 import org.apache.isis.applib.annotation.ActionSemantics.Of;
@@ -28,6 +30,7 @@ import org.apache.isis.applib.annotation.DomainService;
 import org.apache.isis.applib.annotation.MemberOrder;
 import org.apache.isis.applib.annotation.Named;
 import org.apache.isis.applib.annotation.NotInServiceMenu;
+import org.apache.isis.applib.query.QueryDefault;
 
 @DomainService
 public class DisplayGroups {
@@ -44,7 +47,8 @@ public class DisplayGroups {
     @ActionSemantics(Of.SAFE)
     @MemberOrder(sequence = "1")
     public List<DisplayGroup> allDisplayGroups() {
-        return container.allInstances(DisplayGroup.class);
+        //return container.allInstances(DisplayGroup.class);
+        return container.allMatches(new QueryDefault<DisplayGroup>(DisplayGroup.class, "findAll"));
     }
 
     // //////////////////////////////////////

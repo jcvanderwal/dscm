@@ -23,11 +23,8 @@ import java.math.BigDecimal;
 
 import javax.inject.Inject;
 
-import org.joda.time.LocalDate;
-
-import org.apache.isis.applib.fixturescripts.DiscoverableFixtureScript;
-
 import org.estatio.dscm.dom.asset.Assets;
+import org.estatio.dscm.dom.display.DisplayGroup;
 import org.estatio.dscm.dom.display.DisplayGroups;
 import org.estatio.dscm.dom.playlist.Playlist;
 import org.estatio.dscm.dom.playlist.PlaylistItems;
@@ -38,6 +35,9 @@ import org.estatio.dscm.dom.playlist.Time;
 import org.estatio.dscm.fixture.asset.AssetForCommercial;
 import org.estatio.dscm.fixture.asset.AssetForFiller;
 import org.estatio.dscm.fixture.display.DisplayGroupsAndDisplays;
+import org.joda.time.LocalDate;
+
+import org.apache.isis.applib.fixturescripts.DiscoverableFixtureScript;
 
 public class PlaylistsAndItems extends DiscoverableFixtureScript {
 
@@ -68,15 +68,17 @@ public class PlaylistsAndItems extends DiscoverableFixtureScript {
             PlaylistType type,
             BigDecimal loopDuration,
             String assetName) {
-        Playlist p1 = playlists.newPlaylist(
-                displayGroups.allDisplayGroups().get(0),
-                type,
-                DATE,
-                time,
-                null,
-                PlaylistRepeat.DAILY,
-                loopDuration);
-        playlistItems.newPlaylistItem(p1, assets.findAssetByName(assetName));
+        for (DisplayGroup displayGroup : displayGroups.allDisplayGroups()) {
+            Playlist p1 = playlists.newPlaylist(
+                    displayGroup,
+                    type,
+                    DATE,
+                    time,
+                    null,
+                    PlaylistRepeat.DAILY,
+                    loopDuration);
+            playlistItems.newPlaylistItem(p1, assets.findAssetByName(assetName));
+        }
     }
 
     // //////////////////////////////////////

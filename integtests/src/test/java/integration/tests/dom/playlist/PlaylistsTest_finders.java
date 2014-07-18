@@ -29,8 +29,10 @@ import javax.inject.Inject;
 import org.estatio.dscm.dom.display.DisplayGroup;
 import org.estatio.dscm.dom.display.DisplayGroups;
 import org.estatio.dscm.dom.playlist.Playlist;
+import org.estatio.dscm.dom.playlist.PlaylistRepeat;
 import org.estatio.dscm.dom.playlist.PlaylistType;
 import org.estatio.dscm.dom.playlist.Playlists;
+import org.estatio.dscm.dom.playlist.Time;
 import org.estatio.dscm.fixture.playlist.PlaylistsAndItems;
 import org.joda.time.LocalDate;
 import org.joda.time.LocalTime;
@@ -72,6 +74,19 @@ public class PlaylistsTest_finders extends DscmIntegTest {
     public void findByDateTimeAndType_happyCase() throws Exception {
         assertThat(playlistFor(new LocalDate(2014, 7, 14), new LocalTime("14:00")).getStartTime(), is(new LocalTime("13:00")));
         assertThat(playlistFor(new LocalDate(2014, 7, 14), new LocalTime("10:00")).getStartTime(), is(new LocalTime("08:00")));
+    }
+
+    @Test
+    public void testCompareTo() throws Exception {
+        Playlist mainPlayList = playlists.findByDisplayGroupAndDateTimeAndType(displayGroup, new LocalDate(1980, 1, 1), new LocalTime("13:00"), PlaylistType.MAIN);
+        Playlist compareTo = playlists.newPlaylist(displayGroup, PlaylistType.FILLERS,
+                mainPlayList.getStartDate(),
+                Time.T1300,
+                mainPlayList.getEndDate(),
+                PlaylistRepeat.DAILY,
+                mainPlayList.getLoopDuration());
+
+        assertThat(mainPlayList.compareTo(compareTo), is(0));
     }
 
     private Playlist playlistFor(LocalDate date, LocalTime time) {

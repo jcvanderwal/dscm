@@ -28,6 +28,7 @@ import javax.jdo.annotations.VersionStrategy;
 
 import com.danhaywood.isis.wicket.gmap3.applib.Location;
 import com.danhaywood.isis.wicket.gmap3.service.LocationLookupService;
+import com.google.common.collect.ComparisonChain;
 
 import org.apache.isis.applib.annotation.ActionSemantics;
 import org.apache.isis.applib.annotation.ActionSemantics.Of;
@@ -44,7 +45,6 @@ import org.apache.isis.applib.annotation.Render;
 import org.apache.isis.applib.annotation.Render.Type;
 import org.apache.isis.applib.annotation.Title;
 import org.apache.isis.applib.annotation.Where;
-import org.apache.isis.applib.util.ObjectContracts;
 
 @javax.jdo.annotations.PersistenceCapable(
         identityType = IdentityType.DATASTORE)
@@ -54,6 +54,11 @@ import org.apache.isis.applib.util.ObjectContracts;
 @javax.jdo.annotations.Version(
         strategy = VersionStrategy.VERSION_NUMBER,
         column = "version")
+@javax.jdo.annotations.Queries({
+    @javax.jdo.annotations.Query(name = "findAll", language = "JDOQL",
+            value = "SELECT FROM org.estatio.dscm.dom.display.DisplayGroup "
+                    + "ORDER BY name")
+})
 @Bookmarkable
 @Bounded
 @Immutable
@@ -115,7 +120,7 @@ public class DisplayGroup implements Comparable<DisplayGroup> {
 
     @Override
     public int compareTo(DisplayGroup other) {
-        return ObjectContracts.compare(this, other, "name");
+        return ComparisonChain.start().compare(getName(), other.getName()).result();
     }
 
     // //////////////////////////////////////
