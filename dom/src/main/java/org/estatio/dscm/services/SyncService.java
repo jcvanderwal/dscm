@@ -148,12 +148,14 @@ public class SyncService {
         List<PlaylistItem> fillers = new ArrayList<PlaylistItem>();
         List<PlaylistItem> commercials = new ArrayList<PlaylistItem>();
         commercials.addAll(playlist.getItems());
-        fillers.addAll(playlists.findByDisplayGroupAndDateTimeAndType(
+        Playlist fillerPlaylist = playlists.findByDisplayGroupAndDateTimeAndType(
                 playlist.getDisplayGroup(),
                 dateTime.toLocalDate(),
                 dateTime.toLocalTime(),
-                PlaylistType.FILLERS).getItems());
-
+                PlaylistType.FILLERS);
+        if (fillerPlaylist != null) {
+            fillers.addAll(fillerPlaylist.getItems());
+        }
         return PlaylistGenerator.generate(commercials, fillers, playlist.getLoopDuration());
     }
 
@@ -170,8 +172,10 @@ public class SyncService {
             writer = new FileWriter(file);
             for (PlaylistItem item : items) {
                 saveOriginAsset(item.getAsset());
-                writer.write("assets/".concat(item.getAsset().getFile().getName().concat("\n")));
-                saveDisplayAsset(display, item.getAsset());
+                if (item.getAsset().getFile() != null) {
+                    writer.write("assets/".concat(item.getAsset().getFile().getName().concat("\n")));
+                    saveDisplayAsset(display, item.getAsset());
+                }
             }
             writer.close();
         } catch (IOException e) {
@@ -181,23 +185,27 @@ public class SyncService {
     }
 
     private void saveOriginAsset(Asset asset) {
-        // TODO Put file in <path>/assets when not there.
+        byte[] blobArray;
         File output = new File(properties.get("dscm.server.path").concat("/assets/" + asset.getName()));
+        
         if (!output.isFile()) {
             output.getParentFile().mkdirs();
-            byte[] blobArray = asset.getFile().getBytes();
-            FileOutputStream fos;
-            try {
-                fos = new FileOutputStream(output);
-                fos.write(blobArray);
-                fos.close();
-            } catch (FileNotFoundException e) {
-                // TODO Auto-generated catch block
-                e.printStackTrace();
-            } catch (IOException e) {
-                // TODO Auto-generated catch block
-                e.printStackTrace();
-            }
+            if (asset.getFile() != null) {
+                blobArray = asset.getFile().getBytes();
+            
+                FileOutputStream fos;
+                try {
+                    fos = new FileOutputStream(output);
+                    fos.write(blobArray);
+                    fos.close();
+                } catch (FileNotFoundException e) {
+                    // TODO Auto-generated catch block
+                    e.printStackTrace();
+                } catch (IOException e) {
+                    // TODO Auto-generated catch block
+                    e.printStackTrace();
+                }
+            } 
         }
     }
 

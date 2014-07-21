@@ -20,6 +20,8 @@ package org.estatio.dscm.dom.display;
 
 import java.util.List;
 
+import javax.inject.Inject;
+
 import org.estatio.dscm.dom.playlist.Playlist;
 
 import org.apache.isis.applib.DomainObjectContainer;
@@ -65,9 +67,11 @@ public class DisplayGroups {
     }
 
     @NotInServiceMenu
-    public void remove(DisplayGroup displayGroup, @Named("Are you sure?") Boolean confirm) {
+    public List<DisplayGroup> remove(DisplayGroup displayGroup, @Named("Are you sure?") Boolean confirm) {
         container.remove(displayGroup);
         container.flush();
+        
+        return displayGroups.allDisplayGroups();
     }
 
     public boolean hideRemove(DisplayGroup displayGroup, Boolean confirm) {
@@ -81,4 +85,6 @@ public class DisplayGroups {
     @javax.inject.Inject
     DomainObjectContainer container;
 
+    @Inject
+    DisplayGroups displayGroups;
 }

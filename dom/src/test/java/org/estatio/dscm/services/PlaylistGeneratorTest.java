@@ -47,6 +47,15 @@ public class PlaylistGeneratorTest {
         assertThat(sequenceStringof(result), is("ABCDXZABCDY"));
     }
 
+    @Test
+    public void testWithEmptyPlaylist() throws Exception {
+        List<PlaylistItem> result = PlaylistGenerator.generate(
+                createList("A10", "B10", "C10", "D10"),
+                new ArrayList<PlaylistItem>(),
+                new BigDecimal("60"));
+        assertThat(sequenceStringof(result), is("ABCD"));
+    }
+
     public static List<PlaylistItem> createList(String... itemsString) {
         List<PlaylistItem> items = new ArrayList<PlaylistItem>();
         int i = 1;
