@@ -143,6 +143,7 @@ public class SyncService {
      *            The effective time
      * @return
      */
+    @Programmatic
     public List<PlaylistItem> effectiveItems(Playlist playlist, LocalDateTime dateTime) {
 
         List<PlaylistItem> fillers = new ArrayList<PlaylistItem>();
@@ -205,11 +206,19 @@ public class SyncService {
                     // TODO Auto-generated catch block
                     e.printStackTrace();
                 }
-            } 
+            } else {
+                output = new File(properties.get("dscm.server.path").concat("/assets/" + asset.getName() + ".broken"));
+                try {
+                    output.createNewFile();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
         }
     }
 
     // Creates a symbolic link to the personal folder of every playlist
+    @Programmatic
     public void saveDisplayAsset(Display display, Asset asset) {
         Runtime rt = Runtime.getRuntime();
 
