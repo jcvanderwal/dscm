@@ -25,6 +25,7 @@ import java.io.FileOutputStream;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.PrintStream;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -176,6 +177,8 @@ public class SyncService {
                 if (item.getAsset().getFile() != null) {
                     writer.write("assets/".concat(item.getAsset().getFile().getName().concat("\n")));
                     saveDisplayAsset(display, item.getAsset());
+                } else {
+                    writer.write("assets/".concat(item.getAsset().getName().concat(".broken\n")));
                 }
             }
             writer.close();
@@ -228,13 +231,21 @@ public class SyncService {
         File displayAssetFile = new File(destination);
         displayAssetFile.getParentFile().mkdirs();
 
-        String execCommand = String.format("ln -s %s %s", origin, destination);
+        String[] execCommand = {"ln", "-s", origin, destination};
 
         try {
             rt.exec(execCommand);
-        } catch (IOException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
+        } catch (IOException IO) {
+            // Print the stack trace in an error log
+            File errLog = new File(destination.concat(".errorlog"));
+            try {
+                PrintStream ps = new PrintStream(errLog);
+                IO.printStackTrace(ps);
+                ps.close();
+                errLog.createNewFile();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
         }
     }
 

@@ -26,6 +26,8 @@ import javax.jdo.annotations.IdentityType;
 import javax.jdo.annotations.Persistent;
 import javax.jdo.annotations.VersionStrategy;
 
+import com.google.inject.name.Named;
+
 import org.joda.time.LocalDate;
 
 import org.apache.isis.applib.AbstractDomainObject;
@@ -53,6 +55,11 @@ import org.estatio.dscm.dom.publisher.Publisher;
         strategy = VersionStrategy.VERSION_NUMBER,
         column = "version")
 @javax.jdo.annotations.Queries({
+        // TODO: secondary ordening by publisher
+        @javax.jdo.annotations.Query(name = "findAll", language = "JDOQL",
+                value = "SELECT "
+                        + "FROM org.estatio.dscm.dom.asset.Asset "
+                        + "ORDER BY name"),
         @javax.jdo.annotations.Query(name = "findByName", language = "JDOQL",
                 value = "SELECT "
                         + "FROM org.estatio.dscm.dom.asset.Asset "
@@ -191,7 +198,8 @@ public class Asset extends AbstractDomainObject implements Comparable<Asset> {
 
     // //////////////////////////////////////
 
-    public void remove(Boolean confirm) {
+    public void remove(
+            @Named("Are you sure?") Boolean confirm) {
         if (confirm) {
             doRemove();
         }

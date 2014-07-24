@@ -32,6 +32,7 @@ import org.apache.isis.applib.annotation.MemberOrder;
 import org.apache.isis.applib.annotation.Named;
 import org.apache.isis.applib.annotation.Optional;
 import org.apache.isis.applib.annotation.Programmatic;
+import org.apache.isis.applib.query.QueryDefault;
 import org.apache.isis.applib.services.clock.ClockService;
 import org.apache.isis.applib.value.Blob;
 
@@ -58,7 +59,7 @@ public class Assets extends EstatioDomainService<Asset> {
     @ActionSemantics(Of.SAFE)
     @MemberOrder(sequence = "1")
     public List<Asset> allAssets() {
-        return allInstances(Asset.class);
+        return getContainer().allMatches(new QueryDefault<Asset>(Asset.class, "findAll"));
     }
 
     // //////////////////////////////////////
