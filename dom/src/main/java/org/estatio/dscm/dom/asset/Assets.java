@@ -21,6 +21,9 @@ package org.estatio.dscm.dom.asset;
 import java.math.BigDecimal;
 import java.util.List;
 
+import org.estatio.dscm.EstatioDomainService;
+import org.estatio.dscm.dom.display.DisplayGroup;
+import org.estatio.dscm.dom.publisher.Publisher;
 import org.joda.time.LocalDate;
 
 import org.apache.isis.applib.DomainObjectContainer;
@@ -35,10 +38,6 @@ import org.apache.isis.applib.annotation.Programmatic;
 import org.apache.isis.applib.query.QueryDefault;
 import org.apache.isis.applib.services.clock.ClockService;
 import org.apache.isis.applib.value.Blob;
-
-import org.estatio.dscm.EstatioDomainService;
-import org.estatio.dscm.dom.display.DisplayGroup;
-import org.estatio.dscm.dom.publisher.Publisher;
 
 @DomainService
 public class Assets extends EstatioDomainService<Asset> {
@@ -88,6 +87,22 @@ public class Assets extends EstatioDomainService<Asset> {
     public LocalDate default3NewAsset() {
         return clockService.now();
     }
+
+    public String validateNewAsset(
+            final Blob file,
+            final Publisher publisher,
+            final DisplayGroup displayGroup,
+            final LocalDate startDate,
+            final LocalDate expiryDate,
+            final BigDecimal duration) {
+        if (findAssetByName(file.getName()) != null) {
+            return "A file with this name is already uploaded.";
+        }
+        
+        return null;
+    }
+
+    // //////////////////////////////////////
 
     @Programmatic
     public Asset findAssetByName(final String name) {

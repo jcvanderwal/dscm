@@ -20,6 +20,9 @@ package org.estatio.dscm.dom.playlist;
 
 import java.util.List;
 
+import org.estatio.dscm.EstatioDomainService;
+import org.estatio.dscm.dom.asset.Asset;
+
 import org.apache.isis.applib.DomainObjectContainer;
 import org.apache.isis.applib.annotation.ActionSemantics;
 import org.apache.isis.applib.annotation.ActionSemantics.Of;
@@ -27,11 +30,11 @@ import org.apache.isis.applib.annotation.Bookmarkable;
 import org.apache.isis.applib.annotation.DomainService;
 import org.apache.isis.applib.annotation.Hidden;
 import org.apache.isis.applib.annotation.MemberOrder;
+import org.apache.isis.applib.annotation.Named;
 import org.apache.isis.applib.annotation.NotContributed;
+import org.apache.isis.applib.annotation.NotContributed.As;
+import org.apache.isis.applib.annotation.NotInServiceMenu;
 import org.apache.isis.applib.annotation.Programmatic;
-
-import org.estatio.dscm.EstatioDomainService;
-import org.estatio.dscm.dom.asset.Asset;
 
 @Hidden
 @DomainService
@@ -58,7 +61,10 @@ public class PlaylistItems extends EstatioDomainService<PlaylistItem> {
 
     // //////////////////////////////////////
 
-    @Programmatic
+    @ActionSemantics(Of.SAFE)
+    @NotInServiceMenu
+    @NotContributed(As.ACTION)
+    @Named("Playlists")
     public List<PlaylistItem> findByAsset(final Asset asset) {
         return allMatches("findByAsset", "asset", asset);
     }

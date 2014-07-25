@@ -67,7 +67,7 @@ public class PlaylistItem
     private Playlist playlist;
 
     @Column(name = "playlistId", allowsNull = "false")
-    @Hidden(where = Where.PARENTED_TABLES)
+    @Hidden(where = Where.REFERENCES_PARENT)
     @MemberOrder(sequence = "1")
     public Playlist getPlaylist() {
         return playlist;
@@ -97,6 +97,7 @@ public class PlaylistItem
 
     @Column(name = "assetId", allowsNull = "false")
     @Title(sequence = "2", prepend = ". ")
+    @Hidden(where = Where.REFERENCES_PARENT)
     @MemberOrder(sequence = "3")
     public Asset getAsset() {
         return asset;
