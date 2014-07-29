@@ -91,10 +91,6 @@
 	</build>
 
 	<dependencies>
-		<dependency>
-			<groupId>org.apache.isis.core</groupId>
-			<artifactId>isis-core-applib</artifactId>
-		</dependency>
 
 		<dependency>
 			<groupId>org.apache.isis.core</groupId>
