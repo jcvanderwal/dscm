@@ -94,8 +94,8 @@ public class SyncServiceTest_writePlaylist extends DscmIntegTest {
         // and the file has two rows corresponding the current fixtures
         FileReader namereader = new FileReader(file);
         BufferedReader in = new BufferedReader(namereader);
-        assertThat(in.readLine(), is("assets/" + AssetForCommercial.NAME));
-        assertThat(in.readLine(), is("assets/" + AssetForFiller.NAME));
+        assertThat(in.readLine(), is("../assets/" + AssetForCommercial.NAME));
+        assertThat(in.readLine(), is("../assets/" + AssetForFiller.NAME));
         in.close();
 
         // now confirm if assets exist

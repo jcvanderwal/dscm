@@ -35,15 +35,18 @@ import javax.annotation.PostConstruct;
 import javax.inject.Inject;
 
 import org.apache.commons.io.IOUtils;
+
 import org.estatio.dscm.dom.asset.Asset;
 import org.estatio.dscm.dom.asset.Assets;
 import org.estatio.dscm.dom.display.Display;
+import org.estatio.dscm.dom.display.DisplayGroup;
 import org.estatio.dscm.dom.playlist.Playlist;
 import org.estatio.dscm.dom.playlist.PlaylistItem;
 import org.estatio.dscm.dom.playlist.PlaylistType;
 import org.estatio.dscm.dom.playlist.Playlists;
 import org.estatio.dscm.dom.publisher.Publisher;
 import org.estatio.dscm.dom.publisher.Publishers;
+
 import org.joda.time.LocalDateTime;
 
 import org.apache.isis.applib.annotation.DomainService;
@@ -70,11 +73,15 @@ public class SyncService {
     }
 
     public void synchronizeNow() {
-        final String path = properties.get("dscm.player.path");
+        final String path = properties.get("dscm.server.path");
         path.toLowerCase();
-
+        
         for (Playlist playlist : playlists.allPlaylists()) {
             if (playlist.getType() == PlaylistType.MAIN) {
+                for (Display display : playlist.getDisplayGroup().getDisplays()) {
+                    removePlaylists(display, path);
+                }
+                
                 for (Display display : playlist.getDisplayGroup().getDisplays()) {
                     for (LocalDateTime dateTime : playlist.nextOccurences(clockService.now().plusDays(7))) {
                         writePlaylist(display, dateTime, effectiveItems(playlist, dateTime));
@@ -84,6 +91,19 @@ public class SyncService {
         }
     }
 
+    public void removePlaylists(Display display, String path) {
+        Runtime rt = Runtime.getRuntime();
+        String removePath = path.concat("/displays/").concat(display.getName()).concat("/playlists/");
+        String[] execCommand = {"rm", "-Rf", removePath};
+        
+        try {
+            rt.exec(execCommand);
+        } catch (IOException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+    }
+    
     public void importAssetsAndCreatePlaylist() {
         final String path = properties.get("dscm.server.path");
         Publisher publisher = publishers.allPublishers().get(0);
@@ -175,10 +195,10 @@ public class SyncService {
             for (PlaylistItem item : items) {
                 saveOriginAsset(item.getAsset());
                 if (item.getAsset().getFile() != null) {
-                    writer.write("assets/".concat(item.getAsset().getFile().getName().concat("\n")));
+                    writer.write("../assets/".concat(item.getAsset().getFile().getName().concat("\n")));
                     saveDisplayAsset(display, item.getAsset());
                 } else {
-                    writer.write("assets/".concat(item.getAsset().getName().concat(".broken\n")));
+                    writer.write("../assets/".concat(item.getAsset().getName().concat(".broken\n")));
                 }
             }
             writer.close();
