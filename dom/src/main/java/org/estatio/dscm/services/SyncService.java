@@ -131,15 +131,6 @@ public class SyncService {
             // TODO Auto-generated catch block
             e1.printStackTrace();
         }
-        
-//        String[] execCommand = { "rm", "-f", removePath };
-//
-//        try {
-//            rt.exec(execCommand);
-//        } catch (IOException e) {
-//            // TODO Auto-generated catch block
-//            e.printStackTrace();
-//        }
     }
 
     @Programmatic
