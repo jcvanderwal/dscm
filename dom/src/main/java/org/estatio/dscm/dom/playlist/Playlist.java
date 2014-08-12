@@ -18,6 +18,9 @@
  */
 package org.estatio.dscm.dom.playlist;
 
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
@@ -33,10 +36,12 @@ import javax.jdo.annotations.VersionStrategy;
 import com.google.common.collect.ComparisonChain;
 
 import org.apache.commons.lang3.ObjectUtils;
+
 import org.estatio.dscm.dom.asset.Asset;
 import org.estatio.dscm.dom.asset.Assets;
 import org.estatio.dscm.dom.display.DisplayGroup;
 import org.estatio.dscm.utils.CalendarUtils;
+
 import org.joda.time.Interval;
 import org.joda.time.LocalDate;
 import org.joda.time.LocalDateTime;
@@ -241,6 +246,7 @@ public class Playlist extends AbstractContainedObject implements Comparable<Play
                     start,
                     end,
                     getRepeatRule());
+
             for (Interval interval : intervals) {
                 nextList.add(new LocalDateTime(
                         interval.getStartMillis()).

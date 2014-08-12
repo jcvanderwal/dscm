@@ -18,6 +18,8 @@ import org.estatio.dscm.dom.playlist.Playlist;
 public class PlaylistTest_nextOccurences {
 
     private Playlist playlist;
+    private Playlist playlist2;
+    private Playlist playlist3;
 
     @Before
     public void setUp() throws Exception {
@@ -26,6 +28,15 @@ public class PlaylistTest_nextOccurences {
         playlist.setStartTime(new LocalTime("09:00"));
         playlist.setRepeatRule("RRULE:FREQ=DAILY");
 
+        playlist2 = new Playlist();
+        playlist2.setStartDate(new LocalDate(2014, 11, 8));
+        playlist2.setStartTime(new LocalTime("07:00"));
+        playlist2.setRepeatRule("RRULE:FREQ=DAILY");
+        
+        playlist3 = new Playlist();
+        playlist3.setStartDate(new LocalDate(2014, 11, 8));
+        playlist3.setStartTime(new LocalTime("14:00"));
+        playlist3.setRepeatRule("RRULE:FREQ=DAILY");
     }
 
     @Test

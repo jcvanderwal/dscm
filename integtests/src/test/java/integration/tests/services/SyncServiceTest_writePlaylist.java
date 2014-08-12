@@ -85,7 +85,7 @@ public class SyncServiceTest_writePlaylist extends DscmIntegTest {
         LocalDateTime dateTime = new LocalDateTime(2014, 5, 1, 14, 0);
         
         // when
-        syncService.writePlaylist(display, dateTime, itemsList);
+        syncService.writePlaylist(display, dateTime, itemsList, Runtime.getRuntime());
 
         // then the file exists
         String fileName = syncService.createPlaylistFilename(display, dateTime);

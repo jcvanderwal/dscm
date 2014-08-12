@@ -25,6 +25,7 @@ import java.io.FileOutputStream;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
 import java.io.PrintStream;
 import java.util.ArrayList;
 import java.util.List;
@@ -49,6 +50,7 @@ import org.estatio.dscm.dom.publisher.Publishers;
 
 import org.joda.time.LocalDateTime;
 
+import org.apache.commons.io.FileUtils;
 import org.apache.isis.applib.annotation.DomainService;
 import org.apache.isis.applib.annotation.Named;
 import org.apache.isis.applib.annotation.Programmatic;
@@ -72,38 +74,75 @@ public class SyncService {
         this.properties = properties;
     }
 
-    public void synchronizeNow() {
+    public void synchronizeNow(DisplayGroup displayGroup) {
         final String path = properties.get("dscm.server.path");
         path.toLowerCase();
-        
-        for (Playlist playlist : playlists.allPlaylists()) {
-            if (playlist.getType() == PlaylistType.MAIN) {
-                for (Display display : playlist.getDisplayGroup().getDisplays()) {
-                    removePlaylists(display, path);
-                }
-                
-                for (Display display : playlist.getDisplayGroup().getDisplays()) {
-                    for (LocalDateTime dateTime : playlist.nextOccurences(clockService.now().plusDays(7))) {
-                        writePlaylist(display, dateTime, effectiveItems(playlist, dateTime));
-                    }
+        Runtime rt = Runtime.getRuntime();
+
+        for (Display display : displayGroup.getDisplays()) {
+            removePlaylists(display, path, rt);
+        }
+
+        for (Playlist playlist : playlists.findByDisplayGroupAndType(displayGroup, PlaylistType.MAIN)) {
+            for (Display display : displayGroup.getDisplays()) {
+                for (LocalDateTime dateTime : playlist.nextOccurences(clockService.now().plusDays(7))) {
+                    writePlaylist(display, dateTime, effectiveItems(playlist, dateTime), rt);
                 }
             }
         }
+
+        for (Display display : displayGroup.getDisplays()) {
+            syncPlaylist(display, path);
+        }
     }
 
-    public void removePlaylists(Display display, String path) {
+    @Programmatic
+    public void syncPlaylist(Display display, String path) {
         Runtime rt = Runtime.getRuntime();
-        String removePath = path.concat("/displays/").concat(display.getName()).concat("/playlists/");
-        String[] execCommand = {"rm", "-Rf", removePath};
-        
+        String[] syncCommand = createSyncSchedulePath(path, "sync", display);
+        String[] scheduleCommand = createSyncSchedulePath(path, "schedule", display);
+
         try {
-            rt.exec(execCommand);
+            Process p = rt.exec(syncCommand);
+            p.waitFor();
+            rt.exec(scheduleCommand);
         } catch (IOException e) {
+            e.printStackTrace();
+        } catch (InterruptedException e) {
             // TODO Auto-generated catch block
             e.printStackTrace();
         }
     }
-    
+
+    @Programmatic
+    public String[] createSyncSchedulePath(String path, String task, Display display) {
+        String[] rV = { path.concat("/scripts/watson"), display.getName(), task };
+        return rV;
+    }
+
+    @Programmatic
+    public void removePlaylists(Display display, String path, Runtime rt) {
+        
+        String removePath = path.concat("/displays/").concat(display.getName()).concat("/playlists/");
+
+        try {
+            FileUtils.cleanDirectory(new File(removePath));
+        } catch (IOException e1) {
+            // TODO Auto-generated catch block
+            e1.printStackTrace();
+        }
+        
+//        String[] execCommand = { "rm", "-f", removePath };
+//
+//        try {
+//            rt.exec(execCommand);
+//        } catch (IOException e) {
+//            // TODO Auto-generated catch block
+//            e.printStackTrace();
+//        }
+    }
+
+    @Programmatic
     public void importAssetsAndCreatePlaylist() {
         final String path = properties.get("dscm.server.path");
         Publisher publisher = publishers.allPublishers().get(0);
@@ -182,7 +221,7 @@ public class SyncService {
     }
 
     @Programmatic
-    public void writePlaylist(Display display, LocalDateTime dateTime, List<PlaylistItem> items) {
+    public void writePlaylist(Display display, LocalDateTime dateTime, List<PlaylistItem> items, Runtime rt) {
         String filename = createPlaylistFilename(display, dateTime);
         try {
             File file = new File(filename);
@@ -196,7 +235,7 @@ public class SyncService {
                 saveOriginAsset(item.getAsset());
                 if (item.getAsset().getFile() != null) {
                     writer.write("../assets/".concat(item.getAsset().getFile().getName().concat("\n")));
-                    saveDisplayAsset(display, item.getAsset());
+                    saveDisplayAsset(display, item.getAsset(), rt);
                 } else {
                     writer.write("../assets/".concat(item.getAsset().getName().concat(".broken\n")));
                 }
@@ -211,12 +250,12 @@ public class SyncService {
     private void saveOriginAsset(Asset asset) {
         byte[] blobArray;
         File output = new File(properties.get("dscm.server.path").concat("/assets/" + asset.getName()));
-        
+
         if (!output.isFile()) {
             output.getParentFile().mkdirs();
             if (asset.getFile() != null) {
                 blobArray = asset.getFile().getBytes();
-            
+
                 FileOutputStream fos;
                 try {
                     fos = new FileOutputStream(output);
@@ -242,16 +281,14 @@ public class SyncService {
 
     // Creates a symbolic link to the personal folder of every playlist
     @Programmatic
-    public void saveDisplayAsset(Display display, Asset asset) {
-        Runtime rt = Runtime.getRuntime();
-
+    public void saveDisplayAsset(Display display, Asset asset, Runtime rt) {
         String origin = createOriginAssetFilename(asset);
         String destination = createAssetFilename(display, asset);
 
         File displayAssetFile = new File(destination);
         displayAssetFile.getParentFile().mkdirs();
 
-        String[] execCommand = {"ln", "-s", origin, destination};
+        String[] execCommand = { "ln", "-s", origin, destination };
 
         try {
             rt.exec(execCommand);
