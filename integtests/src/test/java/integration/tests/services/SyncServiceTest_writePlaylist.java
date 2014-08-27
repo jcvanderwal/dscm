@@ -97,6 +97,7 @@ public class SyncServiceTest_writePlaylist extends DscmIntegTest {
         assertThat(in.readLine(), is("../assets/" + AssetForCommercial.NAME));
         assertThat(in.readLine(), is("../assets/" + AssetForFiller.NAME));
         in.close();
+        namereader.close();
 
         // now confirm if assets exist
         for (PlaylistItem item : itemsList) {
