@@ -94,8 +94,21 @@ public class SyncServiceTest_writePlaylist extends DscmIntegTest {
         // and the file has two rows corresponding the current fixtures
         FileReader namereader = new FileReader(file);
         BufferedReader in = new BufferedReader(namereader);
-        assertThat(in.readLine(), is("../assets/" + AssetForCommercial.NAME));
-        assertThat(in.readLine(), is("../assets/" + AssetForFiller.NAME));
+        String first = "";
+        String second = "";
+        int nextChar = in.read();
+        while (nextChar != -1 && (char)nextChar != '\n' && (char)nextChar != '\r') {
+            first = first + String.valueOf((char)nextChar);
+            nextChar = in.read();
+        }
+        nextChar = in.read();
+        while (nextChar != -1 && (char)nextChar != '\n' && (char)nextChar != '\r') {
+            second = second + String.valueOf((char)nextChar);
+            nextChar = in.read();
+        }
+        
+        assertThat(first, is("../assets/" + AssetForCommercial.NAME));
+        assertThat(second, is("../assets/" + AssetForFiller.NAME));
         in.close();
         namereader.close();
 
