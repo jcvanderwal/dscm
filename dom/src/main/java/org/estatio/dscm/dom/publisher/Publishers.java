@@ -61,6 +61,10 @@ public class Publishers extends AbstractFactoryAndRepository {
         return obj;
     }
 
+    public boolean hideNewPublisher(final String name) {
+        return !getContainer().getUser().hasRole(".*admin_role");
+    }
+    
     // //////////////////////////////////////
     // Injected services
     // //////////////////////////////////////
@@ -68,7 +72,7 @@ public class Publishers extends AbstractFactoryAndRepository {
     @javax.inject.Inject
     DomainObjectContainer container;
 
-    public Publisher findByName(String name) {
+    public Publisher findByName(@Named("Name") String name) {
         return firstMatch(new QueryDefault<Publisher>(Publisher.class, "findByName", "name", name));
     }
 
