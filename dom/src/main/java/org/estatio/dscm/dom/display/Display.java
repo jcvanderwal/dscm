@@ -25,6 +25,7 @@ import javax.jdo.annotations.VersionStrategy;
 import org.apache.isis.applib.annotation.Bookmarkable;
 import org.apache.isis.applib.annotation.Immutable;
 import org.apache.isis.applib.annotation.MemberOrder;
+import org.apache.isis.applib.annotation.Named;
 import org.apache.isis.applib.annotation.Title;
 import org.apache.isis.applib.util.ObjectContracts;
 
@@ -66,6 +67,15 @@ public class Display implements Comparable<Display> {
         this.displayGroup = displayGroup;
     }
 
+    public Display changeDisplayGroup(final @Named("Display Group") DisplayGroup displayGroup) {
+        setDisplayGroup(displayGroup);
+        return this;
+    }
+    
+    public DisplayGroup default0ChangeDisplayGroup(final DisplayGroup displayGroup) {
+        return getDisplayGroup();
+    }
+    
     // //////////////////////////////////////
 
     @Override

@@ -126,7 +126,7 @@ public class Playlists extends EstatioDomainService<Playlist> {
     }
 
     public BigDecimal default6NewPlaylist() {
-        return BigDecimal.ZERO;
+        return new BigDecimal(60);
     }
 
 }
