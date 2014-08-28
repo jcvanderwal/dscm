@@ -42,7 +42,7 @@ public class DisplaysTest_listAll_and_create extends DscmIntegTest {
 
         scenarioExecution().install(new DemoFixture());
 
-        displays = wrap(service(Displays.class));
+        displays = service(Displays.class);
         displayGroups = wrap(service(DisplayGroups.class));
     }
 

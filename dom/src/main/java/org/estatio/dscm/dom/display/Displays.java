@@ -18,8 +18,12 @@
  */
 package org.estatio.dscm.dom.display;
 
+import java.math.BigDecimal;
 import java.util.List;
 
+import org.joda.time.LocalDate;
+
+import org.apache.isis.applib.DomainObjectContainer;
 import org.apache.isis.applib.annotation.ActionSemantics;
 import org.apache.isis.applib.annotation.ActionSemantics.Of;
 import org.apache.isis.applib.annotation.Bookmarkable;
@@ -27,8 +31,10 @@ import org.apache.isis.applib.annotation.DomainService;
 import org.apache.isis.applib.annotation.MemberOrder;
 import org.apache.isis.applib.annotation.Named;
 import org.apache.isis.applib.annotation.NotInServiceMenu;
+import org.apache.isis.applib.value.Blob;
 
 import org.estatio.dscm.EstatioDomainService;
+import org.estatio.dscm.dom.publisher.Publisher;
 
 @DomainService
 public class Displays extends EstatioDomainService<Display> {
@@ -65,6 +71,11 @@ public class Displays extends EstatioDomainService<Display> {
         obj.setDisplayGroup(displayGroup);
         getContainer().persistIfNotAlready(obj);
         return obj;
+    }
+    
+    
+    public boolean hideNewDisplay(final String name, final DisplayGroup displayGroup) {
+        return !getContainer().getUser().hasRole(".*admin_role");
     }
 
     @NotInServiceMenu
