@@ -23,6 +23,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.math.BigDecimal;
 
 import javax.activation.MimetypesFileTypeMap;
@@ -52,14 +53,9 @@ public abstract class AssetAbstract extends DiscoverableFixtureScript {
         try {
             InputStream is;
             is = getClass().getResourceAsStream("/" + fileName);
-            File f = new File("/" + fileName);
-            long size = 0;
-            if (f.exists()) {
-                size = f.length();
-            }
-            
+            InputStreamReader isr = new InputStreamReader(is);
             final String mimeType = new MimetypesFileTypeMap().getContentType(fileName);
-            Blob blob = new Blob(fileName, mimeType, IOUtils.toByteArray(is, size));
+            Blob blob = new Blob(fileName, mimeType, IOUtils.toByteArray(isr));
             is.close();
             return blob;
         } catch (FileNotFoundException e) {
