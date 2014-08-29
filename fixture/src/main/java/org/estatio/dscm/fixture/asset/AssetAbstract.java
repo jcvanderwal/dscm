@@ -53,9 +53,8 @@ public abstract class AssetAbstract extends DiscoverableFixtureScript {
         try {
             InputStream is;
             is = getClass().getResourceAsStream("/" + fileName);
-            InputStreamReader isr = new InputStreamReader(is);
             final String mimeType = new MimetypesFileTypeMap().getContentType(fileName);
-            Blob blob = new Blob(fileName, mimeType, IOUtils.toByteArray(isr));
+            Blob blob = new Blob(fileName, mimeType, IOUtils.toByteArray(is));
             is.close();
             return blob;
         } catch (FileNotFoundException e) {
