@@ -19,7 +19,7 @@
 
 package org.estatio.dscm.fixture.asset;
 
-import java.io.ByteArrayOutputStream;
+import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
@@ -52,20 +52,14 @@ public abstract class AssetAbstract extends DiscoverableFixtureScript {
         try {
             InputStream is;
             is = getClass().getResourceAsStream("/" + fileName);
-            
-            ByteArrayOutputStream baos = new ByteArrayOutputStream();
-            int bytesRead = 0;
-            while ((bytesRead = is.read()) != -1) {
-                baos.write(bytesRead);
+            File f = new File("/" + fileName);
+            long size = 0;
+            if (f.exists()) {
+                size = f.length();
             }
             
-            int length = baos.toByteArray().length;
-            baos.close();
-            
-            is = getClass().getResourceAsStream("/" + fileName);
-            
             final String mimeType = new MimetypesFileTypeMap().getContentType(fileName);
-            Blob blob = new Blob(fileName, mimeType, IOUtils.toByteArray(is, length));
+            Blob blob = new Blob(fileName, mimeType, IOUtils.toByteArray(is, size));
             is.close();
             return blob;
         } catch (FileNotFoundException e) {
