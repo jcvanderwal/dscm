@@ -198,8 +198,7 @@ public class Asset extends AbstractDomainObject implements Comparable<Asset> {
 
     // //////////////////////////////////////
 
-    public void remove(
-            @Named("Are you sure?") Boolean confirm) {
+    public void remove(@Named("Are you sure?") Boolean confirm) {
         if (confirm) {
             doRemove();
         }

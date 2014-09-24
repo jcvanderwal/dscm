@@ -27,6 +27,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.PrintStream;
+import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -80,7 +81,8 @@ public class SyncService {
         Runtime rt = Runtime.getRuntime();
 
         for (Display display : displayGroup.getDisplays()) {
-            removePlaylists(display, path, rt);
+            removePlaylists(display, path);
+            removeDisplayAssets(display, path);
         }
 
         for (Playlist playlist : playlists.findByDisplayGroupAndType(displayGroup, PlaylistType.MAIN)) {
@@ -106,10 +108,7 @@ public class SyncService {
             Process p = rt.exec(syncCommand);
             p.waitFor();
             rt.exec(scheduleCommand);
-        } catch (IOException e) {
-            e.printStackTrace();
-        } catch (InterruptedException e) {
-            // TODO Auto-generated catch block
+        } catch (Exception e) {
             e.printStackTrace();
         }
     }
@@ -121,7 +120,7 @@ public class SyncService {
     }
 
     @Programmatic
-    public void removePlaylists(Display display, String path, Runtime rt) {
+    public void removePlaylists(Display display, String path) {
         
         String removePath = path.concat("/displays/").concat(display.getName()).concat("/playlists/");
 
@@ -294,6 +293,18 @@ public class SyncService {
             } catch (IOException e) {
                 e.printStackTrace();
             }
+        }
+    }
+    
+    @Programmatic
+    public void removeDisplayAssets(Display display, String path) {
+        String removePath = path.concat("/displays/").concat(display.getName()).concat("/assets/");
+
+        try {
+            FileUtils.cleanDirectory(new File(removePath));
+        } catch (IOException e1) {
+            // TODO Auto-generated catch block
+            e1.printStackTrace();
         }
     }
 
