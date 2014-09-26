@@ -34,6 +34,7 @@ import org.apache.isis.applib.AbstractDomainObject;
 import org.apache.isis.applib.annotation.Bookmarkable;
 import org.apache.isis.applib.annotation.Bounded;
 import org.apache.isis.applib.annotation.Hidden;
+import org.apache.isis.applib.annotation.HomePage;
 import org.apache.isis.applib.annotation.Immutable;
 import org.apache.isis.applib.annotation.MemberOrder;
 import org.apache.isis.applib.annotation.Optional;
@@ -42,6 +43,7 @@ import org.apache.isis.applib.annotation.Title;
 import org.apache.isis.applib.util.ObjectContracts;
 import org.apache.isis.applib.value.Blob;
 
+import org.estatio.dscm.DscmDashboard;
 import org.estatio.dscm.dom.display.DisplayGroup;
 import org.estatio.dscm.dom.playlist.PlaylistItems;
 import org.estatio.dscm.dom.publisher.Publisher;
@@ -197,12 +199,13 @@ public class Asset extends AbstractDomainObject implements Comparable<Asset> {
     }
 
     // //////////////////////////////////////
-
-    public void remove(
+    public Object remove(
             @Named("Are you sure?") Boolean confirm) {
         if (confirm) {
             doRemove();
+            return newViewModelInstance(DscmDashboard.class, "dashboard");
         }
+        return this;
     }
 
     public String disableRemove(Boolean confirm) {
