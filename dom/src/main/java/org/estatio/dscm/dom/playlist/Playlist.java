@@ -293,6 +293,15 @@ public class Playlist extends AbstractContainedObject implements Comparable<Play
         return this;
     }
 
+    public String disableRemove(
+            @Named("Are you sure?") Boolean confirm) {
+        if (playlists.findByDisplayGroupAndType(displayGroup, type).size() == 1) {
+            return "This is the only " + type.toString().toLowerCase() + " playlist of display group " + displayGroup.getName();
+        } else {
+            return null;
+        }
+    }
+    
     protected void doRemove() {
         removeAllItems();
         getContainer().remove(this);
@@ -316,7 +325,7 @@ public class Playlist extends AbstractContainedObject implements Comparable<Play
                 .compare(getStartTime(), other.getStartTime())
                 .result();
     }
-
+    
     // //////////////////////////////////////
 
     @Inject
@@ -327,5 +336,8 @@ public class Playlist extends AbstractContainedObject implements Comparable<Play
 
     @Inject
     Assets assets;
+    
+    @Inject
+    Playlists playlists;
 
 }

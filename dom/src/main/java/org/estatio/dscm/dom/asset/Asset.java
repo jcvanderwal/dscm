@@ -199,8 +199,7 @@ public class Asset extends AbstractDomainObject implements Comparable<Asset> {
     }
 
     // //////////////////////////////////////
-    public Object remove(
-            @Named("Are you sure?") Boolean confirm) {
+    public Object remove(@Named("Are you sure?") Boolean confirm) {
         if (confirm) {
             doRemove();
             return newViewModelInstance(DscmDashboard.class, "dashboard");
