@@ -14,21 +14,11 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package integration;
+package org.estatio.dscm.integtests;
 
-import org.estatio.dscm.dom.asset.Assets;
-import org.estatio.dscm.dom.display.DisplayGroups;
-import org.estatio.dscm.dom.display.Displays;
-import org.estatio.dscm.dom.playlist.PlaylistItems;
-import org.estatio.dscm.dom.playlist.Playlists;
-import org.estatio.dscm.dom.publisher.Publishers;
-import org.estatio.dscm.services.SyncService;
-
-import org.apache.isis.applib.services.clock.ClockService;
 import org.apache.isis.core.commons.config.IsisConfiguration;
 import org.apache.isis.core.commons.config.IsisConfigurationDefault;
 import org.apache.isis.core.integtestsupport.IsisSystemForTest;
-import org.apache.isis.core.wrapper.WrapperFactoryDefault;
 import org.apache.isis.objectstore.jdo.datanucleus.DataNucleusObjectStore;
 import org.apache.isis.objectstore.jdo.datanucleus.DataNucleusPersistenceMechanismInstaller;
 import org.apache.isis.objectstore.jdo.datanucleus.service.eventbus.EventBusServiceJdo;
@@ -68,7 +58,7 @@ public class DscmSystemInitializer {
             withServices(
                     new IsisJdoSupportImpl(),
                     new EventBusServiceJdo());
-         }
+        }
 
         private IsisConfiguration testConfiguration() {
             final IsisConfigurationDefault testConfiguration = new IsisConfigurationDefault();

@@ -28,6 +28,7 @@ import org.apache.isis.applib.annotation.Bookmarkable;
 import org.apache.isis.applib.annotation.DomainService;
 import org.apache.isis.applib.annotation.MemberOrder;
 import org.apache.isis.applib.annotation.Named;
+import org.apache.isis.applib.annotation.NotInServiceMenu;
 import org.apache.isis.applib.query.QueryDefault;
 
 @DomainService
@@ -64,7 +65,7 @@ public class Publishers extends AbstractFactoryAndRepository {
     public boolean hideNewPublisher(final String name) {
         return !getContainer().getUser().hasRole(".*admin_role");
     }
-    
+
     // //////////////////////////////////////
     // Injected services
     // //////////////////////////////////////
@@ -75,5 +76,18 @@ public class Publishers extends AbstractFactoryAndRepository {
     public Publisher findByName(@Named("Name") String name) {
         return firstMatch(new QueryDefault<Publisher>(Publisher.class, "findByName", "name", name));
     }
+    
+    // //////////////////////////////////////
+    
+    @NotInServiceMenu
+    public List<Publisher> remove(Publisher publisher, @Named("Are you sure?") Boolean confirm) {
+        container.remove(publisher);
+        container.flush();
 
+        return allPublishers();
+    }
+
+    public boolean hideRemove(Publisher publisher, Boolean confirm) {
+        return !container.getUser().hasRole(".*admin_role");
+    }
 }

@@ -16,9 +16,7 @@
  *  specific language governing permissions and limitations
  *  under the License.
  */
-package integration.tests;
-
-import integration.DscmSystemInitializer;
+package org.estatio.dscm.integtests;
 
 import org.junit.BeforeClass;
 

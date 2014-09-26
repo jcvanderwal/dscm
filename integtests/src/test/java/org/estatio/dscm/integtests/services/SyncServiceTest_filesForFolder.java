@@ -16,17 +16,17 @@
  *  specific language governing permissions and limitations
  *  under the License.
  */
-package integration.tests.services;
+package org.estatio.dscm.integtests.services;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
-import integration.tests.DscmIntegTest;
 
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Ignore;
 import org.junit.Test;
 
+import org.estatio.dscm.integtests.DscmIntegTest;
 import org.estatio.dscm.services.SyncService;
 
 public class SyncServiceTest_filesForFolder extends DscmIntegTest {

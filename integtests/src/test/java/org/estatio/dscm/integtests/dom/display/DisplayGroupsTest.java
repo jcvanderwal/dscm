@@ -16,25 +16,24 @@
  *  specific language governing permissions and limitations
  *  under the License.
  */
-package integration.tests.dom.display;
+package org.estatio.dscm.integtests.dom.display;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
-import integration.tests.DscmIntegTest;
 
 import java.util.List;
+
+import org.estatio.dscm.dom.display.DisplayGroup;
+import org.estatio.dscm.dom.display.DisplayGroups;
+import org.estatio.dscm.fixture.DemoFixture;
+import org.estatio.dscm.fixture.display.DisplayGroupsAndDisplays;
+import org.estatio.dscm.integtests.DscmIntegTest;
 
 import org.junit.Before;
 import org.junit.Test;
 
-import org.estatio.dscm.dom.display.Display;
-import org.estatio.dscm.dom.display.DisplayGroups;
-import org.estatio.dscm.dom.display.Displays;
-import org.estatio.dscm.fixture.DemoFixture;
+public class DisplayGroupsTest extends DscmIntegTest {
 
-public class DisplaysTest_listAll_and_create extends DscmIntegTest {
-
-    private Displays displays;
     private DisplayGroups displayGroups;
 
     @Before
@@ -42,25 +41,15 @@ public class DisplaysTest_listAll_and_create extends DscmIntegTest {
 
         scenarioExecution().install(new DemoFixture());
 
-        displays = service(Displays.class);
         displayGroups = wrap(service(DisplayGroups.class));
     }
 
     @Test
     public void step1_listAll() throws Exception {
 
-        final List<Display> all = displays.allDisplays();
-        assertThat(all.size(), is(6));
+        List<DisplayGroup> groups = displayGroups.allDisplayGroups();
+        assertThat(groups.get(0).getName(), is(DisplayGroupsAndDisplays.DEMO_AMSTERDAM));
 
-    }
-
-    @Test
-    public void step2_create() throws Exception {
-
-        displays.newDisplay("Faz", displayGroups.allDisplayGroups().get(0));
-
-        final List<Display> all = displays.allDisplays();
-        assertThat(all.size(), is(7));
     }
 
 }

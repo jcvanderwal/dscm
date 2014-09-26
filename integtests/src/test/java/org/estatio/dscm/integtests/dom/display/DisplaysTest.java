@@ -16,39 +16,55 @@
  *  specific language governing permissions and limitations
  *  under the License.
  */
-package integration.tests.dom.display;
+package org.estatio.dscm.integtests.dom.display;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
-import integration.tests.DscmIntegTest;
 
 import java.util.List;
 
-import org.estatio.dscm.dom.display.DisplayGroup;
-import org.estatio.dscm.dom.display.DisplayGroups;
-import org.estatio.dscm.fixture.DemoFixture;
-import org.estatio.dscm.fixture.display.DisplayGroupsAndDisplays;
+import javax.inject.Inject;
+
 import org.junit.Before;
 import org.junit.Test;
 
-public class DisplayGroupsTest_finders extends DscmIntegTest {
+import org.estatio.dscm.dom.display.Display;
+import org.estatio.dscm.dom.display.DisplayGroups;
+import org.estatio.dscm.dom.display.Displays;
+import org.estatio.dscm.fixture.DemoFixture;
+import org.estatio.dscm.integtests.DscmIntegTest;
 
-    private DisplayGroups displayGroups;
+public class DisplaysTest extends DscmIntegTest {
+
+    @Inject
+    Displays displays;
+
+    @Inject
+    DisplayGroups displayGroups;
 
     @Before
     public void setUp() throws Exception {
-
         scenarioExecution().install(new DemoFixture());
-
-        displayGroups = wrap(service(DisplayGroups.class));
     }
 
-    @Test
-    public void step1_listAll() throws Exception {
+    public static class AllDisplays extends DisplaysTest {
+        @Test
+        public void sizeIsSix() throws Exception {
+            final List<Display> all = displays.allDisplays();
+            assertThat(all.size(), is(6));
+        }
+    }
 
-        List<DisplayGroup> groups = displayGroups.allDisplayGroups();
-        assertThat(groups.get(0).getName(), is(DisplayGroupsAndDisplays.DEMO_AMSTERDAM));
+    public static class NewDisplay extends DisplaysTest {
 
+        private static final String FAZ = "Faz";
+
+        @Test
+        public void createSucceeds() throws Exception {
+            displays.newDisplay(FAZ, displayGroups.allDisplayGroups().get(0));
+            final List<Display> all = displays.allDisplays();
+            assertThat(all.size(), is(7));
+        }
     }
 
 }

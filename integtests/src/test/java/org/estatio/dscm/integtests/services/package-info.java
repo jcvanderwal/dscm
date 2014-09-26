@@ -5,4 +5,4 @@
  * @author jvanderwal
  *
  */
-package integration.tests.services;
+package org.estatio.dscm.integtests.services;

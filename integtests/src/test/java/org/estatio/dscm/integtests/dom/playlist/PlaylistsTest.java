@@ -16,13 +16,12 @@
  *  specific language governing permissions and limitations
  *  under the License.
  */
-package integration.tests.dom.playlist;
+package org.estatio.dscm.integtests.dom.playlist;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertThat;
-import integration.tests.DscmIntegTest;
 
 import javax.inject.Inject;
 
@@ -34,6 +33,7 @@ import org.estatio.dscm.dom.playlist.PlaylistType;
 import org.estatio.dscm.dom.playlist.Playlists;
 import org.estatio.dscm.dom.playlist.Time;
 import org.estatio.dscm.fixture.playlist.PlaylistsAndItems;
+import org.estatio.dscm.integtests.DscmIntegTest;
 
 import org.joda.time.LocalDate;
 import org.joda.time.LocalTime;
@@ -43,7 +43,7 @@ import org.junit.Ignore;
 import org.junit.Test;
 
 @Ignore("Causing (so far) inexplicable trouble with heap space on Jenkins, preventing deployment. See DSCM-20")
-public class PlaylistsTest_finders extends DscmIntegTest {
+public class PlaylistsTest extends DscmIntegTest {
 
     @Inject
     private Playlists playlists;

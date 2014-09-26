@@ -16,11 +16,11 @@
  *  specific language governing permissions and limitations
  *  under the License.
  */
-package integration.tests.services;
+package org.estatio.dscm.integtests.services;
 
 import static org.hamcrest.CoreMatchers.is;
-import static org.junit.Assert.*;
-import integration.tests.DscmIntegTest;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertThat;
 
 import java.util.List;
 
@@ -31,6 +31,7 @@ import org.joda.time.LocalTime;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
+
 import org.estatio.dscm.dom.display.DisplayGroup;
 import org.estatio.dscm.dom.display.DisplayGroups;
 import org.estatio.dscm.dom.playlist.Playlist;
@@ -41,20 +42,21 @@ import org.estatio.dscm.fixture.DemoFixture;
 import org.estatio.dscm.fixture.asset.AssetForCommercial;
 import org.estatio.dscm.fixture.asset.AssetForFiller;
 import org.estatio.dscm.fixture.playlist.PlaylistsAndItems;
+import org.estatio.dscm.integtests.DscmIntegTest;
 import org.estatio.dscm.services.SyncService;
 
-public class SyncServiceTest_effectiveItems extends DscmIntegTest {
+public class SyncServiceTest extends DscmIntegTest {
 
     @Inject
-    private SyncService syncService;
+    SyncService syncService;
 
     @Inject
-    private Playlists playlists;
+    Playlists playlists;
 
     @Inject
-    private DisplayGroups displayGroups;
+    DisplayGroups displayGroups;
 
-    private Playlist commercialPlaylist;
+    Playlist commercialPlaylist;
 
     @BeforeClass
     public static void setupTransactionalData() {
@@ -71,27 +73,31 @@ public class SyncServiceTest_effectiveItems extends DscmIntegTest {
                 PlaylistType.MAIN);
     }
 
-    @Test
-    public void effectiveItems() throws Exception {
-        final List<PlaylistItem> effectiveItems =
-                syncService.effectiveItems(
-                        commercialPlaylist,
-                        new LocalDate(1980, 1, 1).toLocalDateTime(PlaylistsAndItems.MORNING.time()));
-        // Each asset is 10 seconds so we should have 6
-        assertThat(effectiveItems.size(), is(6));
-        // The commercial and filler are distributed evenly
-        assertThat(effectiveItems.get(0).getAsset().getName(), is(AssetForCommercial.NAME));
-        assertThat(effectiveItems.get(1).getAsset().getName(), is(AssetForFiller.NAME));
-        assertThat(effectiveItems.get(2).getAsset().getName(), is(AssetForFiller.NAME));
-    }
-    
-    @Test
-    public void findByDisplayGroupAndDateTimeAndTypeReturnsNull() throws Exception {
-        final DisplayGroup displayGroup = new DisplayGroup();
-        displayGroup.setName("Testgroup");
-        LocalDate date = new LocalDate(2010, 7, 14);
-        LocalTime time = new LocalTime("14:00");
-        PlaylistType type = PlaylistType.MAIN;
-        assertNull("RV is not null: ", playlists.findByDisplayGroupAndDateTimeAndType(displayGroup, date, time, type));
+    public static class EffectiveItems extends SyncServiceTest {
+
+        @Test
+        public void effectiveItems() throws Exception {
+            final List<PlaylistItem> effectiveItems =
+                    syncService.effectiveItems(
+                            commercialPlaylist,
+                            new LocalDate(1980, 1, 1).toLocalDateTime(PlaylistsAndItems.MORNING.time()));
+            // Each asset is 10 seconds so we should have 6
+            assertThat(effectiveItems.size(), is(6));
+            // The commercial and filler are distributed evenly
+            assertThat(effectiveItems.get(0).getAsset().getName(), is(AssetForCommercial.NAME));
+            assertThat(effectiveItems.get(1).getAsset().getName(), is(AssetForFiller.NAME));
+            assertThat(effectiveItems.get(2).getAsset().getName(), is(AssetForFiller.NAME));
+        }
+
+        @Test
+        public void findByDisplayGroupAndDateTimeAndTypeReturnsNull() throws Exception {
+            final DisplayGroup displayGroup = new DisplayGroup();
+            displayGroup.setName("Testgroup");
+            LocalDate date = new LocalDate(2010, 7, 14);
+            LocalTime time = new LocalTime("14:00");
+            PlaylistType type = PlaylistType.MAIN;
+            assertNull("RV is not null: ", playlists.findByDisplayGroupAndDateTimeAndType(displayGroup, date, time, type));
+        }
+
     }
 }

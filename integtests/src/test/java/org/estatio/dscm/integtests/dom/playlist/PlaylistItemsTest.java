@@ -16,11 +16,12 @@
  *  specific language governing permissions and limitations
  *  under the License.
  */
-package integration.tests.dom.playlist;
+package org.estatio.dscm.integtests.dom.playlist;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
-import integration.tests.DscmIntegTest;
+
+import javax.inject.Inject;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -32,34 +33,45 @@ import org.estatio.dscm.dom.playlist.PlaylistItem;
 import org.estatio.dscm.dom.playlist.PlaylistItems;
 import org.estatio.dscm.dom.playlist.Playlists;
 import org.estatio.dscm.fixture.DemoFixture;
+import org.estatio.dscm.integtests.DscmIntegTest;
 
 public class PlaylistItemsTest extends DscmIntegTest {
 
-    private Playlists playlists;
-    private PlaylistItems playlistItems;
-    private Assets assets;
+    @Inject
+    Playlists playlists;
+
+    @Inject
+    PlaylistItems playlistItems;
+
+    @Inject
+    Assets assets;
 
     @Before
     public void setUp() throws Exception {
         scenarioExecution().install(new DemoFixture());
-        playlistItems = wrap(service(PlaylistItems.class));
-        playlists = wrap(service(Playlists.class));
-        assets = wrap(service(Assets.class));
     }
 
-    @Test
-    public void t1_listAll() throws Exception {
-        assertThat(playlistItems.allPlaylistItems().size(), is(8));
+    public static class AllPlaylistItems extends PlaylistItemsTest {
+
+        @Test
+        public void sizeDoesMatter() throws Exception {
+            assertThat(playlistItems.allPlaylistItems().size(), is(8));
+        }
+
     }
 
-    @Test
-    public void t2_new() throws Exception {
+    public static class NewPlaylistItem extends PlaylistItemsTest {
 
-        Playlist playlist = playlists.allPlaylists().get(0);
-        Asset asset = assets.allAssets().get(0);
-        PlaylistItem lastItem = playlist.getItems().last();
-        playlistItems.newPlaylistItem(playlist, asset);
-        assertThat(playlist.getItems().last().getPrevious(), is(lastItem));
+        @Test
+        public void createdSuccesfully() throws Exception {
+
+            Playlist playlist = playlists.allPlaylists().get(0);
+            Asset asset = assets.allAssets().get(0);
+            PlaylistItem lastItem = playlist.getItems().last();
+            playlistItems.newPlaylistItem(playlist, asset);
+            assertThat(playlist.getItems().last().getPrevious(), is(lastItem));
+
+        }
 
     }
 

@@ -16,12 +16,11 @@
  *  specific language governing permissions and limitations
  *  under the License.
  */
-package integration.tests.services;
+package org.estatio.dscm.integtests.services;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
-import integration.tests.DscmIntegTest;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -42,7 +41,9 @@ import org.estatio.dscm.dom.playlist.Playlists;
 import org.estatio.dscm.fixture.DemoFixture;
 import org.estatio.dscm.fixture.asset.AssetForCommercial;
 import org.estatio.dscm.fixture.asset.AssetForFiller;
+import org.estatio.dscm.integtests.DscmIntegTest;
 import org.estatio.dscm.services.SyncService;
+
 import org.joda.time.LocalDateTime;
 import org.junit.Before;
 import org.junit.BeforeClass;

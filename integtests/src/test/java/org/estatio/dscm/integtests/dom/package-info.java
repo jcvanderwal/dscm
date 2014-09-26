@@ -5,4 +5,4 @@
  * @author jvanderwal
  *
  */
-package integration.tests.dom;
+package org.estatio.dscm.integtests.dom;
