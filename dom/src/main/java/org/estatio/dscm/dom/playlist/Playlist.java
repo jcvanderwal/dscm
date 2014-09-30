@@ -37,6 +37,7 @@ import com.google.common.collect.ComparisonChain;
 
 import org.apache.commons.lang3.ObjectUtils;
 
+import org.estatio.dscm.DscmDashboard;
 import org.estatio.dscm.dom.asset.Asset;
 import org.estatio.dscm.dom.asset.Assets;
 import org.estatio.dscm.dom.display.DisplayGroup;
@@ -288,7 +289,7 @@ public class Playlist extends AbstractContainedObject implements Comparable<Play
             @Named("Are you sure?") Boolean confirm) {
         if (confirm) {
             doRemove();
-            return null;
+            return newViewModelInstance(DscmDashboard.class, "dashboard");
         }
         return this;
     }

@@ -15,7 +15,10 @@ datanucleus.log
 *.log
 *.lck
 .checkstyle-cachefile
-
+dom/bin/
+fixture/bin/
+integtests/bin/
+webapp/bin/
 
 # os specific files
 .DS_Store

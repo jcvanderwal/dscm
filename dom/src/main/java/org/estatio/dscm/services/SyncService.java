@@ -53,6 +53,7 @@ import org.estatio.dscm.dom.publisher.Publishers;
 import org.joda.time.LocalDateTime;
 import org.apache.commons.io.FileUtils;
 
+import org.apache.isis.applib.AbstractContainedObject;
 import org.apache.isis.applib.annotation.DomainService;
 import org.apache.isis.applib.annotation.Named;
 import org.apache.isis.applib.annotation.Programmatic;
@@ -61,7 +62,7 @@ import org.apache.isis.applib.value.Blob;
 
 @DomainService
 @Named("Administration")
-public class SyncService {
+public class SyncService extends AbstractContainedObject {
 
     private Map<String, String> properties;
 
@@ -76,7 +77,7 @@ public class SyncService {
         this.properties = properties;
     }
 
-    public void synchronizeNow(DisplayGroup displayGroup) {
+    public Object synchronizeNow(DisplayGroup displayGroup) {
         final String path = properties.get("dscm.server.path");
         path.toLowerCase();
         Runtime rt = Runtime.getRuntime();
@@ -97,6 +98,8 @@ public class SyncService {
         for (Display display : displayGroup.getDisplays()) {
             syncPlaylist(display, path);
         }
+        
+        return newViewModelInstance(DscmDashboard.class, "dashboard");
     }
 
     @Programmatic

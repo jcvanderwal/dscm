@@ -22,12 +22,16 @@ import javax.jdo.annotations.Column;
 import javax.jdo.annotations.IdentityType;
 import javax.jdo.annotations.VersionStrategy;
 
+import org.apache.isis.applib.AbstractDomainObject;
 import org.apache.isis.applib.annotation.Bookmarkable;
 import org.apache.isis.applib.annotation.Immutable;
 import org.apache.isis.applib.annotation.MemberOrder;
 import org.apache.isis.applib.annotation.Named;
+import org.apache.isis.applib.annotation.Programmatic;
 import org.apache.isis.applib.annotation.Title;
 import org.apache.isis.applib.util.ObjectContracts;
+
+import org.estatio.dscm.DscmDashboard;
 
 @javax.jdo.annotations.PersistenceCapable(
         identityType = IdentityType.DATASTORE)
@@ -75,6 +79,7 @@ public class Display implements Comparable<Display> {
     public DisplayGroup default0ChangeDisplayGroup(final DisplayGroup displayGroup) {
         return getDisplayGroup();
     }
+    
     
     // //////////////////////////////////////
 
