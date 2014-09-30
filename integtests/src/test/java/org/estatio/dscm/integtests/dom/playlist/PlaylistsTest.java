@@ -42,7 +42,7 @@ import org.junit.BeforeClass;
 import org.junit.Ignore;
 import org.junit.Test;
 
-@Ignore("Causing (so far) inexplicable trouble with heap space on Jenkins, preventing deployment. See DSCM-20")
+//@Ignore("Causing (so far) inexplicable trouble with heap space on Jenkins, preventing deployment. See DSCM-20")
 public class PlaylistsTest extends DscmIntegTest {
 
     @Inject
