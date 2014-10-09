@@ -25,9 +25,7 @@ import java.io.FileOutputStream;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.OutputStream;
 import java.io.PrintStream;
-import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -36,29 +34,31 @@ import javax.activation.MimetypesFileTypeMap;
 import javax.annotation.PostConstruct;
 import javax.inject.Inject;
 
+import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
+import org.joda.time.LocalDateTime;
+
+import org.apache.isis.applib.AbstractContainedObject;
+import org.apache.isis.applib.annotation.DomainService;
+import org.apache.isis.applib.annotation.Hidden;
+import org.apache.isis.applib.annotation.Named;
+import org.apache.isis.applib.annotation.Programmatic;
+import org.apache.isis.applib.services.background.BackgroundService;
+import org.apache.isis.applib.services.clock.ClockService;
+import org.apache.isis.applib.value.Blob;
 
 import org.estatio.dscm.DscmDashboard;
 import org.estatio.dscm.dom.asset.Asset;
 import org.estatio.dscm.dom.asset.Assets;
 import org.estatio.dscm.dom.display.Display;
 import org.estatio.dscm.dom.display.DisplayGroup;
+import org.estatio.dscm.dom.display.DisplayGroups;
 import org.estatio.dscm.dom.playlist.Playlist;
 import org.estatio.dscm.dom.playlist.PlaylistItem;
 import org.estatio.dscm.dom.playlist.PlaylistType;
 import org.estatio.dscm.dom.playlist.Playlists;
 import org.estatio.dscm.dom.publisher.Publisher;
 import org.estatio.dscm.dom.publisher.Publishers;
-
-import org.joda.time.LocalDateTime;
-import org.apache.commons.io.FileUtils;
-
-import org.apache.isis.applib.AbstractContainedObject;
-import org.apache.isis.applib.annotation.DomainService;
-import org.apache.isis.applib.annotation.Named;
-import org.apache.isis.applib.annotation.Programmatic;
-import org.apache.isis.applib.services.clock.ClockService;
-import org.apache.isis.applib.value.Blob;
 
 @DomainService
 @Named("Administration")
@@ -75,6 +75,13 @@ public class SyncService extends AbstractContainedObject {
     @PostConstruct
     public void init(final Map<String, String> properties) {
         this.properties = properties;
+    }
+
+    @Hidden
+    public void synchronizeNowScheduled() {
+        for (DisplayGroup displayGroup : displayGroups.allDisplayGroups()) {
+            backgroundService.execute(this).synchronizeNow(displayGroup);
+        }
     }
 
     public Object synchronizeNow(DisplayGroup displayGroup) {
@@ -98,7 +105,7 @@ public class SyncService extends AbstractContainedObject {
         for (Display display : displayGroup.getDisplays()) {
             syncPlaylist(display, path);
         }
-        
+
         return newViewModelInstance(DscmDashboard.class, "dashboard");
     }
 
@@ -125,16 +132,14 @@ public class SyncService extends AbstractContainedObject {
 
     @Programmatic
     public void removePlaylists(Display display, String path) {
-        
+
         String removePath = path.concat("/displays/").concat(display.getName()).concat("/playlists/");
-        File f = new File(removePath);
-        if (f.exists() && f.isDirectory()) {
-            try {
-                FileUtils.cleanDirectory(f);
-            } catch (IOException e1) {
-                // TODO Auto-generated catch block
-                e1.printStackTrace();
-            }
+
+        try {
+            FileUtils.cleanDirectory(new File(removePath));
+        } catch (IOException e1) {
+            // TODO Auto-generated catch block
+            e1.printStackTrace();
         }
     }
 
@@ -301,19 +306,16 @@ public class SyncService extends AbstractContainedObject {
             }
         }
     }
-    
+
     @Programmatic
     public void removeDisplayAssets(Display display, String path) {
         String removePath = path.concat("/displays/").concat(display.getName()).concat("/assets/");
 
-        File f = new File(removePath);
-        if (f.exists() && f.isDirectory()) {
-            try {
-                FileUtils.cleanDirectory(f);
-            } catch (IOException e1) {
-                // TODO Auto-generated catch block
-                e1.printStackTrace();
-            }
+        try {
+            FileUtils.cleanDirectory(new File(removePath));
+        } catch (IOException e1) {
+            // TODO Auto-generated catch block
+            e1.printStackTrace();
         }
     }
 
@@ -356,4 +358,10 @@ public class SyncService extends AbstractContainedObject {
     @Inject
     private Playlists playlists;
 
+    @Inject
+    private DisplayGroups displayGroups;
+
+    @Inject
+    private BackgroundService backgroundService;
+    
 }

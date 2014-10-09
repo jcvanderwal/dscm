@@ -16,4 +16,5 @@
 <stringAttribute key="org.eclipse.jdt.launching.MAIN_TYPE" value="org.apache.isis.WebServer"/>
 <stringAttribute key="org.eclipse.jdt.launching.PROGRAM_ARGUMENTS" value="--port 8080 -D isis.persistor.datanucleus.install-fixtures=true --type SERVER_PROTOTYPE"/>
 <stringAttribute key="org.eclipse.jdt.launching.PROJECT_ATTR" value="dscm-webapp"/>
+<stringAttribute key="org.eclipse.jdt.launching.SOURCE_PATH_PROVIDER" value="org.eclipse.m2e.launchconfig.sourcepathProvider"/>
 </launchConfiguration>
