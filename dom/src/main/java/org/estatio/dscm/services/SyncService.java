@@ -127,12 +127,14 @@ public class SyncService extends AbstractContainedObject {
     public void removePlaylists(Display display, String path) {
         
         String removePath = path.concat("/displays/").concat(display.getName()).concat("/playlists/");
-
-        try {
-            FileUtils.cleanDirectory(new File(removePath));
-        } catch (IOException e1) {
-            // TODO Auto-generated catch block
-            e1.printStackTrace();
+        File f = new File(removePath);
+        if (f.exists() && f.isDirectory()) {
+            try {
+                FileUtils.cleanDirectory(f);
+            } catch (IOException e1) {
+                // TODO Auto-generated catch block
+                e1.printStackTrace();
+            }
         }
     }
 
@@ -304,11 +306,14 @@ public class SyncService extends AbstractContainedObject {
     public void removeDisplayAssets(Display display, String path) {
         String removePath = path.concat("/displays/").concat(display.getName()).concat("/assets/");
 
-        try {
-            FileUtils.cleanDirectory(new File(removePath));
-        } catch (IOException e1) {
-            // TODO Auto-generated catch block
-            e1.printStackTrace();
+        File f = new File(removePath);
+        if (f.exists() && f.isDirectory()) {
+            try {
+                FileUtils.cleanDirectory(f);
+            } catch (IOException e1) {
+                // TODO Auto-generated catch block
+                e1.printStackTrace();
+            }
         }
     }
 

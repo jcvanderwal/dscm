@@ -296,7 +296,8 @@ public class Playlist extends AbstractContainedObject implements Comparable<Play
 
     public String disableRemove(
             @Named("Are you sure?") Boolean confirm) {
-        if (playlists.findByDisplayGroupAndType(displayGroup, type).size() == 1) {
+        if (playlists.findByDisplayGroupAndType(displayGroup, type).size() == 1 &&
+            !getContainer().getUser().hasRole(".*admin_role")) {
             return "This is the only " + type.toString().toLowerCase() + " playlist of display group " + displayGroup.getName();
         } else {
             return null;
