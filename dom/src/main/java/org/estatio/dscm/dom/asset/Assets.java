@@ -21,11 +21,6 @@ package org.estatio.dscm.dom.asset;
 import java.math.BigDecimal;
 import java.util.List;
 
-import org.estatio.dscm.EstatioDomainService;
-import org.estatio.dscm.dom.display.DisplayGroup;
-import org.estatio.dscm.dom.publisher.Publisher;
-import org.joda.time.LocalDate;
-
 import org.apache.isis.applib.DomainObjectContainer;
 import org.apache.isis.applib.annotation.ActionSemantics;
 import org.apache.isis.applib.annotation.ActionSemantics.Of;
@@ -38,89 +33,94 @@ import org.apache.isis.applib.annotation.Programmatic;
 import org.apache.isis.applib.query.QueryDefault;
 import org.apache.isis.applib.services.clock.ClockService;
 import org.apache.isis.applib.value.Blob;
+import org.estatio.dscm.EstatioDomainService;
+import org.estatio.dscm.dom.display.DisplayGroup;
+import org.estatio.dscm.dom.publisher.Publisher;
+import org.joda.time.LocalDate;
 
 @DomainService
 public class Assets extends EstatioDomainService<Asset> {
 
-    public Assets() {
-        super(Assets.class, Asset.class);
-    }
+	public Assets() {
+		super(Assets.class, Asset.class);
+	}
 
-    public String getId() {
-        return "asset";
-    }
+	public String getId() {
+		return "asset";
+	}
 
-    public String iconName() {
-        return "Asset";
-    }
+	public String iconName() {
+		return "Asset";
+	}
 
-    @Bookmarkable
-    @ActionSemantics(Of.SAFE)
-    @MemberOrder(sequence = "1")
-    public List<Asset> allAssets() {
-        return getContainer().allMatches(new QueryDefault<Asset>(Asset.class, "findAll"));
-    }
+	@Bookmarkable
+	@ActionSemantics(Of.SAFE)
+	@MemberOrder(sequence = "1")
+	public List<Asset> allAssets() {
+		return getContainer().allMatches(
+				new QueryDefault<Asset>(Asset.class, "findAll"));
+	}
 
-    // //////////////////////////////////////
-    // Create (action)
-    // //////////////////////////////////////
+	// //////////////////////////////////////
+	// Create (action)
+	// //////////////////////////////////////
 
-    @MemberOrder(sequence = "2")
-    public Asset newAsset(
-            final @Named("File") Blob file,
-            final Publisher publisher,
-            final DisplayGroup displayGroup,
-            final @Named("Start date") LocalDate startDate,
-            final @Named("Expiry date") @Optional LocalDate expiryDate,
-            final @Named("Duration (seconds)") BigDecimal duration) {
-        final Asset obj = container.newTransientInstance(Asset.class);
-        obj.setName(file.getName());
-        obj.setDuration(duration);
-        obj.setPublisher(publisher);
-        obj.setStartDate(startDate);
-        obj.setExpiryDate(expiryDate);
-        obj.setFile(file);
-        container.persistIfNotAlready(obj);
-        return obj;
-    }
+	@MemberOrder(sequence = "2")
+	public Asset newAsset(final @Named("File") Blob file,
+			final Publisher publisher, final DisplayGroup displayGroup,
+			final @Named("Start date") LocalDate startDate,
+			final @Named("Expiry date") @Optional LocalDate expiryDate,
+			final @Named("Duration (seconds)") BigDecimal duration) {
+		final Asset obj = container.newTransientInstance(Asset.class);
+		obj.setName(file.getName());
+		obj.setDuration(duration);
+		obj.setPublisher(publisher);
+		obj.setStartDate(startDate);
+		obj.setExpiryDate(expiryDate);
+		obj.setFile(file);
+		container.persistIfNotAlready(obj);
+		return obj;
+	}
 
-    public LocalDate default3NewAsset() {
-        return clockService.now();
-    }
+	public LocalDate default3NewAsset() {
+		return clockService.now();
+	}
 
-    public String validateNewAsset(
-            final Blob file,
-            final Publisher publisher,
-            final DisplayGroup displayGroup,
-            final LocalDate startDate,
-            final LocalDate expiryDate,
-            final BigDecimal duration) {
-        if (findAssetByName(file.getName()) != null) {
-            return "A file with this name is already uploaded.";
-        }
-        
-        return null;
-    }
+	public String validateNewAsset(
+			final Blob file, 
+			final Publisher publisher,
+			final DisplayGroup displayGroup, 
+			final LocalDate startDate,
+			final LocalDate expiryDate, 
+			final BigDecimal duration) {
+		if (expiryDate != null && expiryDate.isBefore(startDate)) {
+			return "Exipry date cannot be before start date";
+		}
+		if (findAssetByName(file.getName()) != null) {
+			return "A file with this name is already uploaded.";
+		}
+		return null;
+	}
 
-    // //////////////////////////////////////
+	// //////////////////////////////////////
 
-    @Programmatic
-    public Asset findAssetByName(final String name) {
-        return firstMatch("findByName", "name", name);
-    }
+	@Programmatic
+	public Asset findAssetByName(final String name) {
+		return firstMatch("findByName", "name", name);
+	}
 
-    @Programmatic
-    public List<Asset> findAssetByDisplaygroup(final DisplayGroup displayGroup) {
-        return allMatches("findByDisplayGroup", "displayGroup", displayGroup);
-    }
+	@Programmatic
+	public List<Asset> findAssetByDisplaygroup(final DisplayGroup displayGroup) {
+		return allMatches("findByDisplayGroup", "displayGroup", displayGroup);
+	}
 
-    // //////////////////////////////////////
-    // Injected services
-    // //////////////////////////////////////
+	// //////////////////////////////////////
+	// Injected services
+	// //////////////////////////////////////
 
-    @javax.inject.Inject
-    DomainObjectContainer container;
+	@javax.inject.Inject
+	DomainObjectContainer container;
 
-    @javax.inject.Inject
-    ClockService clockService;
+	@javax.inject.Inject
+	ClockService clockService;
 }
