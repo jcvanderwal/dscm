@@ -242,12 +242,5 @@ public class Asset extends AbstractDomainObject implements Comparable<Asset> {
 		}
 		return null;
 	}
-	
-	public void testString(final @Named("Test") String hello){
-		
-	}
 
-	public void testLocalDate(final @Named("Test") LocalDate hello){
-		
-	}
 }
