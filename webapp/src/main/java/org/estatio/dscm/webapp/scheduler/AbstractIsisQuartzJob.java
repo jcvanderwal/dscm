@@ -16,17 +16,16 @@
  */
 package org.estatio.dscm.webapp.scheduler;
 
-import com.google.common.base.Splitter;
-import com.google.common.collect.Iterables;
-
-import org.quartz.Job;
-import org.quartz.JobExecutionContext;
-import org.quartz.JobExecutionException;
-
 import org.apache.isis.core.commons.authentication.AuthenticationSession;
 import org.apache.isis.core.runtime.authentication.standard.SimpleSession;
 import org.apache.isis.core.runtime.sessiontemplate.AbstractIsisSessionTemplate;
 import org.apache.isis.core.runtime.system.session.IsisSession;
+import org.quartz.Job;
+import org.quartz.JobExecutionContext;
+import org.quartz.JobExecutionException;
+
+import com.google.common.base.Splitter;
+import com.google.common.collect.Iterables;
 
 public class AbstractIsisQuartzJob implements Job {
 
