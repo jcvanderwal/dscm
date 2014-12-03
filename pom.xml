@@ -37,7 +37,7 @@
         <isis-viewer-wicket.version>1.7.0</isis-viewer-wicket.version>
 
         <isis-module-audit.version>1.7.0</isis-module-audit.version>
-        <isis-module-command.version>1.7.0</isis-module-command.version>
+        <isis-module-command.version>1.7.1-SNAPSHOT</isis-module-command.version>
         <isis-module-devutils.version>1.7.0</isis-module-devutils.version>
         <isis-module-excel.version>1.7.0</isis-module-excel.version>
         <isis-module-publishing.version>1.7.0</isis-module-publishing.version>
@@ -375,6 +375,24 @@
             <build>
                 <directory>target-ide</directory>
             </build>
+        </profile>
+        <profile>
+             <id>cloudbees-snapshots</id>
+             <activation>
+                 <activeByDefault>true</activeByDefault>
+             </activation>
+             <repositories>
+                 <repository>
+                     <id>snapshots-repo</id>
+                     <url>http://repository-estatio.forge.cloudbees.com/snapshot/</url>
+                     <releases>
+                         <enabled>false</enabled>
+                     </releases>
+                     <snapshots>
+                         <enabled>true</enabled>
+                     </snapshots>
+                 </repository>
+             </repositories>
         </profile>
     </profiles>
 

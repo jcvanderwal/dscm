@@ -26,7 +26,10 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.PrintStream;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.List;
 import java.util.Map;
 
@@ -43,8 +46,12 @@ import org.apache.isis.applib.annotation.DomainService;
 import org.apache.isis.applib.annotation.Hidden;
 import org.apache.isis.applib.annotation.Named;
 import org.apache.isis.applib.annotation.Programmatic;
+import org.apache.isis.applib.services.background.ActionInvocationMemento;
+import org.apache.isis.applib.services.background.BackgroundCommandService;
 import org.apache.isis.applib.services.background.BackgroundService;
 import org.apache.isis.applib.services.clock.ClockService;
+import org.apache.isis.applib.services.command.Command;
+import org.apache.isis.applib.services.memento.MementoService;
 import org.apache.isis.applib.value.Blob;
 
 import org.estatio.dscm.DscmDashboard;
@@ -62,7 +69,7 @@ import org.estatio.dscm.dom.publisher.Publishers;
 
 @DomainService
 @Named("Administration")
-public class SyncService extends AbstractContainedObject {
+public class SyncService extends AbstractContainedObject implements BackgroundCommandService {
 
     private Map<String, String> properties;
 
@@ -77,11 +84,24 @@ public class SyncService extends AbstractContainedObject {
         this.properties = properties;
     }
 
+    /*
     @Hidden
     public void synchronizeNowScheduled() {
         for (DisplayGroup displayGroup : displayGroups.allDisplayGroups()) {
             backgroundService.execute(this).synchronizeNow(displayGroup);
         }
+    }
+    */
+    
+    @Hidden
+    public void quartzTester() {
+        backgroundService.execute(this).printText();
+    }
+
+    private void printText() {
+        DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
+        Calendar cal = Calendar.getInstance();
+        System.out.println("Het is nu " + dateFormat.format(cal.getTime()));
     }
 
     public Object synchronizeNow(DisplayGroup displayGroup) {
@@ -360,8 +380,13 @@ public class SyncService extends AbstractContainedObject {
 
     @Inject
     private DisplayGroups displayGroups;
-
+    
     @Inject
     private BackgroundService backgroundService;
+
+    @Override
+    public void schedule(ActionInvocationMemento arg0, Command arg1, String arg2, String arg3, String arg4) {
+        
+    }
     
 }

@@ -191,14 +191,25 @@
 		<dependency>
 			<groupId>org.isisaddons.module.command</groupId>
 			<artifactId>isis-module-command-dom</artifactId>
-			<version>1.7.0</version>
+			<version>${isis-module-command.version}</version>
 		</dependency>
 
-		<dependency>
-			<groupId>org.quartz-scheduler</groupId>
-			<artifactId>quartz</artifactId>
-			<version>2.2.1</version>
-		</dependency>
+        <dependency>
+            <groupId>org.apache.isis.module</groupId>
+            <artifactId>isis-module-background</artifactId>
+            <version>1.6.0</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.quartz-scheduler</groupId>
+            <artifactId>quartz</artifactId>
+            <version>2.2.1</version>
+        </dependency>
+        <dependency>
+            <groupId>org.quartz-scheduler</groupId>
+            <artifactId>quartz-jobs</artifactId>
+            <version>2.2.1</version>
+        </dependency>
 
 		<!-- isis core -->
 		<dependency>
@@ -260,5 +271,27 @@
 		</dependency>
 
 	</dependencies>
+
+     <profiles>
+         <profile>
+             <id>cloudbees-snapshots</id>
+             <activation>
+                 <activeByDefault>true</activeByDefault>
+             </activation>
+             <repositories>
+                 <repository>
+                     <id>snapshots-repo</id>
+                     <url>http://repository-estatio.forge.cloudbees.com/snapshot/</url>
+                     <releases>
+                         <enabled>false</enabled>
+                     </releases>
+                     <snapshots>
+                         <enabled>true</enabled>
+                     </snapshots>
+                 </repository>
+             </repositories>
+         </profile>
+     </profiles>
+
 
 </project>
