@@ -26,10 +26,10 @@ http://www.quartz-scheduler.org/xml/job_scheduling_data_1_8.xsd"
 
 	<schedule>
 		<job>
-			<name>BackgroundCommandExecutionJob</name>
+			<name>SyncServiceJob</name>
 			<group>Isis</group>
 			<description>Poll and execute any background actions persisted by the BackgroundActionServiceJdo domain service</description>
-			<job-class>org.estatio.dscm.webapp.scheduler.BackgroundCommandExecutionQuartzJob</job-class>
+			<job-class>org.estatio.dscm.webapp.scheduler.SyncServiceJob</job-class>
 			<job-data-map>
 				<entry>
 					<key>org.estatio.dscm.webapp.scheduler.user</key>
@@ -48,13 +48,13 @@ http://www.quartz-scheduler.org/xml/job_scheduling_data_1_8.xsd"
 	 	-->
 		<trigger>
 			<cron>
-				<name>BackgroundCommandExecutionJobEveryTenSeconds</name>
-				<job-name>BackgroundCommandExecutionJob</job-name>
+				<name>SyncServiceJobEveryTenSeconds</name>
+				<job-name>SyncServiceJob</job-name>
 				<job-group>Isis</job-group>
                 <!-- 
 				<cron-expression>0 1 * * * ?</cron-expression>
                  -->
-				<cron-expression>0 0/2 * * * ?</cron-expression>
+				<cron-expression>0/10 * * * * ?</cron-expression>
 			</cron>
 		</trigger>
 

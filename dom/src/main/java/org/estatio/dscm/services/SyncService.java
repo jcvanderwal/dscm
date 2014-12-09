@@ -46,12 +46,9 @@ import org.apache.isis.applib.annotation.DomainService;
 import org.apache.isis.applib.annotation.Hidden;
 import org.apache.isis.applib.annotation.Named;
 import org.apache.isis.applib.annotation.Programmatic;
-import org.apache.isis.applib.services.background.ActionInvocationMemento;
-import org.apache.isis.applib.services.background.BackgroundCommandService;
 import org.apache.isis.applib.services.background.BackgroundService;
 import org.apache.isis.applib.services.clock.ClockService;
-import org.apache.isis.applib.services.command.Command;
-import org.apache.isis.applib.services.memento.MementoService;
+import org.apache.isis.applib.services.command.CommandContext;
 import org.apache.isis.applib.value.Blob;
 
 import org.estatio.dscm.DscmDashboard;
@@ -66,10 +63,11 @@ import org.estatio.dscm.dom.playlist.PlaylistType;
 import org.estatio.dscm.dom.playlist.Playlists;
 import org.estatio.dscm.dom.publisher.Publisher;
 import org.estatio.dscm.dom.publisher.Publishers;
+//import org.apache.isis.applib.services.command.Command;
 
 @DomainService
 @Named("Administration")
-public class SyncService extends AbstractContainedObject implements BackgroundCommandService {
+public class SyncService extends AbstractContainedObject {
 
     private Map<String, String> properties;
 
@@ -84,26 +82,37 @@ public class SyncService extends AbstractContainedObject implements BackgroundCo
         this.properties = properties;
     }
 
-    /*
     @Hidden
     public void synchronizeNowScheduled() {
         for (DisplayGroup displayGroup : displayGroups.allDisplayGroups()) {
-            backgroundService.execute(this).synchronizeNow(displayGroup);
+            synchronizeNowProgrammatic(displayGroup);
         }
     }
-    */
-    
+
     @Hidden
-    public void quartzTester() {
-        backgroundService.execute(this).printText();
-    }
+    public void synchronizeNowProgrammatic(DisplayGroup displayGroup) {
+        final String path = properties.get("dscm.server.path");
+        path.toLowerCase();
+        Runtime rt = Runtime.getRuntime();
 
-    private void printText() {
-        DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
-        Calendar cal = Calendar.getInstance();
-        System.out.println("Het is nu " + dateFormat.format(cal.getTime()));
-    }
+        for (Display display : displayGroup.getDisplays()) {
+            removePlaylists(display, path);
+            removeDisplayAssets(display, path);
+        }
 
+        for (Playlist playlist : playlists.findByDisplayGroupAndType(displayGroup, PlaylistType.MAIN)) {
+            for (Display display : displayGroup.getDisplays()) {
+                for (LocalDateTime dateTime : playlist.nextOccurences(clockService.now().plusDays(7))) {
+                    writePlaylist(display, dateTime, effectiveItems(playlist, dateTime), rt);
+                }
+            }
+        }
+
+        for (Display display : displayGroup.getDisplays()) {
+            syncPlaylist(display, path);
+        }
+    }
+    
     public Object synchronizeNow(DisplayGroup displayGroup) {
         final String path = properties.get("dscm.server.path");
         path.toLowerCase();
@@ -383,10 +392,8 @@ public class SyncService extends AbstractContainedObject implements BackgroundCo
     
     @Inject
     private BackgroundService backgroundService;
-
-    @Override
-    public void schedule(ActionInvocationMemento arg0, Command arg1, String arg2, String arg3, String arg4) {
-        
-    }
     
+    @SuppressWarnings("unused")
+    @Inject
+    private CommandContext commandContext;
 }
