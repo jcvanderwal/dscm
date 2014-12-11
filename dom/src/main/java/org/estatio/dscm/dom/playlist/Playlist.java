@@ -96,6 +96,11 @@ import org.apache.isis.applib.util.TitleBuffer;
         @javax.jdo.annotations.Query(name = "findByDisplayGroupAndType", language = "JDOQL",
                 value = "SELECT FROM org.estatio.dscm.dom.playlist.Playlist "
                         + "WHERE displayGroup == :displayGroup "
+                        + "&& type == :type"),
+        @javax.jdo.annotations.Query(name = "findByDisplayGroupAndTimeAndType", language = "JDOQL",
+                value = "SELECT FROM org.estatio.dscm.dom.playlist.Playlist "
+                        + "WHERE displayGroup == :displayGroup "
+                        + "&& startTime == :time "
                         + "&& type == :type")
 })
 @javax.jdo.annotations.Unique(name = "Playlist_displayGroup_startDate_startTime_type_UNQ", members = "displayGroup,startDate,startTime,type")

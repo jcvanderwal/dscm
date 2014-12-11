@@ -19,10 +19,12 @@
 package org.estatio.dscm.dom.playlist;
 
 import java.math.BigDecimal;
+import java.rmi.dgc.DGC;
 import java.util.List;
 
 import org.estatio.dscm.EstatioDomainService;
 import org.estatio.dscm.dom.display.DisplayGroup;
+
 import org.joda.time.LocalDate;
 import org.joda.time.LocalTime;
 
@@ -99,6 +101,17 @@ public class Playlists extends EstatioDomainService<Playlist> {
     }
 
     // //////////////////////////////////////
+    
+    @Programmatic
+    public Playlist findByDisplayGroupAndTimeAndType(
+            final DisplayGroup displayGroup,
+            final LocalTime time,
+            final PlaylistType type) {
+        return firstMatch("findByDisplayGroupAndTimeAndType", 
+                "displayGroup", displayGroup,
+                "time", time,
+                "type", type);
+    }
 
     @MemberOrder(sequence = "2")
     public Playlist newPlaylist(
@@ -121,6 +134,18 @@ public class Playlists extends EstatioDomainService<Playlist> {
         return obj;
     }
 
+    public String validateNewPlaylist(
+            final DisplayGroup displayGroup,
+            final PlaylistType type,
+            final LocalDate startDate,
+            final Time startTime,
+            final LocalDate endDate,
+            final PlaylistRepeat repeat,
+            final BigDecimal loopDuration) {
+        final Boolean exists = findByDisplayGroupAndTimeAndType(displayGroup, startTime.time(), type) == null ? false : true;
+        return exists ? "The selected display group already has a playlist of this type with this start time" : null;
+    }
+    
     public LocalDate default2NewPlaylist() {
         return getClockService().now();
     }
