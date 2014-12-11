@@ -29,4 +29,9 @@ public enum Time {
         return a.concat(":").concat(b);
     }
 
+    public static Time localTimeToTime(LocalTime time) {
+        final String asString = time.toString();
+        final String toEnum = "T".concat(asString.substring(0, 2)).concat(asString.substring(3, 5));
+        return Time.valueOf(Time.class, toEnum);
+    }
 }

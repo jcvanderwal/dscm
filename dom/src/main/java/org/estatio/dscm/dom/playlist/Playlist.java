@@ -230,7 +230,8 @@ public class Playlist extends AbstractContainedObject implements Comparable<Play
     @MemberOrder(sequence = "9")
     public String getNextOccurences() {
         StringBuilder builder = new StringBuilder();
-        for (LocalDateTime occurence : nextOccurences(clockService.now().plusDays(7))) {
+        LocalDate fromDate = clockService.now().compareTo(this.getStartDate()) >= 0 ? clockService.now() : this.getStartDate();
+        for (LocalDateTime occurence : nextOccurences(fromDate.plusDays(7))) {
             builder.append(occurence.toString("yyyy-MM-dd HH:mm"));
             builder.append("\n");
         }
@@ -242,6 +243,7 @@ public class Playlist extends AbstractContainedObject implements Comparable<Play
         List<LocalDateTime> nextList = new ArrayList<LocalDateTime>();
         final LocalDate start = getStartDate().isBefore(clockService.now()) ? clockService.now() : getStartDate();
         final LocalDate end = ObjectUtils.min(endDate, getEndDate());
+        
         if (end.compareTo(start) >= 0 && end.compareTo(clockService.now()) >= 0) {
             List<Interval> intervals = CalendarUtils.intervalsInRange(
                     start,
@@ -255,6 +257,7 @@ public class Playlist extends AbstractContainedObject implements Comparable<Play
                         withMinuteOfHour(getStartTime().getMinuteOfHour()));
             }
         }
+
         return nextList;
     }
 
@@ -283,6 +286,29 @@ public class Playlist extends AbstractContainedObject implements Comparable<Play
         return assets.findAssetByDisplaygroup(getDisplayGroup());
     }
 
+    // //////////////////////////////////////
+    
+    public Playlist endAndCreateNewPlaylist(
+            final @Named("Start date") LocalDate newDate, 
+            final @Named("Loop duration") BigDecimal newLoopDuration) {
+        DisplayGroup newDisplayGroup = this.getDisplayGroup();
+        PlaylistType newType = this.getType();
+        Time newTime = Time.localTimeToTime(this.getStartTime());
+        PlaylistRepeat newRepeat = PlaylistRepeat.stringToPlaylistRepeat(this.getRepeatRule());
+        Playlist newPlaylist = playlists.newPlaylist(
+                newDisplayGroup,
+                newType,
+                newDate,
+                newTime,
+                null,
+                newRepeat,
+                newLoopDuration);
+
+        this.setEndDate(newDate);
+        
+        return newPlaylist;
+    }
+    
     // //////////////////////////////////////
 
     public Object remove(

@@ -5,9 +5,11 @@ import static org.junit.Assert.assertThat;
 
 import java.util.List;
 
+import org.joda.time.Duration;
 import org.joda.time.LocalDate;
 import org.joda.time.LocalDateTime;
 import org.joda.time.LocalTime;
+import org.joda.time.Period;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -75,4 +77,11 @@ public class PlaylistTest_nextOccurences {
         assertThat(nextOccurences.size(), is(0));
     }
 
+    @Test
+    public void difference() throws Exception {
+        LocalDate one = new LocalDate(2014, 1, 1);
+        LocalDate two = new LocalDate(2014, 1, 4);
+        Period p = Period.fieldDifference(one, two);
+        assertThat(p.getDays(), is(3));
+    }
 }

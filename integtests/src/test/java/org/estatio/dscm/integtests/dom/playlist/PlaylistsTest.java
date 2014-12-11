@@ -19,9 +19,14 @@
 package org.estatio.dscm.integtests.dom.playlist;
 
 import static org.hamcrest.CoreMatchers.is;
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertThat;
+
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.inject.Inject;
 
@@ -36,7 +41,9 @@ import org.estatio.dscm.fixture.playlist.PlaylistsAndItems;
 import org.estatio.dscm.integtests.DscmIntegTest;
 
 import org.joda.time.LocalDate;
+import org.joda.time.LocalDateTime;
 import org.joda.time.LocalTime;
+import org.joda.time.Period;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Ignore;
@@ -80,6 +87,38 @@ public class PlaylistsTest extends DscmIntegTest {
     }
 
     @Test
+    public void testNextOccurrences() throws Exception {
+        Playlist playlist = playlistFor(new LocalDate(2014, 7, 14), new LocalTime("14:00"));
+        List<LocalDateTime> nextOccurrences = generateNextOccurrencesForTests(playlist.getStartDate(), playlist.getStartTime(), playlist.getEndDate());
+        
+        assertThat(nextOccurrences.size(), is(7));
+        assertThat(nextOccurrences.get(0), is(new LocalDateTime(1980, 1, 1, 13, 0, 0, 0)));
+        assertThat(nextOccurrences.get(1), is(new LocalDateTime(1980, 1, 2, 13, 0, 0, 0)));
+    }
+    
+    @Test
+    public void testEndPlaylist() throws Exception {
+        // If current playlist ends and new one is created
+        LocalDate newDate = new LocalDate().plusDays(5);
+        BigDecimal newLoopDuration = new BigDecimal(60);
+        Playlist oldPlaylist = playlists.findByDisplayGroupAndDateTimeAndType(displayGroup, new LocalDate(1980, 1, 1), new LocalTime("13:00"), PlaylistType.MAIN);
+        Playlist newPlaylist = oldPlaylist.endAndCreateNewPlaylist(newDate, newLoopDuration);
+        
+        
+        // Then assert old playlist end date
+        assertThat(oldPlaylist.getEndDate(), is(newDate));
+        
+        // And assert new playlist start date
+        assertThat(newPlaylist.getStartDate(), is(newDate));
+        assertNull(newPlaylist.getEndDate());
+        assertThat(newPlaylist.getStartTime(), is(oldPlaylist.getStartTime()));
+        
+        // And assert that next occurrences are correct
+        List<LocalDateTime> nextOccurrences = generateNextOccurrencesForTests(newPlaylist.getStartDate(), newPlaylist.getStartTime(), newPlaylist.getEndDate());
+        assertEquals(nextOccurencesToString(nextOccurrences), newPlaylist.getNextOccurences());
+    }
+    
+    @Test
     public void testCompareTo() throws Exception {
         Playlist mainPlayList = playlists.findByDisplayGroupAndDateTimeAndType(displayGroup, new LocalDate(1980, 1, 1), new LocalTime("13:00"), PlaylistType.MAIN);
         Playlist compareTo = playlists.newPlaylist(displayGroup, PlaylistType.FILLERS,
@@ -96,4 +135,28 @@ public class PlaylistsTest extends DscmIntegTest {
         return playlists.findByDisplayGroupAndDateTimeAndType(displayGroup, date, time, PlaylistType.FILLERS);
     }
 
-}
+    private List<LocalDateTime> generateNextOccurrencesForTests (LocalDate startDate, LocalTime startTime, LocalDate endDate) {
+        List<LocalDateTime> nextOccurrences = new ArrayList<LocalDateTime>();
+        int max = 7;
+        
+        if (endDate != null) {
+            max = Period.fieldDifference(startDate, endDate).getDays() < 7 ? Period.fieldDifference(startDate, endDate).getDays() : 7;
+        }
+        
+        for (int i = 0; i < max; i++) {
+            nextOccurrences.add(startDate.plusDays(i).toLocalDateTime(startTime));
+        }
+        
+        return nextOccurrences;
+    }
+    
+    private String nextOccurencesToString(List<LocalDateTime> nextOccurrences) {
+        StringBuilder builder = new StringBuilder();
+        for (LocalDateTime occurence : nextOccurrences) {
+            builder.append(occurence.toString("yyyy-MM-dd HH:mm"));
+            builder.append("\n");
+        }
+        
+        return builder.toString();
+    }
+} 

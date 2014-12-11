@@ -19,4 +19,14 @@ public enum PlaylistRepeat {
     public String title() {
         return this.name();
     }
+    
+    public static PlaylistRepeat stringToPlaylistRepeat(String rule) {
+        for (PlaylistRepeat e : PlaylistRepeat.values()) {
+            if (rule == e.rrule()) {
+                return e;
+            }
+        }
+        
+        return null;
+    }
 }
