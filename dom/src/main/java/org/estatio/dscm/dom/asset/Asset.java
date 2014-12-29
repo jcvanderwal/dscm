@@ -41,6 +41,7 @@ import org.apache.isis.applib.annotation.Title;
 import org.apache.isis.applib.util.ObjectContracts;
 import org.apache.isis.applib.value.Blob;
 import org.estatio.dscm.DscmDashboard;
+import org.estatio.dscm.DscmDashboardService;
 import org.estatio.dscm.dom.display.DisplayGroup;
 import org.estatio.dscm.dom.playlist.PlaylistItems;
 import org.estatio.dscm.dom.publisher.Publisher;
@@ -191,8 +192,9 @@ public class Asset extends AbstractDomainObject implements Comparable<Asset> {
 		if (confirm) {
 			doRemove();
 			return newViewModelInstance(DscmDashboard.class, "dashboard");
+		} else {
+			return this;
 		}
-		return this;
 	}
 
 	public String disableRemove(Boolean confirm) {
@@ -242,5 +244,4 @@ public class Asset extends AbstractDomainObject implements Comparable<Asset> {
 		}
 		return null;
 	}
-
 }

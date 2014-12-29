@@ -24,10 +24,8 @@ import java.util.List;
 
 import org.estatio.dscm.EstatioDomainService;
 import org.estatio.dscm.dom.display.DisplayGroup;
-
 import org.joda.time.LocalDate;
 import org.joda.time.LocalTime;
-
 import org.apache.isis.applib.annotation.ActionSemantics;
 import org.apache.isis.applib.annotation.ActionSemantics.Of;
 import org.apache.isis.applib.annotation.Bookmarkable;
@@ -36,6 +34,8 @@ import org.apache.isis.applib.annotation.MemberOrder;
 import org.apache.isis.applib.annotation.Named;
 import org.apache.isis.applib.annotation.Optional;
 import org.apache.isis.applib.annotation.Programmatic;
+import org.apache.isis.applib.annotation.Render;
+import org.apache.isis.applib.annotation.Render.Type;
 import org.apache.isis.applib.query.QueryDefault;
 
 @DomainService
@@ -98,6 +98,18 @@ public class Playlists extends EstatioDomainService<Playlist> {
         return allMatches("findByDisplayGroupAndType",
                 "displayGroup", displayGroup,
                 "type", type);
+    }
+
+    @ActionSemantics(Of.SAFE)
+    @Render(Type.EAGERLY)
+    public List<Playlist> mainPlaylists(DisplayGroup displayGroup) {
+    	return findByDisplayGroupAndType(displayGroup, PlaylistType.MAIN);
+    }
+    
+    @ActionSemantics(Of.SAFE)
+    @Render(Type.EAGERLY)
+    public List<Playlist> fillerPlaylists(DisplayGroup displayGroup) {
+    	return findByDisplayGroupAndType(displayGroup, PlaylistType.FILLERS);
     }
 
     // //////////////////////////////////////

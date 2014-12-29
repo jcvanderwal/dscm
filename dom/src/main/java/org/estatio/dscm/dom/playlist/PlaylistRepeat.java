@@ -22,7 +22,7 @@ public enum PlaylistRepeat {
     
     public static PlaylistRepeat stringToPlaylistRepeat(String rule) {
         for (PlaylistRepeat e : PlaylistRepeat.values()) {
-            if (rule == e.rrule()) {
+            if (rule.equals(e.rrule())) {
                 return e;
             }
         }

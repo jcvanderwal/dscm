@@ -19,8 +19,10 @@
 package org.estatio.dscm.dom.playlist;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.io.PrintWriter;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
@@ -36,18 +38,15 @@ import javax.jdo.annotations.VersionStrategy;
 import com.google.common.collect.ComparisonChain;
 
 import org.apache.commons.lang3.ObjectUtils;
-
 import org.estatio.dscm.DscmDashboard;
 import org.estatio.dscm.dom.asset.Asset;
 import org.estatio.dscm.dom.asset.Assets;
 import org.estatio.dscm.dom.display.DisplayGroup;
 import org.estatio.dscm.utils.CalendarUtils;
-
 import org.joda.time.Interval;
 import org.joda.time.LocalDate;
 import org.joda.time.LocalDateTime;
 import org.joda.time.LocalTime;
-
 import org.apache.isis.applib.AbstractContainedObject;
 import org.apache.isis.applib.annotation.Bookmarkable;
 import org.apache.isis.applib.annotation.Bounded;
@@ -300,6 +299,7 @@ public class Playlist extends AbstractContainedObject implements Comparable<Play
         PlaylistType newType = this.getType();
         Time newTime = Time.localTimeToTime(this.getStartTime());
         PlaylistRepeat newRepeat = PlaylistRepeat.stringToPlaylistRepeat(this.getRepeatRule());
+        
         Playlist newPlaylist = playlists.newPlaylist(
                 newDisplayGroup,
                 newType,
@@ -321,8 +321,9 @@ public class Playlist extends AbstractContainedObject implements Comparable<Play
         if (confirm) {
             doRemove();
             return newViewModelInstance(DscmDashboard.class, "dashboard");
+        } else {
+        	return this;
         }
-        return this;
     }
 
     public String disableRemove(
