@@ -12,7 +12,7 @@ public class AVProbe {
     private String fileName;
 
     private String response;
-    
+
     public AVProbe(String fileName) {
         this.fileName = fileName;
     }
@@ -42,10 +42,10 @@ public class AVProbe {
     }
 
     private Duration parse(String input) {
-        if (input == null){
+        if (input == null) {
             return null;
         }
-        
+
         PeriodFormatter hoursMinutes = new PeriodFormatterBuilder()
                 .appendHours()
                 .appendSeparator(":")
@@ -58,9 +58,8 @@ public class AVProbe {
         return hoursMinutes.parsePeriod(input).toDurationFrom(new Instant());
 
     }
-    
+
     @Inject
     CommandService commandService;
-
 
 }

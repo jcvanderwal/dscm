@@ -20,9 +20,6 @@ package org.estatio.dscm.dom.playlist;
 
 import java.util.List;
 
-import org.estatio.dscm.EstatioDomainService;
-import org.estatio.dscm.dom.asset.Asset;
-
 import org.apache.isis.applib.DomainObjectContainer;
 import org.apache.isis.applib.annotation.ActionSemantics;
 import org.apache.isis.applib.annotation.ActionSemantics.Of;
@@ -35,6 +32,9 @@ import org.apache.isis.applib.annotation.NotContributed;
 import org.apache.isis.applib.annotation.NotContributed.As;
 import org.apache.isis.applib.annotation.NotInServiceMenu;
 import org.apache.isis.applib.annotation.Programmatic;
+
+import org.estatio.dscm.EstatioDomainService;
+import org.estatio.dscm.dom.asset.Asset;
 
 @Hidden
 @DomainService

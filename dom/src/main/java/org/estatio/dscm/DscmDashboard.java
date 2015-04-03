@@ -25,45 +25,42 @@ import javax.inject.Inject;
 import org.apache.isis.applib.annotation.Named;
 import org.apache.isis.applib.annotation.Render;
 import org.apache.isis.applib.annotation.Render.Type;
+
 import org.estatio.dscm.dom.display.DisplayGroup;
 import org.estatio.dscm.dom.display.DisplayGroups;
-import org.estatio.dscm.dom.playlist.Playlists;
 
 @Named("Dashboard")
 public class DscmDashboard extends EstatioViewModel {
 
-	public String title() {
-		return "Dashboard";
-	}
+    public String title() {
+        return "Dashboard";
+    }
 
-	public String iconName() {
-		return "Dashboard";
-	}
+    public String iconName() {
+        return "Dashboard";
+    }
 
-	// //////////////////////////////////////
+    // //////////////////////////////////////
 
-	@Override
-	public void viewModelInit(final String memento) {
-	}
+    @Override
+    public void viewModelInit(final String memento) {
+    }
 
-	@Override
-	public String viewModelMemento() {
-		return "dashboard";
-	}
+    @Override
+    public String viewModelMemento() {
+        return "dashboard";
+    }
 
-	// //////////////////////////////////////
+    // //////////////////////////////////////
 
-	@Render(Type.EAGERLY)
-	public List<DisplayGroup> getDisplayGroups() {
-		return displayGroups.allDisplayGroups();
-	}
+    @Render(Type.EAGERLY)
+    public List<DisplayGroup> getDisplayGroups() {
+        return displayGroups.allDisplayGroups();
+    }
 
-	// //////////////////////////////////////
+    // //////////////////////////////////////
 
-	@Inject
-	private Playlists playlists;
-
-	@Inject
-	private DisplayGroups displayGroups;
+    @Inject
+    private DisplayGroups displayGroups;
 
 }

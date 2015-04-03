@@ -21,6 +21,8 @@ package org.estatio.dscm.dom.asset;
 import java.math.BigDecimal;
 import java.util.List;
 
+import org.joda.time.LocalDate;
+
 import org.apache.isis.applib.DomainObjectContainer;
 import org.apache.isis.applib.annotation.ActionSemantics;
 import org.apache.isis.applib.annotation.ActionSemantics.Of;
@@ -33,10 +35,10 @@ import org.apache.isis.applib.annotation.Programmatic;
 import org.apache.isis.applib.query.QueryDefault;
 import org.apache.isis.applib.services.clock.ClockService;
 import org.apache.isis.applib.value.Blob;
+
 import org.estatio.dscm.EstatioDomainService;
 import org.estatio.dscm.dom.display.DisplayGroup;
 import org.estatio.dscm.dom.publisher.Publisher;
-import org.joda.time.LocalDate;
 
 @DomainService
 public class Assets extends EstatioDomainService<Asset> {

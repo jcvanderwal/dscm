@@ -30,7 +30,7 @@ public abstract class EstatioDomainService<T> extends EstatioService<T> {
     private final Class<T> entityType;
 
     protected EstatioDomainService(
-            final Class<? extends EstatioDomainService<T>> serviceType, 
+            final Class<? extends EstatioDomainService<T>> serviceType,
             final Class<T> entityType) {
         super(serviceType);
         this.entityType = entityType;
@@ -47,25 +47,25 @@ public abstract class EstatioDomainService<T> extends EstatioService<T> {
     protected Class<T> getEntityType() {
         return entityType;
     }
-    
+
     protected QueryDefault<T> newQueryDefault(final String queryName, final Object... paramArgs) {
         return new QueryDefault<T>(getEntityType(), queryName, paramArgs);
     }
-    
+
     // //////////////////////////////////////
 
     protected T newTransientInstance() {
         return newTransientInstance(getEntityType());
     }
-    
+
     protected T firstMatch(final String queryName, final Object... paramArgs) {
         return firstMatch(newQueryDefault(queryName, paramArgs));
     }
-    
+
     protected T uniqueMatch(final String queryName, final Object... paramArgs) {
         return uniqueMatch(newQueryDefault(queryName, paramArgs));
     }
-    
+
     protected List<T> allMatches(final String queryName, final Object... paramArgs) {
         return allMatches(newQueryDefault(queryName, paramArgs));
     }
@@ -74,9 +74,8 @@ public abstract class EstatioDomainService<T> extends EstatioService<T> {
         return allInstances(getEntityType());
     }
 
-    
     // //////////////////////////////////////
-    
+
     protected Query newQuery(final String jdoql) {
         return isisJdoSupport.getJdoPersistenceManager().newQuery(jdoql);
     }
@@ -84,6 +83,7 @@ public abstract class EstatioDomainService<T> extends EstatioService<T> {
     // //////////////////////////////////////
 
     protected IsisJdoSupport isisJdoSupport;
+
     public final void injectIsisJdoSupport(final IsisJdoSupport isisJdoSupport) {
         this.isisJdoSupport = isisJdoSupport;
     }

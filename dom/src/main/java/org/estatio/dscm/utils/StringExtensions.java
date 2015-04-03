@@ -30,7 +30,7 @@ import com.google.common.base.Strings;
 import org.apache.isis.applib.util.Enums;
 
 public final class StringExtensions {
-    
+
     static final char SPACE = ' ';
 
     private StringExtensions() {
@@ -46,27 +46,27 @@ public final class StringExtensions {
      * "NextAvailableDate" is returned as "Next Available Date".
      */
     public static String asNaturalName2(final String name) {
-    
+
         final int length = name.length();
-    
+
         if (length <= 1) {
             return name.toUpperCase();// ensure first character is upper case
         }
-    
+
         final StringBuffer naturalName = new StringBuffer(length);
-    
+
         char previousCharacter;
         char character = Character.toUpperCase(name.charAt(0));// ensure first
                                                                // character is
                                                                // upper case
         naturalName.append(character);
         char nextCharacter = name.charAt(1);
-    
+
         for (int pos = 2; pos < length; pos++) {
             previousCharacter = character;
             character = nextCharacter;
             nextCharacter = name.charAt(pos);
-    
+
             if (previousCharacter != StringExtensions.SPACE) {
                 if (Character.isUpperCase(character) && !Character.isUpperCase(previousCharacter)) {
                     naturalName.append(StringExtensions.SPACE);
@@ -138,7 +138,7 @@ public final class StringExtensions {
         }
         return extendee.substring(lastDot + 1);
     }
-    
+
     public static String asCamel(final String extendee) {
         final StringBuffer b = new StringBuffer(extendee.length());
         final StringTokenizer t = new StringTokenizer(extendee);
@@ -211,7 +211,6 @@ public final class StringExtensions {
         return split[0];
     }
 
-
     // ////////////////////////////////////////////////////////////
     // in, combinePaths, splitOnCommas
     // ////////////////////////////////////////////////////////////
@@ -248,7 +247,6 @@ public final class StringExtensions {
         final String[] splitAsArray = removeLeadingWhiteSpace.split("\\W*,\\W*");
         return Arrays.asList(splitAsArray);
     }
-
 
     private static final char CARRIAGE_RETURN = '\n';
     private static final char LINE_FEED = '\r';
@@ -342,8 +340,8 @@ public final class StringExtensions {
     }
 
     public static String removePrefix(final String extendee, final String prefix) {
-        return extendee.startsWith(prefix) 
-                ? extendee.substring(prefix.length()) 
+        return extendee.startsWith(prefix)
+                ? extendee.substring(prefix.length())
                 : extendee;
     }
 
@@ -360,29 +358,30 @@ public final class StringExtensions {
      */
     public static String toAbbreviation(final String extendee) {
         final StringBuilder buf = new StringBuilder();
-        for(char c: extendee.toCharArray()) {
-            if(Character.isUpperCase(c)) {
+        for (char c : extendee.toCharArray()) {
+            if (Character.isUpperCase(c)) {
                 buf.append(c);
             }
         }
         return buf.toString();
     }
 
-    
     // //////////////////////////////////////
     // copied in from Apache Commons
     // //////////////////////////////////////
 
-    
     public static final String EMPTY = "";
     /**
-     * <p>The maximum size to which the padding constant(s) can expand.</p>
+     * <p>
+     * The maximum size to which the padding constant(s) can expand.
+     * </p>
      */
     private static final int PAD_LIMIT = 8192;
 
     /**
-     * <p>Repeat a String <code>repeat</code> times to form a
-     * new String.</p>
+     * <p>
+     * Repeat a String <code>repeat</code> times to form a new String.
+     * </p>
      *
      * <pre>
      * StringUtils.repeat(null, 2) = null
@@ -393,10 +392,12 @@ public final class StringExtensions {
      * StringUtils.repeat("a", -2) = ""
      * </pre>
      *
-     * @param extendee  the String to repeat, may be null
-     * @param repeat  number of times to repeat str, negative treated as zero
+     * @param extendee
+     *            the String to repeat, may be null
+     * @param repeat
+     *            number of times to repeat str, negative treated as zero
      * @return a new String consisting of the original String repeated,
-     *  <code>null</code> if null String input
+     *         <code>null</code> if null String input
      */
     public static String repeat(final String extendee, int repeat) {
         // Performance tuned for 2.0 (JDK1.4)
@@ -417,34 +418,35 @@ public final class StringExtensions {
 
         int outputLength = inputLength * repeat;
         switch (inputLength) {
-            case 1 :
-                char ch = extendee.charAt(0);
-                char[] output1 = new char[outputLength];
-                for (int i = repeat - 1; i >= 0; i--) {
-                    output1[i] = ch;
-                }
-                return new String(output1);
-            case 2 :
-                char ch0 = extendee.charAt(0);
-                char ch1 = extendee.charAt(1);
-                char[] output2 = new char[outputLength];
-                for (int i = repeat * 2 - 2; i >= 0; i--, i--) {
-                    output2[i] = ch0;
-                    output2[i + 1] = ch1;
-                }
-                return new String(output2);
-            default :
-                StringBuilder buf = new StringBuilder(outputLength);
-                for (int i = 0; i < repeat; i++) {
-                    buf.append(extendee);
-                }
-                return buf.toString();
+        case 1:
+            char ch = extendee.charAt(0);
+            char[] output1 = new char[outputLength];
+            for (int i = repeat - 1; i >= 0; i--) {
+                output1[i] = ch;
+            }
+            return new String(output1);
+        case 2:
+            char ch0 = extendee.charAt(0);
+            char ch1 = extendee.charAt(1);
+            char[] output2 = new char[outputLength];
+            for (int i = repeat * 2 - 2; i >= 0; i--, i--) {
+                output2[i] = ch0;
+                output2[i + 1] = ch1;
+            }
+            return new String(output2);
+        default:
+            StringBuilder buf = new StringBuilder(outputLength);
+            for (int i = 0; i < repeat; i++) {
+                buf.append(extendee);
+            }
+            return buf.toString();
         }
     }
 
     /**
-     * <p>Returns padding using the specified delimiter repeated
-     * to a given length.</p>
+     * <p>
+     * Returns padding using the specified delimiter repeated to a given length.
+     * </p>
      *
      * <pre>
      * StringUtils.padding(0, 'e')  = ""
@@ -452,17 +454,21 @@ public final class StringExtensions {
      * StringUtils.padding(-2, 'e') = IndexOutOfBoundsException
      * </pre>
      *
-     * <p>Note: this method doesn't not support padding with
-     * <a href="http://www.unicode.org/glossary/#supplementary_character">Unicode Supplementary Characters</a>
-     * as they require a pair of <code>char</code>s to be represented.
-     * If you are needing to support full I18N of your applications
-     * consider using {@link #repeat(String, int)} instead. 
+     * <p>
+     * Note: this method doesn't not support padding with <a
+     * href="http://www.unicode.org/glossary/#supplementary_character">Unicode
+     * Supplementary Characters</a> as they require a pair of <code>char</code>s
+     * to be represented. If you are needing to support full I18N of your
+     * applications consider using {@link #repeat(String, int)} instead.
      * </p>
      *
-     * @param repeat  number of times to repeat delim
-     * @param padChar  character to repeat
+     * @param repeat
+     *            number of times to repeat delim
+     * @param padChar
+     *            character to repeat
      * @return String with repeated character
-     * @throws IndexOutOfBoundsException if <code>repeat &lt; 0</code>
+     * @throws IndexOutOfBoundsException
+     *             if <code>repeat &lt; 0</code>
      * @see #repeat(String, int)
      */
     private static String padding(int repeat, char padChar) throws IndexOutOfBoundsException {
@@ -521,29 +527,29 @@ public final class StringExtensions {
      */
     public static String asJavaBaseName(final String javaName) {
         int pos = 0;
-    
+
         // find first upper case character
         final int len = javaName.length();
-    
+
         while ((pos < len) && (javaName.charAt(pos) != '_') && Character.isLowerCase(javaName.charAt(pos))) {
             pos++;
         }
-    
+
         if (pos >= len) {
             return "";
         }
-    
+
         if (javaName.charAt(pos) == '_') {
             pos++;
         }
-    
+
         if (pos >= len) {
             return "";
         }
-    
+
         final String baseName = javaName.substring(pos);
         final char firstChar = baseName.charAt(0);
-    
+
         if (Character.isLowerCase(firstChar)) {
             return Character.toUpperCase(firstChar) + baseName.substring(1);
         } else {
@@ -562,7 +568,6 @@ public final class StringExtensions {
     public static String asCapitalizedName(final String extendee) {
         return Character.toUpperCase(extendee.charAt(0)) + extendee.substring(1);
     }
-
 
     public static String asPluralName(final String extendee) {
         String pluralName;
@@ -596,7 +601,4 @@ public final class StringExtensions {
         return buf.toString();
     }
 
-
-
-    
 }

@@ -26,6 +26,8 @@ import javax.jdo.annotations.IdentityType;
 import javax.jdo.annotations.Persistent;
 import javax.jdo.annotations.VersionStrategy;
 
+import org.joda.time.LocalDate;
+
 import org.apache.isis.applib.AbstractDomainObject;
 import org.apache.isis.applib.annotation.ActionSemantics;
 import org.apache.isis.applib.annotation.ActionSemantics.Of;
@@ -40,12 +42,11 @@ import org.apache.isis.applib.annotation.Programmatic;
 import org.apache.isis.applib.annotation.Title;
 import org.apache.isis.applib.util.ObjectContracts;
 import org.apache.isis.applib.value.Blob;
+
 import org.estatio.dscm.DscmDashboard;
-import org.estatio.dscm.DscmDashboardService;
 import org.estatio.dscm.dom.display.DisplayGroup;
 import org.estatio.dscm.dom.playlist.PlaylistItems;
 import org.estatio.dscm.dom.publisher.Publisher;
-import org.joda.time.LocalDate;
 
 @javax.jdo.annotations.PersistenceCapable(identityType = IdentityType.DATASTORE)
 @javax.jdo.annotations.DatastoreIdentity(strategy = javax.jdo.annotations.IdGeneratorStrategy.IDENTITY, column = "id")

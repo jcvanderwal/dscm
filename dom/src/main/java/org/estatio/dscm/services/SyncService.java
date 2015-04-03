@@ -26,10 +26,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.PrintStream;
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.List;
 import java.util.Map;
 
@@ -46,7 +43,6 @@ import org.apache.isis.applib.annotation.DomainService;
 import org.apache.isis.applib.annotation.Hidden;
 import org.apache.isis.applib.annotation.Named;
 import org.apache.isis.applib.annotation.Programmatic;
-import org.apache.isis.applib.services.background.BackgroundService;
 import org.apache.isis.applib.services.clock.ClockService;
 import org.apache.isis.applib.services.command.CommandContext;
 import org.apache.isis.applib.value.Blob;
@@ -63,6 +59,7 @@ import org.estatio.dscm.dom.playlist.PlaylistType;
 import org.estatio.dscm.dom.playlist.Playlists;
 import org.estatio.dscm.dom.publisher.Publisher;
 import org.estatio.dscm.dom.publisher.Publishers;
+
 //import org.apache.isis.applib.services.command.Command;
 
 @DomainService
@@ -112,7 +109,7 @@ public class SyncService extends AbstractContainedObject {
             syncPlaylist(display, path);
         }
     }
-    
+
     public Object synchronizeNow(DisplayGroup displayGroup) {
         final String path = properties.get("dscm.server.path");
         path.toLowerCase();
@@ -389,10 +386,7 @@ public class SyncService extends AbstractContainedObject {
 
     @Inject
     private DisplayGroups displayGroups;
-    
-    @Inject
-    private BackgroundService backgroundService;
-    
+
     @SuppressWarnings("unused")
     @Inject
     private CommandContext commandContext;

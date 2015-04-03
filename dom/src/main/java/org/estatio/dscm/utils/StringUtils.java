@@ -31,40 +31,40 @@ public final class StringUtils {
     private static Function<String, String> LOWER_CASE_THEN_CAPITALIZE = new Function<String, String>() {
         @Override
         public String apply(final String input) {
-            return input != null? StringUtils.capitalize(input.toLowerCase()): null;
+            return input != null ? StringUtils.capitalize(input.toLowerCase()) : null;
         }
     };
 
     private static Function<String, String> UPPER_CASE = new Function<String, String>() {
         @Override
         public String apply(final String input) {
-            return input != null? input.toUpperCase(): null;
+            return input != null ? input.toUpperCase() : null;
         }
     };
 
     public static String enumTitle(final String string) {
-        if(string == null) {
+        if (string == null) {
             return null;
         }
         return Joiner.on(" ").join(Iterables.transform(Splitter.on("_").split(string), LOWER_CASE_THEN_CAPITALIZE));
     }
 
     public static String enumDeTitle(final String string) {
-        if(string == null) {
+        if (string == null) {
             return null;
         }
         return Joiner.on("_").join(Iterables.transform(Splitter.on(" ").split(string), UPPER_CASE));
     }
 
     public static String wildcardToCaseInsensitiveRegex(final String pattern) {
-        if(pattern == null) {
+        if (pattern == null) {
             return null;
         }
         return "(?i)".concat(wildcardToRegex(pattern));
     }
 
     public static String wildcardToRegex(final String pattern) {
-        if(pattern == null) {
+        if (pattern == null) {
             return null;
         }
         return pattern.replace("*", ".*").replace("?", ".");
@@ -79,6 +79,5 @@ public final class StringUtils {
         }
         return Character.toUpperCase(str.charAt(0)) + str.substring(1);
     }
-
 
 }

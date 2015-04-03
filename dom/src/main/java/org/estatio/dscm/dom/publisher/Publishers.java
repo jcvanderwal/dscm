@@ -76,9 +76,9 @@ public class Publishers extends AbstractFactoryAndRepository {
     public Publisher findByName(@Named("Name") String name) {
         return firstMatch(new QueryDefault<Publisher>(Publisher.class, "findByName", "name", name));
     }
-    
+
     // //////////////////////////////////////
-    
+
     @NotInServiceMenu
     public List<Publisher> remove(Publisher publisher, @Named("Are you sure?") Boolean confirm) {
         container.remove(publisher);

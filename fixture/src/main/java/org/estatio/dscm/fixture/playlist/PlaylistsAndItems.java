@@ -54,11 +54,11 @@ public class PlaylistsAndItems extends DiscoverableFixtureScript {
         execute(new AssetForFiller(), executionContext);
         execute(new AssetForCommercial(), executionContext);
 
-        create(MORNING, PlaylistType.MAIN, new BigDecimal(60), AssetForCommercial.NAME);
-        create(AFTERNOON, PlaylistType.MAIN, new BigDecimal(60), AssetForCommercial.NAME);
-        create(MORNING, PlaylistType.FILLERS, BigDecimal.ZERO, AssetForFiller.NAME);
-        create(AFTERNOON, PlaylistType.FILLERS, BigDecimal.ZERO, AssetForFiller.NAME);
-
+        create(MORNING, PlaylistType.MAIN, new BigDecimal(60), AssetForCommercial.NAME, PlaylistRepeat.DAILY, DATE);
+        create(AFTERNOON, PlaylistType.MAIN, new BigDecimal(60), AssetForCommercial.NAME, PlaylistRepeat.DAILY, DATE);
+        create(MORNING, PlaylistType.FILLERS, BigDecimal.ZERO, AssetForFiller.NAME, PlaylistRepeat.DAILY, DATE);
+        create(AFTERNOON, PlaylistType.FILLERS, BigDecimal.ZERO, AssetForFiller.NAME, PlaylistRepeat.DAILY, DATE);
+        create(MORNING, PlaylistType.FILLERS, BigDecimal.ZERO, AssetForFiller.NAME, PlaylistRepeat.MONDAY, new LocalDate(2015, 4, 1));
     }
 
     // //////////////////////////////////////
@@ -67,15 +67,17 @@ public class PlaylistsAndItems extends DiscoverableFixtureScript {
             Time time,
             PlaylistType type,
             BigDecimal loopDuration,
-            String assetName) {
+            String assetName,
+            PlaylistRepeat repeat,
+            LocalDate playlistDate) {
         for (DisplayGroup displayGroup : displayGroups.allDisplayGroups()) {
             Playlist p1 = playlists.newPlaylist(
                     displayGroup,
                     type,
-                    DATE,
+                    playlistDate,
                     time,
                     null,
-                    PlaylistRepeat.DAILY,
+                    repeat,
                     loopDuration);
             playlistItems.newPlaylistItem(p1, assets.findAssetByName(assetName));
         }

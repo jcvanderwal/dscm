@@ -55,9 +55,9 @@ import org.apache.isis.applib.annotation.Where;
         strategy = VersionStrategy.VERSION_NUMBER,
         column = "version")
 @javax.jdo.annotations.Queries({
-    @javax.jdo.annotations.Query(name = "findAll", language = "JDOQL",
-            value = "SELECT FROM org.estatio.dscm.dom.display.DisplayGroup "
-                    + "ORDER BY name")
+        @javax.jdo.annotations.Query(name = "findAll", language = "JDOQL",
+                value = "SELECT FROM org.estatio.dscm.dom.display.DisplayGroup "
+                        + "ORDER BY name")
 })
 @Bookmarkable
 @Bounded

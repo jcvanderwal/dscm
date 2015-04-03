@@ -19,13 +19,11 @@
 package org.estatio.dscm.dom.playlist;
 
 import java.math.BigDecimal;
-import java.rmi.dgc.DGC;
 import java.util.List;
 
-import org.estatio.dscm.EstatioDomainService;
-import org.estatio.dscm.dom.display.DisplayGroup;
 import org.joda.time.LocalDate;
 import org.joda.time.LocalTime;
+
 import org.apache.isis.applib.annotation.ActionSemantics;
 import org.apache.isis.applib.annotation.ActionSemantics.Of;
 import org.apache.isis.applib.annotation.Bookmarkable;
@@ -37,6 +35,9 @@ import org.apache.isis.applib.annotation.Programmatic;
 import org.apache.isis.applib.annotation.Render;
 import org.apache.isis.applib.annotation.Render.Type;
 import org.apache.isis.applib.query.QueryDefault;
+
+import org.estatio.dscm.EstatioDomainService;
+import org.estatio.dscm.dom.display.DisplayGroup;
 
 @DomainService
 public class Playlists extends EstatioDomainService<Playlist> {
@@ -124,6 +125,19 @@ public class Playlists extends EstatioDomainService<Playlist> {
                 "time", time,
                 "type", type);
     }
+    
+    @Programmatic
+    public Playlist findByDisplayGroupAndTimeAndTypeAndPlaylistRepeat(
+            final DisplayGroup displayGroup,
+            final LocalTime time,
+            final PlaylistType type,
+            final String repeat) {
+        return firstMatch("findByDisplayGroupAndTimeAndTypeAndPlaylistRepeat",
+                "displayGroup", displayGroup,
+                "time", time,
+                "type", type,
+                "repeatRule", repeat);
+    }
 
     @MemberOrder(sequence = "2")
     public Playlist newPlaylist(
@@ -154,8 +168,8 @@ public class Playlists extends EstatioDomainService<Playlist> {
             final LocalDate endDate,
             final PlaylistRepeat repeat,
             final BigDecimal loopDuration) {
-        final Boolean exists = findByDisplayGroupAndTimeAndType(displayGroup, startTime.time(), type) == null ? false : true;
-        return exists ? "The selected display group already has a playlist of this type with this start time" : null;
+        final Boolean exists = findByDisplayGroupAndTimeAndTypeAndPlaylistRepeat(displayGroup, startTime.time(), type, repeat.rrule()) == null ? false : true;
+        return exists ? "The selected display group already has a playlist of this type with this start time and repeat rule" : null;
     }
     
     public LocalDate default2NewPlaylist() {

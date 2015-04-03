@@ -7,11 +7,11 @@ import static org.junit.Assert.assertThat;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.estatio.dscm.dom.display.Display;
-
 import org.joda.time.LocalDateTime;
 import org.junit.Before;
 import org.junit.Test;
+
+import org.estatio.dscm.dom.display.Display;
 
 public class SyncServiceTest_createFilename {
 

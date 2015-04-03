@@ -22,8 +22,6 @@ import java.util.List;
 
 import javax.inject.Inject;
 
-import org.estatio.dscm.dom.playlist.Playlist;
-
 import org.apache.isis.applib.DomainObjectContainer;
 import org.apache.isis.applib.annotation.ActionSemantics;
 import org.apache.isis.applib.annotation.ActionSemantics.Of;
@@ -49,7 +47,7 @@ public class DisplayGroups {
     @ActionSemantics(Of.SAFE)
     @MemberOrder(sequence = "1")
     public List<DisplayGroup> allDisplayGroups() {
-        //return container.allInstances(DisplayGroup.class);
+        // return container.allInstances(DisplayGroup.class);
         return container.allMatches(new QueryDefault<DisplayGroup>(DisplayGroup.class, "findAll"));
     }
 
@@ -70,7 +68,7 @@ public class DisplayGroups {
     public List<DisplayGroup> remove(DisplayGroup displayGroup, @Named("Are you sure?") Boolean confirm) {
         container.remove(displayGroup);
         container.flush();
-        
+
         return displayGroups.allDisplayGroups();
     }
 

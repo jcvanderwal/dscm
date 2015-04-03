@@ -3,7 +3,6 @@ package org.estatio.dscm.dom.playlist;
 import static org.junit.Assert.assertThat;
 
 import org.hamcrest.Matchers;
-import org.hamcrest.core.Is;
 import org.junit.Before;
 import org.junit.Test;
 

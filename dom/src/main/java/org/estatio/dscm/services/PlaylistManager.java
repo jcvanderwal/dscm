@@ -13,7 +13,7 @@ import org.apache.isis.applib.ApplicationException;
 import org.estatio.dscm.dom.playlist.PlaylistItem;
 
 class PlaylistManager {
-    
+
     private List<PlayableItem> playableItemObjects;
 
     PlaylistManager(List<PlaylistItem> playlistItems) {
@@ -35,10 +35,10 @@ class PlaylistManager {
     }
 
     boolean itemsEquallyUsed() {
-        if (playableItemObjects.size() == 0){
+        if (playableItemObjects.size() == 0) {
             return true;
         }
-        
+
         BigInteger lowest = null;
         BigInteger highest = null;
         for (PlayableItem playableItem : playableItemObjects) {

@@ -18,11 +18,6 @@
  */
 package org.estatio.dscm.dom.playlist;
 
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.io.PrintWriter;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
@@ -38,15 +33,11 @@ import javax.jdo.annotations.VersionStrategy;
 import com.google.common.collect.ComparisonChain;
 
 import org.apache.commons.lang3.ObjectUtils;
-import org.estatio.dscm.DscmDashboard;
-import org.estatio.dscm.dom.asset.Asset;
-import org.estatio.dscm.dom.asset.Assets;
-import org.estatio.dscm.dom.display.DisplayGroup;
-import org.estatio.dscm.utils.CalendarUtils;
 import org.joda.time.Interval;
 import org.joda.time.LocalDate;
 import org.joda.time.LocalDateTime;
 import org.joda.time.LocalTime;
+
 import org.apache.isis.applib.AbstractContainedObject;
 import org.apache.isis.applib.annotation.Bookmarkable;
 import org.apache.isis.applib.annotation.Bounded;
@@ -61,6 +52,12 @@ import org.apache.isis.applib.annotation.Render;
 import org.apache.isis.applib.annotation.Render.Type;
 import org.apache.isis.applib.services.clock.ClockService;
 import org.apache.isis.applib.util.TitleBuffer;
+
+import org.estatio.dscm.DscmDashboard;
+import org.estatio.dscm.dom.asset.Asset;
+import org.estatio.dscm.dom.asset.Assets;
+import org.estatio.dscm.dom.display.DisplayGroup;
+import org.estatio.dscm.utils.CalendarUtils;
 
 @javax.jdo.annotations.PersistenceCapable(
         identityType = IdentityType.DATASTORE)
@@ -100,7 +97,13 @@ import org.apache.isis.applib.util.TitleBuffer;
                 value = "SELECT FROM org.estatio.dscm.dom.playlist.Playlist "
                         + "WHERE displayGroup == :displayGroup "
                         + "&& startTime == :time "
-                        + "&& type == :type")
+                        + "&& type == :type"),
+        @javax.jdo.annotations.Query(name = "findByDisplayGroupAndTimeAndTypeAndPlaylistRepeat", language = "JDOQL",
+                value = "SELECT FROM org.estatio.dscm.dom.playlist.Playlist "
+                        + "WHERE displayGroup == :displayGroup "
+                        + "&& startTime == :time "
+                        + "&& type == :type "
+                        + "&& repeatRule == :repeatRule")
 })
 @javax.jdo.annotations.Unique(name = "Playlist_displayGroup_startDate_startTime_type_UNQ", members = "displayGroup,startDate,startTime,type")
 @Bookmarkable
@@ -247,7 +250,7 @@ public class Playlist extends AbstractContainedObject implements Comparable<Play
         List<LocalDateTime> nextList = new ArrayList<LocalDateTime>();
         final LocalDate start = getStartDate().isBefore(clockService.now()) ? clockService.now() : getStartDate();
         final LocalDate end = ObjectUtils.min(endDate, getEndDate());
-        
+
         if (end.compareTo(start) >= 0 && end.compareTo(clockService.now()) >= 0) {
             List<Interval> intervals = CalendarUtils.intervalsInRange(
                     start,
@@ -255,10 +258,13 @@ public class Playlist extends AbstractContainedObject implements Comparable<Play
                     getRepeatRule());
 
             for (Interval interval : intervals) {
-                nextList.add(new LocalDateTime(
-                        interval.getStartMillis()).
-                        withHourOfDay(getStartTime().getHourOfDay()).
-                        withMinuteOfHour(getStartTime().getMinuteOfHour()));
+                LocalDateTime intervalStart = new LocalDateTime(interval.getStart());
+                if (intervalStart.compareTo(start.toLocalDateTime(new LocalTime("00:00"))) >= 0) {
+                    nextList.add(new LocalDateTime(
+                            interval.getStartMillis()).
+                            withHourOfDay(getStartTime().getHourOfDay()).
+                            withMinuteOfHour(getStartTime().getMinuteOfHour()));
+                }
             }
         }
 
@@ -291,15 +297,15 @@ public class Playlist extends AbstractContainedObject implements Comparable<Play
     }
 
     // //////////////////////////////////////
-    
+
     public Playlist endAndCreateNewPlaylist(
-            final @Named("Start date") LocalDate newDate, 
+            final @Named("Start date") LocalDate newDate,
             final @Named("Loop duration") BigDecimal newLoopDuration) {
         DisplayGroup newDisplayGroup = this.getDisplayGroup();
         PlaylistType newType = this.getType();
         Time newTime = Time.localTimeToTime(this.getStartTime());
         PlaylistRepeat newRepeat = PlaylistRepeat.stringToPlaylistRepeat(this.getRepeatRule());
-        
+
         Playlist newPlaylist = playlists.newPlaylist(
                 newDisplayGroup,
                 newType,
@@ -310,10 +316,10 @@ public class Playlist extends AbstractContainedObject implements Comparable<Play
                 newLoopDuration);
 
         this.setEndDate(newDate);
-        
+
         return newPlaylist;
     }
-    
+
     // //////////////////////////////////////
 
     public Object remove(
@@ -322,20 +328,20 @@ public class Playlist extends AbstractContainedObject implements Comparable<Play
             doRemove();
             return newViewModelInstance(DscmDashboard.class, "dashboard");
         } else {
-        	return this;
+            return this;
         }
     }
 
     public String disableRemove(
             @Named("Are you sure?") Boolean confirm) {
         if (playlists.findByDisplayGroupAndType(displayGroup, type).size() == 1 &&
-            !getContainer().getUser().hasRole(".*admin_role")) {
+                !getContainer().getUser().hasRole(".*admin_role")) {
             return "This is the only " + type.toString().toLowerCase() + " playlist of display group " + displayGroup.getName();
         } else {
             return null;
         }
     }
-    
+
     protected void doRemove() {
         removeAllItems();
         getContainer().remove(this);
@@ -359,18 +365,18 @@ public class Playlist extends AbstractContainedObject implements Comparable<Play
                 .compare(getStartTime(), other.getStartTime())
                 .result();
     }
-    
+
     // //////////////////////////////////////
 
     @Inject
     PlaylistItems playlistItems;
 
     @Inject
-    ClockService clockService;
+    public ClockService clockService;
 
     @Inject
     Assets assets;
-    
+
     @Inject
     Playlists playlists;
 

@@ -26,16 +26,19 @@ import org.apache.isis.applib.services.memento.MementoService;
 public abstract class EstatioViewModel extends AbstractViewModel {
 
     private ClockService clockService;
+
     protected ClockService getClockService() {
         return clockService;
     }
+
     public final void injectClockService(final ClockService clockService) {
         this.clockService = clockService;
     }
-    
+
     // //////////////////////////////////////
-    
+
     private MementoService mementoService;
+
     protected MementoService getMementoService() {
         return mementoService;
     }
@@ -45,9 +48,11 @@ public abstract class EstatioViewModel extends AbstractViewModel {
     }
 
     private BookmarkService bookmarkService;
+
     protected BookmarkService getBookmarkService() {
         return bookmarkService;
     }
+
     public final void injectBookmarkService(BookmarkService bookmarkService) {
         this.bookmarkService = bookmarkService;
     }
