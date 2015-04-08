@@ -30,15 +30,12 @@ import java.util.List;
 
 import javax.inject.Inject;
 
-import org.apache.commons.lang3.ObjectUtils;
-import org.joda.time.Interval;
 import org.joda.time.LocalDate;
 import org.joda.time.LocalDateTime;
 import org.joda.time.LocalTime;
 import org.joda.time.Period;
 import org.junit.Before;
 import org.junit.BeforeClass;
-import org.junit.Ignore;
 import org.junit.Test;
 
 import org.apache.isis.applib.services.clock.ClockService;
@@ -52,7 +49,6 @@ import org.estatio.dscm.dom.playlist.Playlists;
 import org.estatio.dscm.dom.playlist.Time;
 import org.estatio.dscm.fixture.playlist.PlaylistsAndItems;
 import org.estatio.dscm.integtests.DscmIntegTest;
-import org.estatio.dscm.utils.CalendarUtils;
 
 //@Ignore("Causing (so far) inexplicable trouble with heap space on Jenkins, preventing deployment. See DSCM-20")
 public class PlaylistsTest extends DscmIntegTest {
@@ -108,6 +104,13 @@ public class PlaylistsTest extends DscmIntegTest {
     public void testNextOccurrencesDaily() throws Exception {
         Playlist playlist = playlists.findByDisplayGroupAndStartDateTimeAndType(displayGroup, new LocalDate(2015, 4, 1), new LocalTime("08:00"), PlaylistType.FILLERS);
         assertThat(PlaylistRepeat.stringToPlaylistRepeat(playlist.getRepeatRule()), is(PlaylistRepeat.MONDAY));
+
+        playlist.clockService = new ClockService() {
+            @Override
+            public LocalDate now() {
+                return new LocalDate(2014, 4, 1);
+            }
+        };
 
         List<LocalDateTime> nextOccurences = playlist.nextOccurences(playlist.getStartDate().plusDays(7));
 
