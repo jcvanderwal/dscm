@@ -18,18 +18,12 @@
  */
 package org.estatio.dscm.integtests.dom.playlist;
 
-import static org.hamcrest.CoreMatchers.is;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertThat;
-
-import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.List;
-
-import javax.inject.Inject;
-
+import org.apache.isis.applib.services.clock.ClockService;
+import org.estatio.dscm.dom.display.DisplayGroup;
+import org.estatio.dscm.dom.display.DisplayGroups;
+import org.estatio.dscm.dom.playlist.*;
+import org.estatio.dscm.fixture.playlist.PlaylistsAndItems;
+import org.estatio.dscm.integtests.DscmIntegTest;
 import org.joda.time.LocalDate;
 import org.joda.time.LocalDateTime;
 import org.joda.time.LocalTime;
@@ -38,17 +32,13 @@ import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
-import org.apache.isis.applib.services.clock.ClockService;
+import javax.inject.Inject;
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.List;
 
-import org.estatio.dscm.dom.display.DisplayGroup;
-import org.estatio.dscm.dom.display.DisplayGroups;
-import org.estatio.dscm.dom.playlist.Playlist;
-import org.estatio.dscm.dom.playlist.PlaylistRepeat;
-import org.estatio.dscm.dom.playlist.PlaylistType;
-import org.estatio.dscm.dom.playlist.Playlists;
-import org.estatio.dscm.dom.playlist.Time;
-import org.estatio.dscm.fixture.playlist.PlaylistsAndItems;
-import org.estatio.dscm.integtests.DscmIntegTest;
+import static org.hamcrest.CoreMatchers.is;
+import static org.junit.Assert.*;
 
 //@Ignore("Causing (so far) inexplicable trouble with heap space on Jenkins, preventing deployment. See DSCM-20")
 public class PlaylistsTest extends DscmIntegTest {
@@ -81,7 +71,7 @@ public class PlaylistsTest extends DscmIntegTest {
 
     @Test
     public void findByStartDateAndSTartTimeAndType_nothingFound() throws Exception {
-        assertNull(playlists.findByDisplayGroupAndStartDateTimeAndType(displayGroup, new LocalDate(1980, 1, 1), new LocalTime("14:00"), PlaylistType.MAIN));
+        assertEquals(playlists.findByDisplayGroupAndStartDateTimeAndType(displayGroup, new LocalDate(1980, 1, 1), new LocalTime("14:00"), PlaylistType.MAIN), new ArrayList<Playlist>());
     }
 
     @Test
@@ -102,7 +92,15 @@ public class PlaylistsTest extends DscmIntegTest {
 
     @Test
     public void testNextOccurrencesDaily() throws Exception {
-        Playlist playlist = playlists.findByDisplayGroupAndStartDateTimeAndType(displayGroup, new LocalDate(2015, 4, 1), new LocalTime("08:00"), PlaylistType.FILLERS);
+        List<Playlist> playlistResults = playlists.findByDisplayGroupAndStartDateTimeAndType(displayGroup, new LocalDate(2015, 4, 1), new LocalTime("08:00"), PlaylistType.FILLERS);
+        Playlist playlist = null;
+        for (Playlist playlistLoop : playlistResults) {
+            if (playlistLoop.getRepeatRule().equals(PlaylistRepeat.MONDAY.rrule())) {
+                playlist = playlistLoop;
+                break;
+            }
+        }
+
         assertThat(PlaylistRepeat.stringToPlaylistRepeat(playlist.getRepeatRule()), is(PlaylistRepeat.MONDAY));
 
         playlist.clockService = new ClockService() {
@@ -112,10 +110,24 @@ public class PlaylistsTest extends DscmIntegTest {
             }
         };
 
-        List<LocalDateTime> nextOccurences = playlist.nextOccurences(playlist.getStartDate().plusDays(7));
+        List<LocalDateTime> nextOccurences = playlist.nextOccurences(playlist.getStartDate().plusDays(7), false);
 
         assertThat(nextOccurences.size(), is(1));
         assertThat(nextOccurences.get(0), is(new LocalDateTime(2015, 4, 6, 8, 0, 0, 0)));
+    }
+
+    @Test
+    public void testOverlappingPlaylists() throws Exception {
+        List<Playlist> playlistResults = playlists.findByDisplayGroupAndStartDateTimeAndType(displayGroup, new LocalDate(1980, 1, 1), new LocalTime("08:00"), PlaylistType.FILLERS);
+        Playlist playlist = playlistResults.get(0);
+        playlist.clockService = new ClockService() {
+            @Override
+            public LocalDate now() {
+                return new LocalDate(2015, 4, 25);
+            }
+        };
+        List<LocalDateTime> nextOccurrences = playlist.nextOccurences(playlist.clockService.now().plusDays(7), false);
+        assertThat(nextOccurrences.size(), is(6));
     }
 
     @Test
@@ -146,8 +158,7 @@ public class PlaylistsTest extends DscmIntegTest {
                 mainPlayList.getStartDate(),
                 Time.T1300,
                 mainPlayList.getEndDate(),
-                PlaylistRepeat.DAILY,
-                mainPlayList.getLoopDuration());
+                PlaylistRepeat.DAILY);
 
         assertThat(mainPlayList.compareTo(compareTo), is(0));
     }

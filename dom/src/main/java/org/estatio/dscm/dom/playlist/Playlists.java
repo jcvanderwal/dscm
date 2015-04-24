@@ -18,26 +18,17 @@
  */
 package org.estatio.dscm.dom.playlist;
 
-import java.math.BigDecimal;
-import java.util.List;
-
+import org.apache.isis.applib.annotation.*;
+import org.apache.isis.applib.annotation.ActionSemantics.Of;
+import org.apache.isis.applib.annotation.Render.Type;
+import org.apache.isis.applib.query.QueryDefault;
+import org.estatio.dscm.EstatioDomainService;
+import org.estatio.dscm.dom.display.DisplayGroup;
 import org.joda.time.LocalDate;
 import org.joda.time.LocalTime;
 
-import org.apache.isis.applib.annotation.ActionSemantics;
-import org.apache.isis.applib.annotation.ActionSemantics.Of;
-import org.apache.isis.applib.annotation.Bookmarkable;
-import org.apache.isis.applib.annotation.DomainService;
-import org.apache.isis.applib.annotation.MemberOrder;
-import org.apache.isis.applib.annotation.Named;
-import org.apache.isis.applib.annotation.Optional;
-import org.apache.isis.applib.annotation.Programmatic;
-import org.apache.isis.applib.annotation.Render;
-import org.apache.isis.applib.annotation.Render.Type;
-import org.apache.isis.applib.query.QueryDefault;
-
-import org.estatio.dscm.EstatioDomainService;
-import org.estatio.dscm.dom.display.DisplayGroup;
+import java.math.BigDecimal;
+import java.util.List;
 
 @DomainService
 public class Playlists extends EstatioDomainService<Playlist> {
@@ -65,12 +56,12 @@ public class Playlists extends EstatioDomainService<Playlist> {
     // //////////////////////////////////////
 
     @Programmatic
-    public Playlist findByDisplayGroupAndStartDateTimeAndType(
+    public List<Playlist> findByDisplayGroupAndStartDateTimeAndType(
             final DisplayGroup displayGroup,
             final LocalDate startDate,
             final LocalTime startTime,
             final PlaylistType type) {
-        return firstMatch("findByDisplayGroupAndStartDateTimeAndType",
+        return allMatches("findByDisplayGroupAndStartDateTimeAndType",
                 "displayGroup", displayGroup,
                 "startDate", startDate,
                 "startTime", startTime,
@@ -104,28 +95,28 @@ public class Playlists extends EstatioDomainService<Playlist> {
     @ActionSemantics(Of.SAFE)
     @Render(Type.EAGERLY)
     public List<Playlist> mainPlaylists(DisplayGroup displayGroup) {
-    	return findByDisplayGroupAndType(displayGroup, PlaylistType.MAIN);
+        return findByDisplayGroupAndType(displayGroup, PlaylistType.MAIN);
     }
-    
+
     @ActionSemantics(Of.SAFE)
     @Render(Type.EAGERLY)
     public List<Playlist> fillerPlaylists(DisplayGroup displayGroup) {
-    	return findByDisplayGroupAndType(displayGroup, PlaylistType.FILLERS);
+        return findByDisplayGroupAndType(displayGroup, PlaylistType.FILLERS);
     }
 
     // //////////////////////////////////////
-    
+
     @Programmatic
-    public Playlist findByDisplayGroupAndTimeAndType(
+    public List<Playlist> findByDisplayGroupAndStartTimeAndType(
             final DisplayGroup displayGroup,
-            final LocalTime time,
+            final LocalTime startTime,
             final PlaylistType type) {
-        return firstMatch("findByDisplayGroupAndTimeAndType", 
+        return allMatches("findByDisplayGroupAndStartTimeAndType",
                 "displayGroup", displayGroup,
-                "time", time,
+                "startTime", startTime,
                 "type", type);
     }
-    
+
     @Programmatic
     public Playlist findByDisplayGroupAndTimeAndTypeAndPlaylistRepeat(
             final DisplayGroup displayGroup,
@@ -146,8 +137,7 @@ public class Playlists extends EstatioDomainService<Playlist> {
             final @Named("Start date") LocalDate startDate,
             final @Named("Start time") Time startTime,
             final @Named("End date") @Optional LocalDate endDate,
-            final @Named("Repeat") PlaylistRepeat repeat,
-            final @Named("Loop duration") BigDecimal loopDuration) {
+            final @Named("Repeat") PlaylistRepeat repeat) {
         final Playlist obj = getContainer().newTransientInstance(Playlist.class);
         obj.setDisplayGroup(displayGroup);
         obj.setStartDate(startDate);
@@ -155,7 +145,7 @@ public class Playlists extends EstatioDomainService<Playlist> {
         obj.setEndDate(endDate);
         obj.setRepeatRule(repeat.rrule());
         obj.setType(type);
-        obj.setLoopDuration(loopDuration);
+        obj.setLoopDuration(new BigDecimal(60));
         getContainer().persistIfNotAlready(obj);
         return obj;
     }
@@ -166,18 +156,13 @@ public class Playlists extends EstatioDomainService<Playlist> {
             final LocalDate startDate,
             final Time startTime,
             final LocalDate endDate,
-            final PlaylistRepeat repeat,
-            final BigDecimal loopDuration) {
+            final PlaylistRepeat repeat) {
         final Boolean exists = findByDisplayGroupAndTimeAndTypeAndPlaylistRepeat(displayGroup, startTime.time(), type, repeat.rrule()) == null ? false : true;
         return exists ? "The selected display group already has a playlist of this type with this start time and repeat rule" : null;
     }
-    
+
     public LocalDate default2NewPlaylist() {
         return getClockService().now();
-    }
-
-    public BigDecimal default6NewPlaylist() {
-        return new BigDecimal(60);
     }
 
 }

@@ -36,6 +36,7 @@ import javax.inject.Inject;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
+import org.estatio.dscm.dom.playlist.*;
 import org.joda.time.LocalDateTime;
 
 import org.apache.isis.applib.AbstractContainedObject;
@@ -53,10 +54,6 @@ import org.estatio.dscm.dom.asset.Assets;
 import org.estatio.dscm.dom.display.Display;
 import org.estatio.dscm.dom.display.DisplayGroup;
 import org.estatio.dscm.dom.display.DisplayGroups;
-import org.estatio.dscm.dom.playlist.Playlist;
-import org.estatio.dscm.dom.playlist.PlaylistItem;
-import org.estatio.dscm.dom.playlist.PlaylistType;
-import org.estatio.dscm.dom.playlist.Playlists;
 import org.estatio.dscm.dom.publisher.Publisher;
 import org.estatio.dscm.dom.publisher.Publishers;
 
@@ -99,7 +96,7 @@ public class SyncService extends AbstractContainedObject {
 
         for (Playlist playlist : playlists.findByDisplayGroupAndType(displayGroup, PlaylistType.MAIN)) {
             for (Display display : displayGroup.getDisplays()) {
-                for (LocalDateTime dateTime : playlist.nextOccurences(clockService.now().plusDays(7))) {
+                for (LocalDateTime dateTime : playlist.nextOccurences(clockService.now().plusDays(7), false)) {
                     writePlaylist(display, dateTime, effectiveItems(playlist, dateTime), rt);
                 }
             }
@@ -122,7 +119,7 @@ public class SyncService extends AbstractContainedObject {
 
         for (Playlist playlist : playlists.findByDisplayGroupAndType(displayGroup, PlaylistType.MAIN)) {
             for (Display display : displayGroup.getDisplays()) {
-                for (LocalDateTime dateTime : playlist.nextOccurences(clockService.now().plusDays(7))) {
+                for (LocalDateTime dateTime : playlist.nextOccurences(clockService.now().plusDays(7), false)) {
                     writePlaylist(display, dateTime, effectiveItems(playlist, dateTime), rt);
                 }
             }
@@ -244,6 +241,7 @@ public class SyncService extends AbstractContainedObject {
         if (fillerPlaylist != null) {
             fillers.addAll(fillerPlaylist.getItems());
         }
+
         return PlaylistGenerator.generate(commercials, fillers, playlist.getLoopDuration());
     }
 

@@ -66,11 +66,13 @@ public class SyncServiceTest extends DscmIntegTest {
     @Before
     public void setUp() throws Exception {
         final DisplayGroup displayGroup = displayGroups.allDisplayGroups().get(0);
-        commercialPlaylist = playlists.findByDisplayGroupAndStartDateTimeAndType(
+        List<Playlist> playlistResults = playlists.findByDisplayGroupAndStartDateTimeAndType(
                 displayGroup,
                 PlaylistsAndItems.DATE,
                 PlaylistsAndItems.MORNING.time(),
                 PlaylistType.MAIN);
+        assertThat(playlistResults.size(), is(1));
+        commercialPlaylist = playlistResults.get(0);
     }
 
     public static class EffectiveItems extends SyncServiceTest {

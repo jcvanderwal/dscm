@@ -19,25 +19,18 @@
 
 package org.estatio.dscm.fixture.playlist;
 
-import java.math.BigDecimal;
-
-import javax.inject.Inject;
-
+import org.apache.isis.applib.fixturescripts.DiscoverableFixtureScript;
 import org.estatio.dscm.dom.asset.Assets;
 import org.estatio.dscm.dom.display.DisplayGroup;
 import org.estatio.dscm.dom.display.DisplayGroups;
-import org.estatio.dscm.dom.playlist.Playlist;
-import org.estatio.dscm.dom.playlist.PlaylistItems;
-import org.estatio.dscm.dom.playlist.PlaylistRepeat;
-import org.estatio.dscm.dom.playlist.PlaylistType;
-import org.estatio.dscm.dom.playlist.Playlists;
-import org.estatio.dscm.dom.playlist.Time;
+import org.estatio.dscm.dom.playlist.*;
 import org.estatio.dscm.fixture.asset.AssetForCommercial;
 import org.estatio.dscm.fixture.asset.AssetForFiller;
 import org.estatio.dscm.fixture.display.DisplayGroupsAndDisplays;
 import org.joda.time.LocalDate;
 
-import org.apache.isis.applib.fixturescripts.DiscoverableFixtureScript;
+import javax.inject.Inject;
+import java.math.BigDecimal;
 
 public class PlaylistsAndItems extends DiscoverableFixtureScript {
 
@@ -77,8 +70,7 @@ public class PlaylistsAndItems extends DiscoverableFixtureScript {
                     playlistDate,
                     time,
                     null,
-                    repeat,
-                    loopDuration);
+                    repeat);
             playlistItems.newPlaylistItem(p1, assets.findAssetByName(assetName));
         }
     }

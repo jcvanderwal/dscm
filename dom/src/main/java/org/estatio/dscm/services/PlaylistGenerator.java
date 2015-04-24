@@ -1,10 +1,11 @@
 package org.estatio.dscm.services;
 
+import org.estatio.dscm.dom.playlist.Playlist;
+import org.estatio.dscm.dom.playlist.PlaylistItem;
+
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
-
-import org.estatio.dscm.dom.playlist.PlaylistItem;
 
 public class PlaylistGenerator {
 

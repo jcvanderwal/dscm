@@ -40,7 +40,7 @@ public class PlaylistTest_nextOccurences {
                 return new LocalDate(2014, 5, 1);
             }
         };
-        final List<LocalDateTime> nextOccurences = playlist.nextOccurences(new LocalDate(2014, 6, 1));
+        final List<LocalDateTime> nextOccurences = playlist.nextOccurences(new LocalDate(2014, 6, 1), true);
         assertThat(nextOccurences.toString(), nextOccurences.size(), is(31));
     }
 
@@ -52,7 +52,7 @@ public class PlaylistTest_nextOccurences {
                 return new LocalDate(2014, 6, 1);
             }
         };
-        final List<LocalDateTime> nextOccurences = playlist.nextOccurences(new LocalDate(2014, 6, 1));
+        final List<LocalDateTime> nextOccurences = playlist.nextOccurences(new LocalDate(2014, 6, 1), true);
         assertThat(nextOccurences.toString(), nextOccurences.size(), is(1));
     }
 
@@ -64,7 +64,7 @@ public class PlaylistTest_nextOccurences {
                 return new LocalDate(2014, 4, 1);
             }
         };
-        final List<LocalDateTime> nextOccurences = playlist.nextOccurences(new LocalDate(2014, 4, 1));
+        final List<LocalDateTime> nextOccurences = playlist.nextOccurences(new LocalDate(2014, 4, 1), true);
         assertThat(nextOccurences.size(), is(0));
     }
 
@@ -84,7 +84,7 @@ public class PlaylistTest_nextOccurences {
                 return new LocalDate(2015, 4, 1);
             }
         };
-        final List<LocalDateTime> nextOccurrences = playlist2.nextOccurences(new LocalDate(2015, 4, 8));
+        final List<LocalDateTime> nextOccurrences = playlist2.nextOccurences(new LocalDate(2015, 4, 8), true);
         assertThat(nextOccurrences.toString(), nextOccurrences.size(), is(1));
     }
 }

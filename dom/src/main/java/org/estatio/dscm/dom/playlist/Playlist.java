@@ -18,46 +18,33 @@
  */
 package org.estatio.dscm.dom.playlist;
 
-import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.SortedSet;
-import java.util.TreeSet;
+import com.google.common.collect.ComparisonChain;
+import org.apache.commons.lang3.ObjectUtils;
+import org.apache.isis.applib.AbstractContainedObject;
+import org.apache.isis.applib.annotation.*;
+import org.apache.isis.applib.annotation.Render.Type;
+import org.apache.isis.applib.services.clock.ClockService;
+import org.apache.isis.applib.util.TitleBuffer;
+import org.estatio.dscm.DscmDashboard;
+import org.estatio.dscm.dom.asset.Asset;
+import org.estatio.dscm.dom.asset.Assets;
+import org.estatio.dscm.dom.display.DisplayGroup;
+import org.estatio.dscm.utils.CalendarUtils;
+import org.joda.time.Interval;
+import org.joda.time.LocalDate;
+import org.joda.time.LocalDateTime;
+import org.joda.time.LocalTime;
 
 import javax.inject.Inject;
 import javax.jdo.annotations.Column;
 import javax.jdo.annotations.IdentityType;
 import javax.jdo.annotations.Persistent;
 import javax.jdo.annotations.VersionStrategy;
-
-import com.google.common.collect.ComparisonChain;
-
-import org.apache.commons.lang3.ObjectUtils;
-import org.joda.time.Interval;
-import org.joda.time.LocalDate;
-import org.joda.time.LocalDateTime;
-import org.joda.time.LocalTime;
-
-import org.apache.isis.applib.AbstractContainedObject;
-import org.apache.isis.applib.annotation.Bookmarkable;
-import org.apache.isis.applib.annotation.Bounded;
-import org.apache.isis.applib.annotation.Hidden;
-import org.apache.isis.applib.annotation.Immutable;
-import org.apache.isis.applib.annotation.MemberOrder;
-import org.apache.isis.applib.annotation.MultiLine;
-import org.apache.isis.applib.annotation.Named;
-import org.apache.isis.applib.annotation.Optional;
-import org.apache.isis.applib.annotation.Programmatic;
-import org.apache.isis.applib.annotation.Render;
-import org.apache.isis.applib.annotation.Render.Type;
-import org.apache.isis.applib.services.clock.ClockService;
-import org.apache.isis.applib.util.TitleBuffer;
-
-import org.estatio.dscm.DscmDashboard;
-import org.estatio.dscm.dom.asset.Asset;
-import org.estatio.dscm.dom.asset.Assets;
-import org.estatio.dscm.dom.display.DisplayGroup;
-import org.estatio.dscm.utils.CalendarUtils;
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.SortedSet;
+import java.util.TreeSet;
 
 @javax.jdo.annotations.PersistenceCapable(
         identityType = IdentityType.DATASTORE)
@@ -93,10 +80,10 @@ import org.estatio.dscm.utils.CalendarUtils;
                 value = "SELECT FROM org.estatio.dscm.dom.playlist.Playlist "
                         + "WHERE displayGroup == :displayGroup "
                         + "&& type == :type"),
-        @javax.jdo.annotations.Query(name = "findByDisplayGroupAndTimeAndType", language = "JDOQL",
+        @javax.jdo.annotations.Query(name = "findByDisplayGroupAndStartTimeAndType", language = "JDOQL",
                 value = "SELECT FROM org.estatio.dscm.dom.playlist.Playlist "
                         + "WHERE displayGroup == :displayGroup "
-                        + "&& startTime == :time "
+                        + "&& startTime == :startTime "
                         + "&& type == :type"),
         @javax.jdo.annotations.Query(name = "findByDisplayGroupAndTimeAndTypeAndPlaylistRepeat", language = "JDOQL",
                 value = "SELECT FROM org.estatio.dscm.dom.playlist.Playlist "
@@ -238,7 +225,7 @@ public class Playlist extends AbstractContainedObject implements Comparable<Play
     public String getNextOccurences() {
         StringBuilder builder = new StringBuilder();
         LocalDate fromDate = clockService.now().compareTo(this.getStartDate()) >= 0 ? clockService.now() : this.getStartDate();
-        for (LocalDateTime occurence : nextOccurences(fromDate.plusDays(7))) {
+        for (LocalDateTime occurence : nextOccurences(fromDate.plusDays(7), false)) {
             builder.append(occurence.toString("yyyy-MM-dd HH:mm"));
             builder.append("\n");
         }
@@ -246,13 +233,28 @@ public class Playlist extends AbstractContainedObject implements Comparable<Play
     }
 
     @Programmatic
-    public List<LocalDateTime> nextOccurences(LocalDate endDate) {
+    public List<LocalDateTime> nextOccurences(LocalDate endDate, boolean test) {
         List<LocalDateTime> nextList = new ArrayList<LocalDateTime>();
         final LocalDate start = getStartDate().isBefore(clockService.now()) ? clockService.now() : getStartDate();
-        final LocalDate end = ObjectUtils.min(endDate, getEndDate());
+        final LocalDate end = ObjectUtils.min(endDate, this.getEndDate());
+        List<Playlist> individualDayPlaylists = null;
+
+        if (this.getRepeatRule().equals(PlaylistRepeat.DAILY.rrule()) && test == false) {
+            individualDayPlaylists = playlists.findByDisplayGroupAndStartTimeAndType(
+                    this.getDisplayGroup(),
+                    this.getStartTime(),
+                    this.getType());
+            List<Playlist> copyIndividual = new ArrayList<Playlist>(individualDayPlaylists);
+            for (Playlist dailyPlaylist : copyIndividual) {
+                if (dailyPlaylist.getRepeatRule().equals(PlaylistRepeat.DAILY.rrule())) {
+                    individualDayPlaylists.remove(dailyPlaylist);
+                }
+            }
+        }
 
         if (end.compareTo(start) >= 0 && end.compareTo(clockService.now()) >= 0) {
-            List<Interval> intervals = CalendarUtils.intervalsInRange(
+            List<Interval> intervals;
+            intervals = CalendarUtils.intervalsInRange(
                     start,
                     end,
                     getRepeatRule());
@@ -260,10 +262,21 @@ public class Playlist extends AbstractContainedObject implements Comparable<Play
             for (Interval interval : intervals) {
                 LocalDateTime intervalStart = new LocalDateTime(interval.getStart());
                 if (intervalStart.compareTo(start.toLocalDateTime(new LocalTime("00:00"))) >= 0) {
-                    nextList.add(new LocalDateTime(
-                            interval.getStartMillis()).
-                            withHourOfDay(getStartTime().getHourOfDay()).
-                            withMinuteOfHour(getStartTime().getMinuteOfHour()));
+                    boolean add = true;
+                    if (individualDayPlaylists != null && !individualDayPlaylists.isEmpty()) {
+                        for (Playlist dailyPlaylist : individualDayPlaylists) {
+                            if (intervalStart.dayOfWeek().getAsText().toUpperCase().equals(PlaylistRepeat.stringToPlaylistRepeat(dailyPlaylist.getRepeatRule()).title())) {
+                                add = false;
+                            }
+                        }
+                    }
+
+                    if (add == true) {
+                        nextList.add(new LocalDateTime(
+                                interval.getStartMillis()).
+                                withHourOfDay(getStartTime().getHourOfDay()).
+                                withMinuteOfHour(getStartTime().getMinuteOfHour()));
+                    }
                 }
             }
         }
@@ -312,8 +325,7 @@ public class Playlist extends AbstractContainedObject implements Comparable<Play
                 newDate,
                 newTime,
                 null,
-                newRepeat,
-                newLoopDuration);
+                newRepeat);
 
         this.setEndDate(newDate);
 
