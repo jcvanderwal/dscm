@@ -18,33 +18,19 @@
  */
 package org.estatio.dscm.dom.display;
 
-import java.util.SortedSet;
-import java.util.TreeSet;
+import com.danhaywood.isis.wicket.gmap3.applib.Location;
+import com.danhaywood.isis.wicket.gmap3.service.LocationLookupService;
+import com.google.common.collect.ComparisonChain;
+import org.apache.isis.applib.annotation.*;
+import org.apache.isis.applib.annotation.ActionSemantics.Of;
+import org.apache.isis.applib.annotation.Render.Type;
 
 import javax.inject.Inject;
 import javax.jdo.annotations.IdentityType;
 import javax.jdo.annotations.Persistent;
 import javax.jdo.annotations.VersionStrategy;
-
-import com.danhaywood.isis.wicket.gmap3.applib.Location;
-import com.danhaywood.isis.wicket.gmap3.service.LocationLookupService;
-import com.google.common.collect.ComparisonChain;
-
-import org.apache.isis.applib.annotation.ActionSemantics;
-import org.apache.isis.applib.annotation.ActionSemantics.Of;
-import org.apache.isis.applib.annotation.Bookmarkable;
-import org.apache.isis.applib.annotation.Bounded;
-import org.apache.isis.applib.annotation.DescribedAs;
-import org.apache.isis.applib.annotation.Disabled;
-import org.apache.isis.applib.annotation.Hidden;
-import org.apache.isis.applib.annotation.Immutable;
-import org.apache.isis.applib.annotation.MemberOrder;
-import org.apache.isis.applib.annotation.Named;
-import org.apache.isis.applib.annotation.Optional;
-import org.apache.isis.applib.annotation.Render;
-import org.apache.isis.applib.annotation.Render.Type;
-import org.apache.isis.applib.annotation.Title;
-import org.apache.isis.applib.annotation.Where;
+import java.util.SortedSet;
+import java.util.TreeSet;
 
 @javax.jdo.annotations.PersistenceCapable(
         identityType = IdentityType.DATASTORE)

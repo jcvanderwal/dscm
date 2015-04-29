@@ -18,16 +18,14 @@
  */
 package org.estatio.dscm;
 
-import java.util.List;
-
-import javax.inject.Inject;
-
 import org.apache.isis.applib.annotation.Named;
 import org.apache.isis.applib.annotation.Render;
 import org.apache.isis.applib.annotation.Render.Type;
-
 import org.estatio.dscm.dom.display.DisplayGroup;
 import org.estatio.dscm.dom.display.DisplayGroups;
+
+import javax.inject.Inject;
+import java.util.List;
 
 @Named("Dashboard")
 public class DscmDashboard extends EstatioViewModel {

@@ -18,16 +18,12 @@
  */
 package org.estatio.dscm.dom.display;
 
+import org.apache.isis.applib.annotation.*;
+import org.apache.isis.applib.util.ObjectContracts;
+
 import javax.jdo.annotations.Column;
 import javax.jdo.annotations.IdentityType;
 import javax.jdo.annotations.VersionStrategy;
-
-import org.apache.isis.applib.annotation.Bookmarkable;
-import org.apache.isis.applib.annotation.Immutable;
-import org.apache.isis.applib.annotation.MemberOrder;
-import org.apache.isis.applib.annotation.Named;
-import org.apache.isis.applib.annotation.Title;
-import org.apache.isis.applib.util.ObjectContracts;
 
 @javax.jdo.annotations.PersistenceCapable(
         identityType = IdentityType.DATASTORE)

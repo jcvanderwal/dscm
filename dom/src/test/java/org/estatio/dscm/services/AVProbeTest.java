@@ -1,9 +1,7 @@
 package org.estatio.dscm.services;
 
-import static org.hamcrest.CoreMatchers.is;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertThat;
-
+import org.apache.isis.core.unittestsupport.jmocking.JUnitRuleMockery2;
+import org.apache.isis.core.unittestsupport.jmocking.JUnitRuleMockery2.Mode;
 import org.jmock.Expectations;
 import org.jmock.auto.Mock;
 import org.joda.time.Duration;
@@ -11,8 +9,9 @@ import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 
-import org.apache.isis.core.unittestsupport.jmocking.JUnitRuleMockery2;
-import org.apache.isis.core.unittestsupport.jmocking.JUnitRuleMockery2.Mode;
+import static org.hamcrest.CoreMatchers.is;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertThat;
 
 public class AVProbeTest {
 

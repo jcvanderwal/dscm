@@ -18,231 +18,189 @@
  */
 package org.estatio.dscm.dom.asset;
 
-import java.math.BigDecimal;
+import org.apache.isis.applib.AbstractDomainObject;
+import org.apache.isis.applib.annotation.*;
+import org.apache.isis.applib.annotation.ActionSemantics.Of;
+import org.apache.isis.applib.util.ObjectContracts;
+import org.apache.isis.applib.value.Blob;
+import org.estatio.dscm.DscmDashboard;
+import org.estatio.dscm.dom.display.DisplayGroup;
+import org.estatio.dscm.dom.playlist.PlaylistItems;
+import org.estatio.dscm.dom.publisher.Publisher;
+import org.joda.time.LocalDate;
 
 import javax.inject.Inject;
 import javax.jdo.annotations.Column;
 import javax.jdo.annotations.IdentityType;
 import javax.jdo.annotations.Persistent;
 import javax.jdo.annotations.VersionStrategy;
-
-import org.joda.time.LocalDate;
-
-import org.apache.isis.applib.AbstractDomainObject;
-import org.apache.isis.applib.annotation.ActionSemantics;
-import org.apache.isis.applib.annotation.ActionSemantics.Of;
-import org.apache.isis.applib.annotation.Bookmarkable;
-import org.apache.isis.applib.annotation.Bounded;
-import org.apache.isis.applib.annotation.Hidden;
-import org.apache.isis.applib.annotation.Immutable;
-import org.apache.isis.applib.annotation.MemberOrder;
-import org.apache.isis.applib.annotation.Named;
-import org.apache.isis.applib.annotation.Optional;
-import org.apache.isis.applib.annotation.Programmatic;
-import org.apache.isis.applib.annotation.Title;
-import org.apache.isis.applib.util.ObjectContracts;
-import org.apache.isis.applib.value.Blob;
-
-import org.estatio.dscm.DscmDashboard;
-import org.estatio.dscm.dom.display.DisplayGroup;
-import org.estatio.dscm.dom.playlist.PlaylistItems;
-import org.estatio.dscm.dom.publisher.Publisher;
+import java.math.BigDecimal;
 
 @javax.jdo.annotations.PersistenceCapable(identityType = IdentityType.DATASTORE)
 @javax.jdo.annotations.DatastoreIdentity(strategy = javax.jdo.annotations.IdGeneratorStrategy.IDENTITY, column = "id")
 @javax.jdo.annotations.Version(strategy = VersionStrategy.VERSION_NUMBER, column = "version")
 @javax.jdo.annotations.Queries({
-		// TODO: secondary ordening by publisher
-		@javax.jdo.annotations.Query(name = "findAll", language = "JDOQL", value = "SELECT "
-				+ "FROM org.estatio.dscm.dom.asset.Asset " + "ORDER BY name"),
-		@javax.jdo.annotations.Query(name = "findByName", language = "JDOQL", value = "SELECT "
-				+ "FROM org.estatio.dscm.dom.asset.Asset "
-				+ "WHERE name == :name"),
-		@javax.jdo.annotations.Query(name = "findByDisplayGroup", language = "JDOQL", value = "SELECT "
-				+ "FROM org.estatio.dscm.dom.Asset "
-				+ "WHERE (displayGroup == null || displayGroup == :displayGroup)") })
+        // TODO: secondary ordening by publisher
+        @javax.jdo.annotations.Query(name = "findAll", language = "JDOQL", value = "SELECT "
+                + "FROM org.estatio.dscm.dom.asset.Asset " + "ORDER BY name"),
+        @javax.jdo.annotations.Query(name = "findByName", language = "JDOQL", value = "SELECT "
+                + "FROM org.estatio.dscm.dom.asset.Asset "
+                + "WHERE name == :name"),
+        @javax.jdo.annotations.Query(name = "findByDisplayGroup", language = "JDOQL", value = "SELECT "
+                + "FROM org.estatio.dscm.dom.Asset "
+                + "WHERE (displayGroup == null || displayGroup == :displayGroup)")})
 @Bookmarkable
 @Immutable
 @Bounded
 public class Asset extends AbstractDomainObject implements Comparable<Asset> {
 
-	private String name;
+    private String name;
 
-	@javax.jdo.annotations.Column(allowsNull = "false")
-	@Title(sequence = "1")
-	@MemberOrder(sequence = "1")
-	public String getName() {
-		return name;
-	}
+    @javax.jdo.annotations.Column(allowsNull = "false")
+    @Title(sequence = "1")
+    @MemberOrder(sequence = "1")
+    public String getName() {
+        return name;
+    }
 
-	public void setName(final String name) {
-		this.name = name;
-	}
+    public void setName(final String name) {
+        this.name = name;
+    }
 
-	// //////////////////////////////////////
+    // //////////////////////////////////////
 
-	private String description;
+    private String description;
 
-	@MemberOrder(sequence = "2")
-	@Optional
-	public String getDescription() {
-		return description;
-	}
+    @MemberOrder(sequence = "2")
+    @Optional
+    public String getDescription() {
+        return description;
+    }
 
-	public void setDescription(final String description) {
-		this.description = description;
-	}
+    public void setDescription(final String description) {
+        this.description = description;
+    }
 
-	// //////////////////////////////////////
+    // //////////////////////////////////////
 
-	private LocalDate startDate;
+    private LocalDate startDate;
 
-	@Persistent
-	@Column(allowsNull = "false")
-	@MemberOrder(sequence = "3")
-	public LocalDate getStartDate() {
-		return startDate;
-	}
+    @Persistent
+    @Column(allowsNull = "false")
+    @MemberOrder(sequence = "3")
+    public LocalDate getStartDate() {
+        return startDate;
+    }
 
-	public void setStartDate(final LocalDate startDate) {
-		this.startDate = startDate;
-	}
+    public void setStartDate(final LocalDate startDate) {
+        this.startDate = startDate;
+    }
 
-	// //////////////////////////////////////
+    // //////////////////////////////////////
 
-	private LocalDate expiryDate;
+    private BigDecimal duration;
 
-	@Persistent
-	@Optional
-	@Column(allowsNull = "true")
-	@MemberOrder(sequence = "4")
-	public LocalDate getExpiryDate() {
-		return expiryDate;
-	}
+    @Optional
+    @MemberOrder(sequence = "5")
+    public BigDecimal getDuration() {
+        return duration == null ? BigDecimal.ZERO : duration;
+    }
 
-	public void setExpiryDate(final LocalDate expiryDate) {
-		this.expiryDate = expiryDate;
-	}
+    public void setDuration(BigDecimal duration) {
+        this.duration = duration;
+    }
 
-	// //////////////////////////////////////
+    // //////////////////////////////////////
 
-	private BigDecimal duration;
+    private Publisher publisher;
 
-	@Optional
-	@MemberOrder(sequence = "5")
-	public BigDecimal getDuration() {
-		return duration == null ? BigDecimal.ZERO : duration;
-	}
+    @Column(name = "publisherId", allowsNull = "false")
+    @MemberOrder(sequence = "6")
+    public Publisher getPublisher() {
+        return publisher;
+    }
 
-	public void setDuration(BigDecimal duration) {
-		this.duration = duration;
-	}
+    public void setPublisher(Publisher publisher) {
+        this.publisher = publisher;
+    }
 
-	// //////////////////////////////////////
+    // //////////////////////////////////////
 
-	private Publisher publisher;
+    private DisplayGroup displayGroup;
 
-	@Column(name = "publisherId", allowsNull = "false")
-	@MemberOrder(sequence = "6")
-	public Publisher getPublisher() {
-		return publisher;
-	}
+    @Optional
+    @javax.jdo.annotations.Column(name = "displayGroupId", allowsNull = "true")
+    public DisplayGroup getDisplayGroup() {
+        return displayGroup;
+    }
 
-	public void setPublisher(Publisher publisher) {
-		this.publisher = publisher;
-	}
+    public void setDisplayGroup(final DisplayGroup displayGroup) {
+        this.displayGroup = displayGroup;
+    }
 
-	// //////////////////////////////////////
+    // //////////////////////////////////////
 
-	private DisplayGroup displayGroup;
+    public Blob download() {
+        return getFile();
+    }
 
-	@Optional
-	@javax.jdo.annotations.Column(name = "displayGroupId", allowsNull = "true")
-	public DisplayGroup getDisplayGroup() {
-		return displayGroup;
-	}
+    // //////////////////////////////////////
 
-	public void setDisplayGroup(final DisplayGroup displayGroup) {
-		this.displayGroup = displayGroup;
-	}
+    @javax.jdo.annotations.Persistent(defaultFetchGroup = "false")
+    private Blob file;
 
-	// //////////////////////////////////////
+    @Optional
+    @MemberOrder(sequence = "7")
+    @Hidden
+    public Blob getFile() {
+        return file;
+    }
 
-	public Blob download() {
-		return getFile();
-	}
+    public void setFile(Blob file) {
+        this.file = file;
+    }
 
-	// //////////////////////////////////////
+    // //////////////////////////////////////
+    public Object remove(@Named("Are you sure?") Boolean confirm) {
+        if (confirm) {
+            doRemove();
+            return newViewModelInstance(DscmDashboard.class, "dashboard");
+        } else {
+            return this;
+        }
+    }
 
-	@javax.jdo.annotations.Persistent(defaultFetchGroup = "false")
-	private Blob file;
+    public String disableRemove(Boolean confirm) {
+        return playlistItems.findByAsset(this).isEmpty() ? null
+                : "Asset is used in a playlist";
+    }
 
-	@Optional
-	@MemberOrder(sequence = "7")
-	@Hidden
-	public Blob getFile() {
-		return file;
-	}
+    @Programmatic
+    public void doRemove() {
+        getContainer().remove(this);
+        getContainer().flush();
+    }
 
-	public void setFile(Blob file) {
-		this.file = file;
-	}
+    // //////////////////////////////////////
 
-	// //////////////////////////////////////
-	public Object remove(@Named("Are you sure?") Boolean confirm) {
-		if (confirm) {
-			doRemove();
-			return newViewModelInstance(DscmDashboard.class, "dashboard");
-		} else {
-			return this;
-		}
-	}
+    @Override
+    public int compareTo(Asset other) {
+        return ObjectContracts.compare(this, other, "name");
+    }
 
-	public String disableRemove(Boolean confirm) {
-		return playlistItems.findByAsset(this).isEmpty() ? null
-				: "Asset is used in a playlist";
-	}
+    // //////////////////////////////////////
 
-	@Programmatic
-	public void doRemove() {
-		getContainer().remove(this);
-		getContainer().flush();
-	}
+    @Inject
+    private PlaylistItems playlistItems;
 
-	// //////////////////////////////////////
+    @ActionSemantics(Of.IDEMPOTENT)
+    public Asset changeDates(
+            final @Named("Start date") LocalDate startDate) {
+        setStartDate(startDate);
+        return this;
+    }
 
-	@Override
-	public int compareTo(Asset other) {
-		return ObjectContracts.compare(this, other, "name");
-	}
-
-	// //////////////////////////////////////
-
-	@Inject
-	private PlaylistItems playlistItems;
-
-	@ActionSemantics(Of.IDEMPOTENT)
-	public Asset changeDates(
-			final @Named("Start date") LocalDate startDate,
-			final @Named("Expiry date") @Optional LocalDate expiryDate) {
-		setStartDate(startDate);
-		setExpiryDate(expiryDate);
-		return this;
-	}
-
-	public LocalDate default0ChangeDates() {
-		return getStartDate();
-	}
-
-	public LocalDate default1ChangeDates() {
-		return getExpiryDate();
-	}
-
-	public String validateChangeDates(final LocalDate startDate,
-			final LocalDate expiryDate) {
-		if (expiryDate != null && expiryDate.isBefore(startDate)) {
-			return "Exipry date cannot be before start date";
-		}
-		return null;
-	}
+    public LocalDate default0ChangeDates() {
+        return getStartDate();
+    }
 }

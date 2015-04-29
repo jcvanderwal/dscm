@@ -1,18 +1,17 @@
 package org.estatio.dscm.services;
 
-import static org.hamcrest.CoreMatchers.is;
-import static org.junit.Assert.assertThat;
-import static org.junit.Assert.assertTrue;
+import org.estatio.dscm.dom.asset.Asset;
+import org.estatio.dscm.dom.playlist.PlaylistItem;
+import org.junit.Before;
+import org.junit.Test;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.junit.Before;
-import org.junit.Test;
-
-import org.estatio.dscm.dom.asset.Asset;
-import org.estatio.dscm.dom.playlist.PlaylistItem;
+import static org.hamcrest.CoreMatchers.is;
+import static org.junit.Assert.assertThat;
+import static org.junit.Assert.assertTrue;
 
 public class PlaylistManagerTest {
 

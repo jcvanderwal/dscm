@@ -1,10 +1,6 @@
 package org.estatio.dscm.dom.playlist;
 
-import static org.hamcrest.CoreMatchers.is;
-import static org.junit.Assert.assertThat;
-
-import java.util.List;
-
+import org.apache.isis.applib.services.clock.ClockService;
 import org.joda.time.LocalDate;
 import org.joda.time.LocalDateTime;
 import org.joda.time.LocalTime;
@@ -12,7 +8,10 @@ import org.joda.time.Period;
 import org.junit.Before;
 import org.junit.Test;
 
-import org.apache.isis.applib.services.clock.ClockService;
+import java.util.List;
+
+import static org.hamcrest.CoreMatchers.is;
+import static org.junit.Assert.assertThat;
 
 public class PlaylistTest_nextOccurences {
 

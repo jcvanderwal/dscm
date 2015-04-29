@@ -1,9 +1,8 @@
 package org.estatio.dscm.services;
 
+import org.estatio.dscm.dom.display.Display;
 import org.junit.Before;
 import org.junit.Test;
-
-import org.estatio.dscm.dom.display.Display;
 
 public class SyncServiceTest_syncPlaylist {
 

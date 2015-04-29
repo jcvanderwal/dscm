@@ -19,15 +19,14 @@
 
 package org.estatio.dscm.utils;
 
+import com.google.common.base.Strings;
+import org.apache.isis.applib.util.Enums;
+
 import java.io.File;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.StringTokenizer;
-
-import com.google.common.base.Strings;
-
-import org.apache.isis.applib.util.Enums;
 
 public final class StringExtensions {
 

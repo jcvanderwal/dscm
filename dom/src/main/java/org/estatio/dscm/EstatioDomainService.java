@@ -18,12 +18,11 @@
  */
 package org.estatio.dscm;
 
-import java.util.List;
-
-import javax.jdo.Query;
-
 import org.apache.isis.applib.query.QueryDefault;
 import org.apache.isis.applib.services.jdosupport.IsisJdoSupport;
+
+import javax.jdo.Query;
+import java.util.List;
 
 public abstract class EstatioDomainService<T> extends EstatioService<T> {
 

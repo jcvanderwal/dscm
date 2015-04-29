@@ -24,7 +24,6 @@ import org.apache.isis.applib.services.bookmark.BookmarkService;
 import org.apache.isis.applib.services.clock.ClockService;
 import org.apache.isis.applib.services.eventbus.EventBusService;
 import org.apache.isis.applib.services.memento.MementoService;
-
 import org.estatio.dscm.utils.StringExtensions;
 
 public abstract class EstatioService<T> extends AbstractService {

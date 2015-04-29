@@ -16,12 +16,12 @@
  */
 package org.estatio.dscm.dom.display;
 
+import org.junit.Before;
+import org.junit.Test;
+
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.nullValue;
 import static org.junit.Assert.assertThat;
-
-import org.junit.Before;
-import org.junit.Test;
 
 public class DisplayTest_name {
 

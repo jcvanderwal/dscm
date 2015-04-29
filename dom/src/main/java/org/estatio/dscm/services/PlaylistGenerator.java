@@ -1,6 +1,5 @@
 package org.estatio.dscm.services;
 
-import org.estatio.dscm.dom.playlist.Playlist;
 import org.estatio.dscm.dom.playlist.PlaylistItem;
 
 import java.math.BigDecimal;

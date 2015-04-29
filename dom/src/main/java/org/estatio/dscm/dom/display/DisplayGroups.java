@@ -18,19 +18,13 @@
  */
 package org.estatio.dscm.dom.display;
 
-import java.util.List;
+import org.apache.isis.applib.DomainObjectContainer;
+import org.apache.isis.applib.annotation.*;
+import org.apache.isis.applib.annotation.ActionSemantics.Of;
+import org.apache.isis.applib.query.QueryDefault;
 
 import javax.inject.Inject;
-
-import org.apache.isis.applib.DomainObjectContainer;
-import org.apache.isis.applib.annotation.ActionSemantics;
-import org.apache.isis.applib.annotation.ActionSemantics.Of;
-import org.apache.isis.applib.annotation.Bookmarkable;
-import org.apache.isis.applib.annotation.DomainService;
-import org.apache.isis.applib.annotation.MemberOrder;
-import org.apache.isis.applib.annotation.Named;
-import org.apache.isis.applib.annotation.NotInServiceMenu;
-import org.apache.isis.applib.query.QueryDefault;
+import java.util.List;
 
 @DomainService
 public class DisplayGroups {

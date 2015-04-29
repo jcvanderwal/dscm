@@ -18,24 +18,17 @@
  */
 package org.estatio.dscm.dom.publisher;
 
-import java.util.SortedSet;
-import java.util.TreeSet;
+import org.apache.isis.applib.annotation.*;
+import org.apache.isis.applib.annotation.Render.Type;
+import org.apache.isis.applib.util.ObjectContracts;
+import org.estatio.dscm.dom.asset.Asset;
 
 import javax.jdo.annotations.IdentityType;
 import javax.jdo.annotations.Persistent;
 import javax.jdo.annotations.Query;
 import javax.jdo.annotations.VersionStrategy;
-
-import org.apache.isis.applib.annotation.Bookmarkable;
-import org.apache.isis.applib.annotation.Bounded;
-import org.apache.isis.applib.annotation.Immutable;
-import org.apache.isis.applib.annotation.MemberOrder;
-import org.apache.isis.applib.annotation.Render;
-import org.apache.isis.applib.annotation.Render.Type;
-import org.apache.isis.applib.annotation.Title;
-import org.apache.isis.applib.util.ObjectContracts;
-
-import org.estatio.dscm.dom.asset.Asset;
+import java.util.SortedSet;
+import java.util.TreeSet;
 
 @javax.jdo.annotations.PersistenceCapable(
         identityType = IdentityType.DATASTORE)

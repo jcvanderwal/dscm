@@ -18,27 +18,8 @@
  */
 package org.estatio.dscm.services;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.PrintStream;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-
-import javax.activation.MimetypesFileTypeMap;
-import javax.annotation.PostConstruct;
-import javax.inject.Inject;
-
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
-import org.estatio.dscm.dom.playlist.*;
-import org.joda.time.LocalDateTime;
-
 import org.apache.isis.applib.AbstractContainedObject;
 import org.apache.isis.applib.annotation.DomainService;
 import org.apache.isis.applib.annotation.Hidden;
@@ -47,15 +28,27 @@ import org.apache.isis.applib.annotation.Programmatic;
 import org.apache.isis.applib.services.clock.ClockService;
 import org.apache.isis.applib.services.command.CommandContext;
 import org.apache.isis.applib.value.Blob;
-
 import org.estatio.dscm.DscmDashboard;
 import org.estatio.dscm.dom.asset.Asset;
 import org.estatio.dscm.dom.asset.Assets;
 import org.estatio.dscm.dom.display.Display;
 import org.estatio.dscm.dom.display.DisplayGroup;
 import org.estatio.dscm.dom.display.DisplayGroups;
+import org.estatio.dscm.dom.playlist.Playlist;
+import org.estatio.dscm.dom.playlist.PlaylistItem;
+import org.estatio.dscm.dom.playlist.PlaylistType;
+import org.estatio.dscm.dom.playlist.Playlists;
 import org.estatio.dscm.dom.publisher.Publisher;
 import org.estatio.dscm.dom.publisher.Publishers;
+import org.joda.time.LocalDateTime;
+
+import javax.activation.MimetypesFileTypeMap;
+import javax.annotation.PostConstruct;
+import javax.inject.Inject;
+import java.io.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
 
 //import org.apache.isis.applib.services.command.Command;
 
@@ -149,7 +142,7 @@ public class SyncService extends AbstractContainedObject {
 
     @Programmatic
     public String[] createSyncSchedulePath(String path, String task, Display display) {
-        String[] rV = { path.concat("/scripts/watson"), display.getName(), task };
+        String[] rV = {path.concat("/scripts/watson"), display.getName(), task};
         return rV;
     }
 
@@ -220,11 +213,9 @@ public class SyncService extends AbstractContainedObject {
     /**
      * The effective playlist items e.g. the commercials and fillers combined in
      * cycles of 60 seconds. All videos take 10 seconds each for the time being
-     * 
-     * @param playlist
-     *            The main playlist e.g. commercial
-     * @param dateTime
-     *            The effective time
+     *
+     * @param playlist The main playlist e.g. commercial
+     * @param dateTime The effective time
      * @return
      */
     @Programmatic
@@ -313,7 +304,7 @@ public class SyncService extends AbstractContainedObject {
         File displayAssetFile = new File(destination);
         displayAssetFile.getParentFile().mkdirs();
 
-        String[] execCommand = { "ln", "-s", origin, destination };
+        String[] execCommand = {"ln", "-s", origin, destination};
 
         try {
             rt.exec(execCommand);

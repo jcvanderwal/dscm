@@ -1,11 +1,11 @@
 package org.estatio.dscm.services;
 
-import javax.inject.Inject;
-
 import org.joda.time.Duration;
 import org.joda.time.Instant;
 import org.joda.time.format.PeriodFormatter;
 import org.joda.time.format.PeriodFormatterBuilder;
+
+import javax.inject.Inject;
 
 public class AVProbe {
 

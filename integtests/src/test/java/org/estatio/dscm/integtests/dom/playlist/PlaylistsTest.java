@@ -136,7 +136,7 @@ public class PlaylistsTest extends DscmIntegTest {
         LocalDate newDate = new LocalDate().plusDays(5);
         BigDecimal newLoopDuration = new BigDecimal(60);
         Playlist oldPlaylist = playlists.findByDisplayGroupAndDateTimeAndType(displayGroup, new LocalDate(1980, 1, 1), new LocalTime("13:00"), PlaylistType.MAIN);
-        Playlist newPlaylist = oldPlaylist.endAndCreateNewPlaylist(newDate, newLoopDuration);
+        Playlist newPlaylist = oldPlaylist.endAndCreateNewPlaylist(newDate);
 
         // Then assert old playlist end date
         assertThat(oldPlaylist.getEndDate(), is(newDate));

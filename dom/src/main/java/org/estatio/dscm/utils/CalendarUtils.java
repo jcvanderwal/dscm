@@ -18,15 +18,14 @@
  */
 package org.estatio.dscm.utils;
 
-import java.text.ParseException;
-import java.util.List;
-
 import com.google.common.collect.Lists;
 import com.google.ical.compat.jodatime.LocalDateIterator;
 import com.google.ical.compat.jodatime.LocalDateIteratorFactory;
-
 import org.joda.time.Interval;
 import org.joda.time.LocalDate;
+
+import java.text.ParseException;
+import java.util.List;
 
 public final class CalendarUtils {
 

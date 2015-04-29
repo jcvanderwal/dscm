@@ -312,8 +312,7 @@ public class Playlist extends AbstractContainedObject implements Comparable<Play
     // //////////////////////////////////////
 
     public Playlist endAndCreateNewPlaylist(
-            final @Named("Start date") LocalDate newDate,
-            final @Named("Loop duration") BigDecimal newLoopDuration) {
+            final @Named("Start date") LocalDate newDate) {
         DisplayGroup newDisplayGroup = this.getDisplayGroup();
         PlaylistType newType = this.getType();
         Time newTime = Time.localTimeToTime(this.getStartTime());

@@ -1,16 +1,14 @@
 package org.estatio.dscm.services;
 
+import org.apache.commons.lang3.ObjectUtils;
+import org.apache.isis.applib.ApplicationException;
+import org.estatio.dscm.dom.playlist.PlaylistItem;
+
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-
-import org.apache.commons.lang3.ObjectUtils;
-
-import org.apache.isis.applib.ApplicationException;
-
-import org.estatio.dscm.dom.playlist.PlaylistItem;
 
 class PlaylistManager {
 
