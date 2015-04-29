@@ -63,7 +63,6 @@ public class Assets extends EstatioDomainService<Asset> {
     public Asset newAsset(final @Named("File") Blob file,
                           final Publisher publisher, final DisplayGroup displayGroup,
                           final @Named("Start date") LocalDate startDate,
-                          final @Named("Expiry date") @Optional LocalDate expiryDate,
                           final @Named("Duration (seconds)") BigDecimal duration) {
         final Asset obj = container.newTransientInstance(Asset.class);
         obj.setName(file.getName());
@@ -84,11 +83,7 @@ public class Assets extends EstatioDomainService<Asset> {
             final Publisher publisher,
             final DisplayGroup displayGroup,
             final LocalDate startDate,
-            final LocalDate expiryDate,
             final BigDecimal duration) {
-        if (expiryDate != null && expiryDate.isBefore(startDate)) {
-            return "Exipry date cannot be before start date";
-        }
         if (findAssetByName(file.getName()) != null) {
             return "A file with this name is already uploaded.";
         }

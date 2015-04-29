@@ -180,7 +180,7 @@ public class SyncService extends AbstractContainedObject {
                     is = new FileInputStream(file);
                     final String mimeType = new MimetypesFileTypeMap().getContentType(file);
                     Blob blob = new Blob(file.getName(), mimeType, IOUtils.toByteArray(is));
-                    asset = assets.newAsset(blob, publisher, null, clockService.now(), null, null);
+                    asset = assets.newAsset(blob, publisher, null, clockService.now(), null);
                     for (Playlist playlist : playlists.allPlaylists()) {
                         playlist.newItem(asset);
                     }

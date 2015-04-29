@@ -45,7 +45,6 @@ public abstract class AssetAbstract extends DiscoverableFixtureScript {
                 publishers.findByName(publisherName),
                 null,
                 clockService.now(),
-                null,
                 new BigDecimal("10"));
     }
 
