@@ -38,7 +38,7 @@
 
         <isis-module-audit.version>1.8.0</isis-module-audit.version>
         <isis-module-command.version>1.8.1</isis-module-command.version>
-        <isis-module-devutils.version>1.7.0</isis-module-devutils.version>
+        <isis-module-devutils.version>1.8.0</isis-module-devutils.version>
         <isis-module-excel.version>1.8.0</isis-module-excel.version>
         <isis-module-publishing.version>1.8.0</isis-module-publishing.version>
         <isis-module-security.version>1.8.0</isis-module-security.version>
