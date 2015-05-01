@@ -89,7 +89,6 @@ import java.util.TreeSet;
                         + "&& type == :type "
                         + "&& repeatRule == :repeatRule")
 })
-@Unique(name = "Playlist_displayGroup_startDate_startTime_type_repeatRule_UNQ", members = {"displayGroup", "startDate", "startTime", "type", "repeatRule"})
 @Bookmarkable
 @Bounded
 @Immutable
