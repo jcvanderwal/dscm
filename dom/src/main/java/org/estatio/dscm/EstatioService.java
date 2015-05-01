@@ -26,6 +26,8 @@ import org.apache.isis.applib.services.eventbus.EventBusService;
 import org.apache.isis.applib.services.memento.MementoService;
 import org.estatio.dscm.utils.StringExtensions;
 
+import javax.inject.Inject;
+
 public abstract class EstatioService<T> extends AbstractService {
 
     private final Class<? extends EstatioService<T>> serviceType;
@@ -67,7 +69,8 @@ public abstract class EstatioService<T> extends AbstractService {
      * a default value is used to prevent null pointers for objects being
      * initialized where the service has not yet been injected into.
      */
-    private EventBusService eventBusService = EventBusService.NOOP;
+    @Inject
+    private EventBusService eventBusService;
 
     protected EventBusService getEventBusService() {
         return eventBusService;
@@ -79,11 +82,6 @@ public abstract class EstatioService<T> extends AbstractService {
      * instance of each domain service in memory when events are
      * {@link EventBusService#post(Object) post}ed.
      */
-    @Programmatic
-    final public void injectEventBusService(final EventBusService eventBusService) {
-        this.eventBusService = eventBusService;
-        eventBusService.register(this);
-    }
 
     private MementoService mementoService;
 

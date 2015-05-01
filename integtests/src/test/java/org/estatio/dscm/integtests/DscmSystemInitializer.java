@@ -19,10 +19,13 @@ package org.estatio.dscm.integtests;
 import org.apache.isis.core.commons.config.IsisConfiguration;
 import org.apache.isis.core.commons.config.IsisConfigurationDefault;
 import org.apache.isis.core.integtestsupport.IsisSystemForTest;
+import org.apache.isis.objectstore.jdo.applib.service.exceprecog.ExceptionRecognizerCompositeForJdoObjectStore;
 import org.apache.isis.objectstore.jdo.datanucleus.DataNucleusObjectStore;
 import org.apache.isis.objectstore.jdo.datanucleus.DataNucleusPersistenceMechanismInstaller;
+import org.apache.isis.objectstore.jdo.datanucleus.IsisConfigurationForJdoIntegTests;
 import org.apache.isis.objectstore.jdo.datanucleus.service.eventbus.EventBusServiceJdo;
 import org.apache.isis.objectstore.jdo.datanucleus.service.support.IsisJdoSupportImpl;
+import org.apache.log4j.Level;
 
 /**
  * Holds an instance of an {@link IsisSystemForTest} as a {@link ThreadLocal} on
@@ -44,30 +47,71 @@ public class DscmSystemInitializer {
 
     private static class SimpleAppSystemBuilder extends IsisSystemForTest.Builder {
 
+//        public SimpleAppSystemBuilder() {
+//            withLoggingAt(org.apache.log4j.Level.INFO);
+//            with(testConfiguration());
+//            with(new DataNucleusPersistenceMechanismInstaller());
+//
+//            withServicesIn("org.estatio"
+//                    , "org.apache.isis.core.wrapper"
+//                    , "org.apache.isis.applib"
+//                    , "org.apache.isis.core.metamodel.services"
+//                    , "org.apache.isis.core.runtime.services");
+//
+//            withServices(
+//                    new IsisJdoSupportImpl(),
+//                    new EventBusServiceJdo());
+//        }
+//
+//        private IsisConfiguration testConfiguration() {
+//            final IsisConfigurationDefault testConfiguration = new IsisConfigurationDefault();
+//            testConfiguration.add("isis.persistor.datanucleus.RegisterEntities.packagePrefix", "dom");
+//            testConfiguration.add("isis.persistor.datanucleus.impl.javax.jdo.option.ConnectionURL", "jdbc:hsqldb:mem:test");
+//            testConfiguration.add("isis.persistor.datanucleus.impl.datanucleus.defaultInheritanceStrategy", "TABLE_PER_CLASS");
+//            testConfiguration.add(DataNucleusObjectStore.INSTALL_FIXTURES_KEY, "true");
+//            testConfiguration.add("isis.persistor.datanucleus.impl.datanucleus.cache.level2.type", "none");
+//            testConfiguration.add("isis.persistor.datanucleus.impl.datanucleus.identifier.case", "PreserveCase");
+//            return testConfiguration;
+//        }
+
         public SimpleAppSystemBuilder() {
-            withLoggingAt(org.apache.log4j.Level.INFO);
+
+            // no need to add, because each test will set up its own test fixtures
+            // anyway.
+            withLoggingAt(Level.DEBUG);
             with(testConfiguration());
             with(new DataNucleusPersistenceMechanismInstaller());
 
-            withServicesIn("org.estatio"
-                    , "org.apache.isis.core.wrapper"
-                    , "org.apache.isis.applib"
-                    , "org.apache.isis.core.metamodel.services"
-                    , "org.apache.isis.core.runtime.services");
+            withServicesIn(
+                    "org.estatio",
+                    "org.isisaddons"
+            );
 
             withServices(
-                    new IsisJdoSupportImpl(),
-                    new EventBusServiceJdo());
+                    new ExceptionRecognizerCompositeForJdoObjectStore());
         }
 
-        private IsisConfiguration testConfiguration() {
-            final IsisConfigurationDefault testConfiguration = new IsisConfigurationDefault();
-            testConfiguration.add("isis.persistor.datanucleus.RegisterEntities.packagePrefix", "dom");
-            testConfiguration.add("isis.persistor.datanucleus.impl.javax.jdo.option.ConnectionURL", "jdbc:hsqldb:mem:test");
-            testConfiguration.add("isis.persistor.datanucleus.impl.datanucleus.defaultInheritanceStrategy", "TABLE_PER_CLASS");
-            testConfiguration.add(DataNucleusObjectStore.INSTALL_FIXTURES_KEY, "true");
-            testConfiguration.add("isis.persistor.datanucleus.impl.datanucleus.cache.level2.type", "none");
-            testConfiguration.add("isis.persistor.datanucleus.impl.datanucleus.identifier.case", "PreserveCase");
+        private static IsisConfiguration testConfiguration() {
+            final IsisConfigurationForJdoIntegTests testConfiguration = new IsisConfigurationForJdoIntegTests();
+            testConfiguration.addRegisterEntitiesPackagePrefix("org.estatio");
+
+            // uncomment to use log4jdbc instead
+            // testConfiguration.put("isis.persistor.datanucleus.impl.javax.jdo.option.ConnectionDriverName",
+            // "net.sf.log4jdbc.DriverSpy");
+
+            // testConfiguration.put("isis.persistor.datanucleus.impl.javax.jdo.option.ConnectionURL",
+            // "jdbc:hsqldb:mem:test;sqllog=3");
+
+            //
+            // testConfiguration.put("isis.persistor.datanucleus.impl.javax.jdo.option.ConnectionURL",
+            // "jdbc:sqlserver://localhost:1433;instance=.;databaseName=estatio");
+            // testConfiguration.put("isis.persistor.datanucleus.impl.javax.jdo.option.ConnectionDriverName",
+            // "com.microsoft.sqlserver.jdbc.SQLServerDriver");
+            // testConfiguration.put("isis.persistor.datanucleus.impl.javax.jdo.option.ConnectionUserName",
+            // "estatio");
+            // testConfiguration.put("isis.persistor.datanucleus.impl.javax.jdo.option.ConnectionPassword",
+            // "estatio");
+
             return testConfiguration;
         }
 

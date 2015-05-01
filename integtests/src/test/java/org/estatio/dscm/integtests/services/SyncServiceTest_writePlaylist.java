@@ -30,6 +30,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import javax.annotation.PostConstruct;
 import javax.inject.Inject;
 
 import org.estatio.dscm.dom.display.Display;
@@ -59,6 +60,9 @@ public class SyncServiceTest_writePlaylist extends DscmIntegTest {
 
     @Inject
     private DisplayGroups displayGroups;
+
+    @PostConstruct
+
 
     @BeforeClass
     public static void setupTransactionalData() {
