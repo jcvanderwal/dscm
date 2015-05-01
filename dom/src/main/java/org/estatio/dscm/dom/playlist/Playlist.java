@@ -36,10 +36,7 @@ import org.joda.time.LocalDateTime;
 import org.joda.time.LocalTime;
 
 import javax.inject.Inject;
-import javax.jdo.annotations.Column;
-import javax.jdo.annotations.IdentityType;
-import javax.jdo.annotations.Persistent;
-import javax.jdo.annotations.VersionStrategy;
+import javax.jdo.annotations.*;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
@@ -92,7 +89,7 @@ import java.util.TreeSet;
                         + "&& type == :type "
                         + "&& repeatRule == :repeatRule")
 })
-@javax.jdo.annotations.Unique(name = "Playlist_displayGroup_startDate_startTime_type_UNQ", members = "displayGroup,startDate,startTime,type")
+@Unique(name = "Playlist_displayGroup_startDate_startTime_type_repeatRule_UNQ", members = {"displayGroup", "startDate", "startTime", "type", "repeatRule"})
 @Bookmarkable
 @Bounded
 @Immutable
@@ -206,6 +203,7 @@ public class Playlist extends AbstractContainedObject implements Comparable<Play
 
     // //////////////////////////////////////
 
+    @Column(allowsNull = "false")
     private String repeatRule;
 
     @Hidden
