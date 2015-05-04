@@ -205,7 +205,6 @@ public class Playlist extends AbstractContainedObject implements Comparable<Play
     @Column(allowsNull = "false")
     private String repeatRule;
 
-    @Hidden
     @Optional
     public String getRepeatRule() {
         return repeatRule;

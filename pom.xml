@@ -52,6 +52,7 @@
         <quartz-scheduler.version>2.2.1</quartz-scheduler.version>
 
         <!-- must be consistent with the versions defined by the JDO Objectstore -->
+        <datanucleus-accessplatform-jdo-rdbms.version>3.3.6</datanucleus-accessplatform-jdo-rdbms.version>
         <datanucleus-maven-plugin.version>3.3.2</datanucleus-maven-plugin.version>
 
         <!-- override in each module (used by locate global resources) -->
