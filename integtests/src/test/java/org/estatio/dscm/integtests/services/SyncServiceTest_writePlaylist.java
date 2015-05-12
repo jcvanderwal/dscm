@@ -61,9 +61,6 @@ public class SyncServiceTest_writePlaylist extends DscmIntegTest {
     @Inject
     private DisplayGroups displayGroups;
 
-    @PostConstruct
-
-
     @BeforeClass
     public static void setupTransactionalData() {
         scenarioExecution().install(new DemoFixture());

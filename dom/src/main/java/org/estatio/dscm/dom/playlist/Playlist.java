@@ -89,6 +89,7 @@ import java.util.TreeSet;
                         + "&& type == :type "
                         + "&& repeatRule == :repeatRule")
 })
+//@Unique(name = "Playlist_displayGroup_startDate_startTime_type_repeatRule_UNQ", members = {"displayGroup", "startDate", "startTime", "type", "repeatRule"})
 @Bookmarkable
 @Bounded
 @Immutable
@@ -133,6 +134,7 @@ public class Playlist extends AbstractContainedObject implements Comparable<Play
 
     @MemberOrder(sequence = "4")
     @javax.jdo.annotations.Column(allowsNull = "false")
+
     public LocalTime getStartTime() {
         return startTime;
     }
@@ -205,6 +207,7 @@ public class Playlist extends AbstractContainedObject implements Comparable<Play
     @Column(allowsNull = "false")
     private String repeatRule;
 
+    @Hidden
     @Optional
     public String getRepeatRule() {
         return repeatRule;
@@ -214,10 +217,16 @@ public class Playlist extends AbstractContainedObject implements Comparable<Play
         this.repeatRule = repeatRule;
     }
 
+    @PropertyLayout(named = "Repeat Rule")
+    @MemberOrder(sequence = "9")
+    public String getRepeatRuleReadable() {
+        return PlaylistRepeat.stringToPlaylistRepeat(getRepeatRule()).title();
+    }
+
     // //////////////////////////////////////
 
     @MultiLine(numberOfLines = 10)
-    @MemberOrder(sequence = "9")
+    @MemberOrder(sequence = "10")
     public String getNextOccurences() {
         StringBuilder builder = new StringBuilder();
         LocalDate fromDate = clockService.now().compareTo(this.getStartDate()) >= 0 ? clockService.now() : this.getStartDate();
