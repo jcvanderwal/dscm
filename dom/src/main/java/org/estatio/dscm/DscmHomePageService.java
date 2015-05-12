@@ -26,10 +26,10 @@ import org.apache.isis.applib.annotation.HomePage;
 
 @DomainService(menuOrder = "90")
 @Hidden
-public class DscmDashboardService extends EstatioService<DscmDashboardService> {
+public class DscmHomePageService extends EstatioService<DscmHomePageService> {
 
-    public DscmDashboardService() {
-        super(DscmDashboardService.class);
+    public DscmHomePageService() {
+        super(DscmHomePageService.class);
     }
 
     @Override
