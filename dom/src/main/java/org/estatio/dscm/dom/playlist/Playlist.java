@@ -231,7 +231,7 @@ public class Playlist extends AbstractContainedObject implements Comparable<Play
         StringBuilder builder = new StringBuilder();
         LocalDate fromDate = clockService.now().compareTo(this.getStartDate()) >= 0 ? clockService.now() : this.getStartDate();
         for (LocalDateTime occurence : nextOccurences(fromDate.plusDays(7), false)) {
-            builder.append(occurence.toString("yyyy-MM-dd HH:mm"));
+            builder.append(occurence.toString("E dd-MM-yyyy HH:mm"));
             builder.append("\n");
         }
         return builder.toString();

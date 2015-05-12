@@ -184,7 +184,7 @@ public class PlaylistsTest extends DscmIntegTest {
     private String nextOccurencesToString(List<LocalDateTime> nextOccurrences) {
         StringBuilder builder = new StringBuilder();
         for (LocalDateTime occurence : nextOccurrences) {
-            builder.append(occurence.toString("yyyy-MM-dd HH:mm"));
+            builder.append(occurence.toString("E dd-MM-yyyy HH:mm"));
             builder.append("\n");
         }
 
