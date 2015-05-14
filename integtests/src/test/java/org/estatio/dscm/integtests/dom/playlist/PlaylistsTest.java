@@ -157,7 +157,13 @@ public class PlaylistsTest extends DscmIntegTest {
                 mainPlayList.getStartDate(),
                 Time.T1300,
                 mainPlayList.getEndDate(),
-                PlaylistRepeat.DAILY);
+                true,
+                true,
+                true,
+                true,
+                true,
+                true,
+                true);
 
         assertThat(mainPlayList.compareTo(compareTo), is(0));
     }

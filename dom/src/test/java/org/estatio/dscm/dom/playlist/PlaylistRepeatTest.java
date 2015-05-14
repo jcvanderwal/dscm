@@ -16,7 +16,7 @@ public class PlaylistRepeatTest {
 
     @Test
     public void happyCase() throws Exception {
-        assertThat(PlaylistRepeat.stringToPlaylistRepeat("RRULE:FREQ=DAILY"), Matchers.is(PlaylistRepeat.DAILY));
+        assertThat(PlaylistRepeat.stringToPlaylistRepeat("RRULE:FREQ=DAILY;BYDAY=MO,TU,WE,TH,FR,SA,SU"), Matchers.is(PlaylistRepeat.DAILY));
     }
 
     @Test

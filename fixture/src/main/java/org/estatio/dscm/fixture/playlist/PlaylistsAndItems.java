@@ -47,11 +47,11 @@ public class PlaylistsAndItems extends DiscoverableFixtureScript {
         execute(new AssetForFiller(), executionContext);
         execute(new AssetForCommercial(), executionContext);
 
-        create(MORNING, PlaylistType.MAIN, new BigDecimal(60), AssetForCommercial.NAME, PlaylistRepeat.DAILY, DATE);
-        create(AFTERNOON, PlaylistType.MAIN, new BigDecimal(60), AssetForCommercial.NAME, PlaylistRepeat.DAILY, DATE);
-        create(MORNING, PlaylistType.FILLERS, BigDecimal.ZERO, AssetForFiller.NAME, PlaylistRepeat.DAILY, DATE);
-        create(AFTERNOON, PlaylistType.FILLERS, BigDecimal.ZERO, AssetForFiller.NAME, PlaylistRepeat.DAILY, DATE);
-        create(MORNING, PlaylistType.FILLERS, BigDecimal.ZERO, AssetForFiller.NAME, PlaylistRepeat.MONDAY, new LocalDate(2015, 4, 1));
+        create(MORNING, PlaylistType.MAIN, new BigDecimal(60), AssetForCommercial.NAME, true, true, true, true, true, true, true, DATE);
+        create(AFTERNOON, PlaylistType.MAIN, new BigDecimal(60), AssetForCommercial.NAME, true, true, true, true, true, true, true, DATE);
+        create(MORNING, PlaylistType.FILLERS, BigDecimal.ZERO, AssetForFiller.NAME, true, true, true, true, true, true, true, DATE);
+        create(AFTERNOON, PlaylistType.FILLERS, BigDecimal.ZERO, AssetForFiller.NAME, true, true, true, true, true, true, true, DATE);
+        create(MORNING, PlaylistType.FILLERS, BigDecimal.ZERO, AssetForFiller.NAME, true, false, false, false, false, false, false, new LocalDate(2015, 4, 1));
     }
 
     // //////////////////////////////////////
@@ -61,7 +61,13 @@ public class PlaylistsAndItems extends DiscoverableFixtureScript {
             PlaylistType type,
             BigDecimal loopDuration,
             String assetName,
-            PlaylistRepeat repeat,
+            boolean monday,
+            boolean tuesday,
+            boolean wednesday,
+            boolean thursday,
+            boolean friday,
+            boolean saturday,
+            boolean sunday,
             LocalDate playlistDate) {
         for (DisplayGroup displayGroup : displayGroups.allDisplayGroups()) {
             Playlist p1 = playlists.newPlaylist(
@@ -70,7 +76,13 @@ public class PlaylistsAndItems extends DiscoverableFixtureScript {
                     playlistDate,
                     time,
                     null,
-                    repeat);
+                    monday,
+                    tuesday,
+                    wednesday,
+                    thursday,
+                    friday,
+                    saturday,
+                    sunday);
             playlistItems.newPlaylistItem(p1, assets.findAssetByName(assetName));
         }
     }

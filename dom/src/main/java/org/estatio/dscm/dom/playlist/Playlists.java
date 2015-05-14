@@ -134,15 +134,22 @@ public class Playlists extends EstatioDomainService<Playlist> {
     public Playlist newPlaylist(
             final DisplayGroup displayGroup,
             final PlaylistType type,
-            final @Named("Start date") LocalDate startDate,
-            final @Named("Start time") Time startTime,
-            final @Named("End date") @Optional LocalDate endDate,
-            final @Named("Repeat") PlaylistRepeat repeat) {
+            final @ParameterLayout(named = "Start date") LocalDate startDate,
+            final @ParameterLayout(named = "Start time") Time startTime,
+            final @ParameterLayout(named = "End date") @Parameter(optionality = Optionality.OPTIONAL) LocalDate endDate,
+            final @ParameterLayout(named = "Monday") @Parameter(optionality = Optionality.OPTIONAL) boolean monday,
+            final @ParameterLayout(named = "Tuesday") @Parameter(optionality = Optionality.OPTIONAL) boolean tuesday,
+            final @ParameterLayout(named = "Wednesday") @Parameter(optionality = Optionality.OPTIONAL) boolean wednesday,
+            final @ParameterLayout(named = "Thursday") @Parameter(optionality = Optionality.OPTIONAL) boolean thursday,
+            final @ParameterLayout(named = "Friday") @Parameter(optionality = Optionality.OPTIONAL) boolean friday,
+            final @ParameterLayout(named = "Saturday") @Parameter(optionality = Optionality.OPTIONAL) boolean saturday,
+            final @ParameterLayout(named = "Sunday") @Parameter(optionality = Optionality.OPTIONAL) boolean sunday) {
         final Playlist obj = getContainer().newTransientInstance(Playlist.class);
         obj.setDisplayGroup(displayGroup);
         obj.setStartDate(startDate);
         obj.setStartTime(startTime.time());
         obj.setEndDate(endDate);
+        PlaylistRepeat repeat = booleanToRepeatRule(monday, tuesday, wednesday, thursday, friday, saturday, sunday);
         obj.setRepeatRule(repeat.rrule());
         obj.setType(type);
         obj.setLoopDuration(new BigDecimal(60));
@@ -156,7 +163,19 @@ public class Playlists extends EstatioDomainService<Playlist> {
             final LocalDate startDate,
             final Time startTime,
             final LocalDate endDate,
-            final PlaylistRepeat repeat) {
+            final boolean monday,
+            final boolean tuesday,
+            final boolean wednesday,
+            final boolean thursday,
+            final boolean friday,
+            final boolean saturday,
+            final boolean sunday) {
+        if (!monday && !tuesday && !wednesday && !thursday && !friday && !saturday && !sunday) {
+            return "At least one day must be selected";
+        }
+
+        PlaylistRepeat repeat = booleanToRepeatRule(monday, tuesday, wednesday, thursday, friday, saturday, sunday);
+
         final Boolean exists = findByDisplayGroupAndTimeAndTypeAndPlaylistRepeat(displayGroup, startTime.time(), type, repeat.rrule()) == null ? false : true;
         return exists ? "The selected display group already has a playlist of this type with this start time and repeat rule" : null;
     }
@@ -165,4 +184,33 @@ public class Playlists extends EstatioDomainService<Playlist> {
         return getClockService().now();
     }
 
+    private PlaylistRepeat booleanToRepeatRule(boolean monday,
+                                               boolean tuesday,
+                                               boolean wednesday,
+                                               boolean thursday,
+                                               boolean friday,
+                                               boolean saturday,
+                                               boolean sunday) {
+
+        if (!monday && !tuesday && !wednesday && !thursday && !friday && !saturday && !sunday) {
+            return null;
+        }
+
+        StringBuilder builder = new StringBuilder();
+        builder.append("RRULE:FREQ=DAILY;BYDAY=");
+
+        if (monday) builder.append("MO,");
+        if (tuesday) builder.append("TU,");
+        if (wednesday) builder.append("WE,");
+        if (thursday) builder.append("TH,");
+        if (friday) builder.append("FR,");
+        if (saturday) builder.append("SA,");
+        if (sunday) builder.append("SU");
+
+        if (builder.length() > 0 && builder.charAt(builder.length() - 1) == ',') {
+            builder.setLength(builder.length() - 1);
+        }
+
+        return PlaylistRepeat.stringToPlaylistRepeat(builder.toString());
+    }
 }

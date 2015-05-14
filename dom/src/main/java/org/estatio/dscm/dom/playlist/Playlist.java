@@ -30,13 +30,18 @@ import org.estatio.dscm.dom.asset.Asset;
 import org.estatio.dscm.dom.asset.Assets;
 import org.estatio.dscm.dom.display.DisplayGroup;
 import org.estatio.dscm.utils.CalendarUtils;
+import org.isisaddons.wicket.fullcalendar2.cpt.applib.CalendarEvent;
+import org.isisaddons.wicket.fullcalendar2.cpt.applib.CalendarEventable;
 import org.joda.time.Interval;
 import org.joda.time.LocalDate;
 import org.joda.time.LocalDateTime;
 import org.joda.time.LocalTime;
 
 import javax.inject.Inject;
-import javax.jdo.annotations.*;
+import javax.jdo.annotations.Column;
+import javax.jdo.annotations.IdentityType;
+import javax.jdo.annotations.Persistent;
+import javax.jdo.annotations.VersionStrategy;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
@@ -93,7 +98,7 @@ import java.util.TreeSet;
 @Bookmarkable
 @Bounded
 @Immutable
-public class Playlist extends AbstractContainedObject implements Comparable<Playlist> {
+public class Playlist extends AbstractContainedObject implements Comparable<Playlist>, CalendarEventable {
 
     public String title() {
         TitleBuffer tb = new TitleBuffer();
@@ -177,6 +182,7 @@ public class Playlist extends AbstractContainedObject implements Comparable<Play
 
     @Column(allowsNull = "false")
     @MemberOrder(sequence = "7")
+    @PropertyLayout(hidden = Where.ALL_TABLES)
     public BigDecimal getLoopDuration() {
         return loopDuration;
     }
@@ -321,7 +327,7 @@ public class Playlist extends AbstractContainedObject implements Comparable<Play
         DisplayGroup newDisplayGroup = this.getDisplayGroup();
         PlaylistType newType = this.getType();
         Time newTime = Time.localTimeToTime(this.getStartTime());
-        PlaylistRepeat newRepeat = PlaylistRepeat.stringToPlaylistRepeat(this.getRepeatRule());
+        boolean[] newRepeat = PlaylistRepeat.playlistRepeatToBooleans(this.getRepeatRule());
 
         Playlist newPlaylist = playlists.newPlaylist(
                 newDisplayGroup,
@@ -329,7 +335,13 @@ public class Playlist extends AbstractContainedObject implements Comparable<Play
                 newDate,
                 newTime,
                 null,
-                newRepeat);
+                newRepeat[0],
+                newRepeat[1],
+                newRepeat[2],
+                newRepeat[3],
+                newRepeat[4],
+                newRepeat[5],
+                newRepeat[6]);
 
         this.setEndDate(newDate);
 
@@ -380,6 +392,20 @@ public class Playlist extends AbstractContainedObject implements Comparable<Play
                 .compare(getStartDate(), other.getStartDate())
                 .compare(getStartTime(), other.getStartTime())
                 .result();
+    }
+
+    // //////////////////////////////////////
+
+    @Programmatic
+    @Override
+    public String getCalendarName() {
+        return "Playlist";
+    }
+
+    @Programmatic
+    @Override
+    public CalendarEvent toCalendarEvent() {
+        return getStartDate() != null ? new CalendarEvent(getStartDate().toDateTimeAtStartOfDay(), "Playlist", title()) : null;
     }
 
     // //////////////////////////////////////
