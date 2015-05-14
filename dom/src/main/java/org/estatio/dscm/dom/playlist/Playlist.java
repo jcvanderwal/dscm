@@ -98,7 +98,7 @@ import java.util.TreeSet;
 @Bookmarkable
 @Bounded
 @Immutable
-public class Playlist extends AbstractContainedObject implements Comparable<Playlist>, CalendarEventable {
+public class Playlist extends AbstractContainedObject implements Comparable<Playlist> {
 
     public String title() {
         TitleBuffer tb = new TitleBuffer();
@@ -392,20 +392,6 @@ public class Playlist extends AbstractContainedObject implements Comparable<Play
                 .compare(getStartDate(), other.getStartDate())
                 .compare(getStartTime(), other.getStartTime())
                 .result();
-    }
-
-    // //////////////////////////////////////
-
-    @Programmatic
-    @Override
-    public String getCalendarName() {
-        return "Playlist";
-    }
-
-    @Programmatic
-    @Override
-    public CalendarEvent toCalendarEvent() {
-        return getStartDate() != null ? new CalendarEvent(getStartDate().toDateTimeAtStartOfDay(), "Playlist", title()) : null;
     }
 
     // //////////////////////////////////////
