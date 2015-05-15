@@ -45,9 +45,9 @@ public class Playlists extends EstatioDomainService<Playlist> {
         return "Playlist";
     }
 
-    @Bookmarkable
-    @ActionSemantics(Of.SAFE)
     @MemberOrder(sequence = "1")
+    @Action(semantics = SemanticsOf.SAFE)
+    @ActionLayout(bookmarking = BookmarkPolicy.AS_ROOT)
     public List<Playlist> allPlaylists() {
         // return getContainer().allInstances(Playlist.class);
         return getContainer().allMatches(new QueryDefault<Playlist>(Playlist.class, "findAll"));
@@ -92,14 +92,14 @@ public class Playlists extends EstatioDomainService<Playlist> {
                 "type", type);
     }
 
-    @ActionSemantics(Of.SAFE)
-    @Render(Type.EAGERLY)
+    @Action(semantics = SemanticsOf.SAFE)
+    @CollectionLayout(render = RenderType.EAGERLY)
     public List<Playlist> mainPlaylists(DisplayGroup displayGroup) {
         return findByDisplayGroupAndType(displayGroup, PlaylistType.MAIN);
     }
 
-    @ActionSemantics(Of.SAFE)
-    @Render(Type.EAGERLY)
+    @Action(semantics = SemanticsOf.SAFE)
+    @CollectionLayout(render = RenderType.EAGERLY)
     public List<Playlist> fillerPlaylists(DisplayGroup displayGroup) {
         return findByDisplayGroupAndType(displayGroup, PlaylistType.FILLERS);
     }
@@ -150,7 +150,11 @@ public class Playlists extends EstatioDomainService<Playlist> {
         obj.setStartTime(startTime.time());
         obj.setEndDate(endDate);
         PlaylistRepeat repeat = booleanToRepeatRule(monday, tuesday, wednesday, thursday, friday, saturday, sunday);
-        obj.setRepeatRule(repeat.rrule());
+        if (repeat != null) {
+            obj.setRepeatRule(repeat.rrule());
+        } else {
+            return null;
+        }
         obj.setType(type);
         obj.setLoopDuration(new BigDecimal(60));
         getContainer().persistIfNotAlready(obj);

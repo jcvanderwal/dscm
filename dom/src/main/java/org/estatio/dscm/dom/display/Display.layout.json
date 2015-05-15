@@ -40,10 +40,6 @@
         "value": "Download Layout"
       }
     },
-    "remove": {
-      "named": {
-        "value": "Remove"
-      }
-    }
+    "remove": {}
   }
 }

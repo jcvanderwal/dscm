@@ -20,7 +20,6 @@ package org.estatio.dscm.dom.asset;
 
 import org.apache.isis.applib.AbstractDomainObject;
 import org.apache.isis.applib.annotation.*;
-import org.apache.isis.applib.annotation.ActionSemantics.Of;
 import org.apache.isis.applib.util.ObjectContracts;
 import org.apache.isis.applib.value.Blob;
 import org.estatio.dscm.DscmDashboard;
@@ -49,9 +48,8 @@ import java.math.BigDecimal;
         @javax.jdo.annotations.Query(name = "findByDisplayGroup", language = "JDOQL", value = "SELECT "
                 + "FROM org.estatio.dscm.dom.Asset "
                 + "WHERE (displayGroup == null || displayGroup == :displayGroup)")})
-@Bookmarkable
-@Immutable
-@Bounded
+@DomainObject(bounded = true, editing = Editing.DISABLED)
+@DomainObjectLayout(bookmarking = BookmarkPolicy.AS_ROOT)
 public class Asset extends AbstractDomainObject implements Comparable<Asset> {
 
     private String name;
@@ -72,7 +70,7 @@ public class Asset extends AbstractDomainObject implements Comparable<Asset> {
     private String description;
 
     @MemberOrder(sequence = "2")
-    @Optional
+    @Property(optionality = Optionality.OPTIONAL)
     public String getDescription() {
         return description;
     }
@@ -100,8 +98,8 @@ public class Asset extends AbstractDomainObject implements Comparable<Asset> {
 
     private BigDecimal duration;
 
-    @Optional
     @MemberOrder(sequence = "5")
+    @Property(optionality = Optionality.OPTIONAL)
     public BigDecimal getDuration() {
         return duration == null ? BigDecimal.ZERO : duration;
     }
@@ -128,8 +126,8 @@ public class Asset extends AbstractDomainObject implements Comparable<Asset> {
 
     private DisplayGroup displayGroup;
 
-    @Optional
     @javax.jdo.annotations.Column(name = "displayGroupId", allowsNull = "true")
+    @Property(optionality = Optionality.OPTIONAL)
     public DisplayGroup getDisplayGroup() {
         return displayGroup;
     }
@@ -149,9 +147,8 @@ public class Asset extends AbstractDomainObject implements Comparable<Asset> {
     @javax.jdo.annotations.Persistent(defaultFetchGroup = "false")
     private Blob file;
 
-    @Optional
     @MemberOrder(sequence = "7")
-    @Hidden
+    @Property(optionality = Optionality.OPTIONAL, hidden = Where.EVERYWHERE)
     public Blob getFile() {
         return file;
     }
@@ -161,7 +158,7 @@ public class Asset extends AbstractDomainObject implements Comparable<Asset> {
     }
 
     // //////////////////////////////////////
-    public Object remove(@Named("Are you sure?") Boolean confirm) {
+    public Object remove(@ParameterLayout(named = "Are you sure?") Boolean confirm) {
         if (confirm) {
             doRemove();
             return newViewModelInstance(DscmDashboard.class, "dashboard");
@@ -193,9 +190,9 @@ public class Asset extends AbstractDomainObject implements Comparable<Asset> {
     @Inject
     private PlaylistItems playlistItems;
 
-    @ActionSemantics(Of.IDEMPOTENT)
+    @Action(semantics = SemanticsOf.IDEMPOTENT)
     public Asset changeDates(
-            final @Named("Start date") LocalDate startDate) {
+            final @ParameterLayout(named = "Start date") LocalDate startDate) {
         setStartDate(startDate);
         return this;
     }

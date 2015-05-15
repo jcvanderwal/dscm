@@ -18,17 +18,13 @@
  */
 package org.estatio.dscm.dom.playlist;
 
-import org.apache.isis.applib.DomainObjectContainer;
 import org.apache.isis.applib.annotation.*;
-import org.apache.isis.applib.annotation.ActionSemantics.Of;
-import org.apache.isis.applib.annotation.NotContributed.As;
 import org.estatio.dscm.EstatioDomainService;
 import org.estatio.dscm.dom.asset.Asset;
 
 import java.util.List;
 
-@Hidden
-@DomainService
+@DomainService(nature = NatureOfService.VIEW_CONTRIBUTIONS_ONLY)
 public class PlaylistItems extends EstatioDomainService<PlaylistItem> {
 
     public PlaylistItems() {
@@ -43,19 +39,17 @@ public class PlaylistItems extends EstatioDomainService<PlaylistItem> {
         return "PlaylistItem";
     }
 
-    @Bookmarkable
-    @ActionSemantics(Of.SAFE)
     @MemberOrder(sequence = "1")
+    @Action(semantics = SemanticsOf.SAFE)
+    @ActionLayout(bookmarking = BookmarkPolicy.AS_ROOT)
     public List<PlaylistItem> allPlaylistItems() {
-        return container.allInstances(PlaylistItem.class);
+        return getContainer().allInstances(PlaylistItem.class);
     }
 
     // //////////////////////////////////////
 
-    @ActionSemantics(Of.SAFE)
-    @NotInServiceMenu
-    @NotContributed(As.ACTION)
-    @Named("Playlists")
+    @Action(semantics = SemanticsOf.SAFE)
+    @ActionLayout(named = "Playlists", contributed = Contributed.AS_ASSOCIATION)
     public List<PlaylistItem> findByAsset(final Asset asset) {
         return allMatches("findByAsset", "asset", asset);
     }
@@ -67,29 +61,22 @@ public class PlaylistItems extends EstatioDomainService<PlaylistItem> {
 
     // //////////////////////////////////////
 
-    @NotContributed
+    @ActionLayout(contributed = Contributed.AS_NEITHER)
     public PlaylistItem newPlaylistItem(
             final Playlist playlist,
             final Asset asset) {
-        final PlaylistItem obj = container.newTransientInstance(PlaylistItem.class);
+        final PlaylistItem obj = getContainer().newTransientInstance(PlaylistItem.class);
         obj.setPlaylist(playlist);
         obj.setAsset(asset);
         obj.setSequence(1);
-        container.persistIfNotAlready(obj);
+        getContainer().persistIfNotAlready(obj);
         if (!playlist.getItems().isEmpty()) {
             final PlaylistItem last = playlist.getItems().last();
             last.setNext(obj);
             obj.setSequence(last.getSequence() + 1);
         }
-        container.flush();
+        getContainer().flush();
         return obj;
     }
-
-    // //////////////////////////////////////
-    // Injected services
-    // //////////////////////////////////////
-
-    @javax.inject.Inject
-    DomainObjectContainer container;
 
 }

@@ -19,14 +19,16 @@
 package org.estatio.dscm.dom.publisher;
 
 import org.apache.isis.applib.annotation.*;
-import org.apache.isis.applib.annotation.Render.Type;
 import org.apache.isis.applib.util.ObjectContracts;
+import org.estatio.dscm.DSCMDomainObject;
 import org.estatio.dscm.dom.asset.Asset;
 
+import javax.inject.Inject;
 import javax.jdo.annotations.IdentityType;
 import javax.jdo.annotations.Persistent;
 import javax.jdo.annotations.Query;
 import javax.jdo.annotations.VersionStrategy;
+import java.util.List;
 import java.util.SortedSet;
 import java.util.TreeSet;
 
@@ -41,10 +43,9 @@ import java.util.TreeSet;
 @Query(name = "findByName", language = "JDOQL",
         value = "SELECT FROM org.estatio.dscm.dom.publisher.Publisher "
                 + "WHERE name.matches(:name)")
-@Bookmarkable
-@Bounded
-@Immutable
-public class Publisher implements Comparable<Publisher> {
+@DomainObject(bounded = true, editing = Editing.DISABLED)
+@DomainObjectLayout(bookmarking = BookmarkPolicy.AS_ROOT)
+public class Publisher extends DSCMDomainObject<Publisher> implements Comparable<Publisher> {
 
     private String name;
 
@@ -65,13 +66,25 @@ public class Publisher implements Comparable<Publisher> {
     private SortedSet<Asset> assets = new TreeSet<Asset>();
 
     @MemberOrder(sequence = "1")
-    @Render(Type.EAGERLY)
+    @CollectionLayout(render = RenderType.EAGERLY)
     public SortedSet<Asset> getAssets() {
         return assets;
     }
 
     public void setAssets(final SortedSet<Asset> assets) {
         this.assets = assets;
+    }
+
+
+    public List<Publisher> remove(Publisher publisher, @ParameterLayout(named = "Are you sure?") Boolean confirm) {
+        getContainer().remove(publisher);
+        getContainer().flush();
+
+        return publishers.allPublishers();
+    }
+
+    public boolean hideRemove(Publisher publisher, Boolean confirm) {
+        return !getContainer().getUser().hasRole(".*admin_role");
     }
 
     // //////////////////////////////////////
@@ -81,4 +94,6 @@ public class Publisher implements Comparable<Publisher> {
         return ObjectContracts.compare(this, other, "name");
     }
 
+    @Inject
+    Publishers publishers;
 }

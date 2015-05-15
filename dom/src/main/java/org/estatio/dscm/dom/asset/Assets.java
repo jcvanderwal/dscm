@@ -20,7 +20,6 @@ package org.estatio.dscm.dom.asset;
 
 import org.apache.isis.applib.DomainObjectContainer;
 import org.apache.isis.applib.annotation.*;
-import org.apache.isis.applib.annotation.ActionSemantics.Of;
 import org.apache.isis.applib.query.QueryDefault;
 import org.apache.isis.applib.services.clock.ClockService;
 import org.apache.isis.applib.value.Blob;
@@ -47,9 +46,9 @@ public class Assets extends EstatioDomainService<Asset> {
         return "Asset";
     }
 
-    @Bookmarkable
-    @ActionSemantics(Of.SAFE)
     @MemberOrder(sequence = "1")
+    @Action(semantics = SemanticsOf.SAFE)
+    @ActionLayout(bookmarking = BookmarkPolicy.AS_ROOT)
     public List<Asset> allAssets() {
         return getContainer().allMatches(
                 new QueryDefault<Asset>(Asset.class, "findAll"));
@@ -60,10 +59,10 @@ public class Assets extends EstatioDomainService<Asset> {
     // //////////////////////////////////////
 
     @MemberOrder(sequence = "2")
-    public Asset newAsset(final @Named("File") Blob file,
+    public Asset newAsset(final @ParameterLayout(named = "File") Blob file,
                           final Publisher publisher, final DisplayGroup displayGroup,
-                          final @Named("Start date") LocalDate startDate,
-                          final @Named("Duration (seconds)") BigDecimal duration) {
+                          final @ParameterLayout(named = "Start date") LocalDate startDate,
+                          final @ParameterLayout(named = "Duration (seconds)") BigDecimal duration) {
         final Asset obj = container.newTransientInstance(Asset.class);
         obj.setName(file.getName());
         obj.setDuration(duration);

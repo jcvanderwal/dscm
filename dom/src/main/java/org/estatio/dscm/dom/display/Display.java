@@ -20,10 +20,13 @@ package org.estatio.dscm.dom.display;
 
 import org.apache.isis.applib.annotation.*;
 import org.apache.isis.applib.util.ObjectContracts;
+import org.estatio.dscm.DSCMDomainObject;
 
+import javax.inject.Inject;
 import javax.jdo.annotations.Column;
 import javax.jdo.annotations.IdentityType;
 import javax.jdo.annotations.VersionStrategy;
+import java.util.List;
 
 @javax.jdo.annotations.PersistenceCapable(
         identityType = IdentityType.DATASTORE)
@@ -33,9 +36,9 @@ import javax.jdo.annotations.VersionStrategy;
 @javax.jdo.annotations.Version(
         strategy = VersionStrategy.VERSION_NUMBER,
         column = "version")
-@Bookmarkable
-@Immutable
-public class Display implements Comparable<Display> {
+@DomainObject(editing = Editing.DISABLED)
+@DomainObjectLayout(bookmarking = BookmarkPolicy.AS_ROOT)
+public class Display extends DSCMDomainObject<Display> implements Comparable<Display> {
 
     private String name;
 
@@ -63,20 +66,35 @@ public class Display implements Comparable<Display> {
         this.displayGroup = displayGroup;
     }
 
-    public Display changeDisplayGroup(final @Named("Display Group") DisplayGroup displayGroup) {
+    public Display changeDisplayGroup(final @ParameterLayout(named = "Display Group") DisplayGroup displayGroup) {
         setDisplayGroup(displayGroup);
         return this;
     }
-    
+
     public DisplayGroup default0ChangeDisplayGroup(final DisplayGroup displayGroup) {
         return getDisplayGroup();
     }
-    
-    
+
+    public List<Display> remove(@ParameterLayout(named = "Are you sure?") Boolean confirm) {
+        getContainer().remove(this);
+        getContainer().flush();
+        return displays.allDisplays();
+    }
+
+    public boolean hideRemove(Boolean confirm) {
+        return !getContainer().getUser().hasRole(".*admin_role");
+    }
+
     // //////////////////////////////////////
 
     @Override
     public int compareTo(Display other) {
         return ObjectContracts.compare(this, other, "name");
     }
+
+    // //////////////////////////////////////
+
+    @Inject
+    Displays displays;
+
 }

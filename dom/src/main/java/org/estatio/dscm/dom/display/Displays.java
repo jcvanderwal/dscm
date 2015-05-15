@@ -40,9 +40,9 @@ public class Displays extends EstatioDomainService<Display> {
         return "Display";
     }
 
-    @Bookmarkable
-    @ActionSemantics(Of.SAFE)
     @MemberOrder(sequence = "1")
+    @Action(semantics = SemanticsOf.SAFE)
+    @ActionLayout(bookmarking = BookmarkPolicy.AS_ROOT)
     public List<Display> allDisplays() {
         return getContainer().allInstances(Display.class);
     }
@@ -53,7 +53,7 @@ public class Displays extends EstatioDomainService<Display> {
 
     @MemberOrder(sequence = "2")
     public Display newDisplay(
-            final @Named("Name") String name,
+            final @ParameterLayout(named = "Name") String name,
             final DisplayGroup displayGroup) {
         final Display obj = getContainer().newTransientInstance(Display.class);
         obj.setName(name);
@@ -63,17 +63,6 @@ public class Displays extends EstatioDomainService<Display> {
     }
 
     public boolean hideNewDisplay(final String name, final DisplayGroup displayGroup) {
-        return !getContainer().getUser().hasRole(".*admin_role");
-    }
-
-    @NotInServiceMenu
-    public Object remove(Display display, @Named("Are you sure?") Boolean confirm) {
-        getContainer().remove(display);
-        getContainer().flush();
-        return newViewModelInstance(DscmDashboard.class, "dashboard");
-    }
-
-    public boolean hideRemove(Display display, Boolean confirm) {
         return !getContainer().getUser().hasRole(".*admin_role");
     }
 

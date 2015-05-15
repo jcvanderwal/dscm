@@ -6,7 +6,7 @@ import java.io.InputStreamReader;
 public class CommandService {
 
     public String executeCommand(String command) {
-        StringBuffer output = new StringBuffer();
+        StringBuilder output = new StringBuilder();
         Process p;
         try {
             p = Runtime.getRuntime().exec(command);
@@ -16,7 +16,8 @@ public class CommandService {
 
             String line = "";
             while ((line = reader.readLine()) != null) {
-                output.append(line + "\n");
+                output.append(line);
+                output.append("\n");
             }
 
         } catch (Exception e) {

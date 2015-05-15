@@ -22,13 +22,14 @@ import com.danhaywood.isis.wicket.gmap3.applib.Location;
 import com.danhaywood.isis.wicket.gmap3.service.LocationLookupService;
 import com.google.common.collect.ComparisonChain;
 import org.apache.isis.applib.annotation.*;
-import org.apache.isis.applib.annotation.ActionSemantics.Of;
-import org.apache.isis.applib.annotation.Render.Type;
+import org.apache.isis.applib.annotation.DomainObject;
+import org.estatio.dscm.*;
 
 import javax.inject.Inject;
 import javax.jdo.annotations.IdentityType;
 import javax.jdo.annotations.Persistent;
 import javax.jdo.annotations.VersionStrategy;
+import java.util.List;
 import java.util.SortedSet;
 import java.util.TreeSet;
 
@@ -45,10 +46,9 @@ import java.util.TreeSet;
                 value = "SELECT FROM org.estatio.dscm.dom.display.DisplayGroup "
                         + "ORDER BY name")
 })
-@Bookmarkable
-@Bounded
-@Immutable
-public class DisplayGroup implements Comparable<DisplayGroup> {
+@DomainObject(editing = Editing.DISABLED, bounded = true)
+@DomainObjectLayout(bookmarking = BookmarkPolicy.AS_ROOT)
+public class DisplayGroup extends DSCMDomainObject<DisplayGroup> implements Comparable<DisplayGroup> {
 
     private String name;
 
@@ -68,9 +68,7 @@ public class DisplayGroup implements Comparable<DisplayGroup> {
     @javax.jdo.annotations.Persistent
     private Location location;
 
-    @Disabled
-    @Optional
-    @Hidden(where = Where.ALL_TABLES)
+    @Property(editing = Editing.DISABLED, optionality = Optionality.OPTIONAL, hidden = Where.ALL_TABLES)
     public Location getLocation() {
         return location;
     }
@@ -79,9 +77,9 @@ public class DisplayGroup implements Comparable<DisplayGroup> {
         this.location = location;
     }
 
-    @ActionSemantics(Of.IDEMPOTENT)
+    @Action(semantics = SemanticsOf.IDEMPOTENT)
     public DisplayGroup setLocation(
-            final @Named("Address") @DescribedAs("Example: Herengracht 469, Amsterdam, NL") String address) {
+            final @ParameterLayout(named = "Address", describedAs = "Example: Herengracht 469, Amsterdam, NL") String address) {
         if (locationLookupService != null) {
             // TODO: service does not seem to be loaded in tests
             setLocation(locationLookupService.lookup(address));
@@ -95,13 +93,24 @@ public class DisplayGroup implements Comparable<DisplayGroup> {
     private SortedSet<Display> displays = new TreeSet<Display>();
 
     @MemberOrder(sequence = "1")
-    @Render(Type.EAGERLY)
+    @CollectionLayout(render = RenderType.EAGERLY)
     public SortedSet<Display> getDisplays() {
         return displays;
     }
 
     public void setDisplays(final SortedSet<Display> displays) {
         this.displays = displays;
+    }
+
+    public List<DisplayGroup> remove(@ParameterLayout(named = "Are you sure?") Boolean confirm) {
+        getContainer().remove(this);
+        getContainer().flush();
+
+        return displayGroups.allDisplayGroups();
+    }
+
+    public boolean hideRemove(Boolean confirm) {
+        return !getContainer().getUser().hasRole(".*admin_role");
     }
 
     @Override
@@ -113,4 +122,7 @@ public class DisplayGroup implements Comparable<DisplayGroup> {
 
     @Inject
     private LocationLookupService locationLookupService;
+
+    @Inject
+    DisplayGroups displayGroups;
 }

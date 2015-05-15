@@ -21,10 +21,7 @@ package org.estatio.dscm.services;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.isis.applib.AbstractContainedObject;
-import org.apache.isis.applib.annotation.DomainService;
-import org.apache.isis.applib.annotation.Hidden;
-import org.apache.isis.applib.annotation.Named;
-import org.apache.isis.applib.annotation.Programmatic;
+import org.apache.isis.applib.annotation.*;
 import org.apache.isis.applib.services.clock.ClockService;
 import org.apache.isis.applib.services.command.CommandContext;
 import org.apache.isis.applib.value.Blob;
@@ -53,7 +50,7 @@ import java.util.Map;
 //import org.apache.isis.applib.services.command.Command;
 
 @DomainService
-@Named("Administration")
+@DomainServiceLayout(named = "Administration")
 public class SyncService extends AbstractContainedObject {
 
     private Map<String, String> properties;
@@ -69,14 +66,14 @@ public class SyncService extends AbstractContainedObject {
         this.properties = properties;
     }
 
-    @Hidden
+    @Programmatic
     public void synchronizeNowScheduled() {
         for (DisplayGroup displayGroup : displayGroups.allDisplayGroups()) {
             synchronizeNowProgrammatic(displayGroup);
         }
     }
 
-    @Hidden
+    @Programmatic
     public void synchronizeNowProgrammatic(DisplayGroup displayGroup) {
         final String path = properties.get("dscm.server.path");
         path.toLowerCase();
@@ -142,8 +139,7 @@ public class SyncService extends AbstractContainedObject {
 
     @Programmatic
     public String[] createSyncSchedulePath(String path, String task, Display display) {
-        String[] rV = {path.concat("/scripts/watson"), display.getName(), task};
-        return rV;
+        return new String[]{path.concat("/scripts/watson"), display.getName(), task};
     }
 
     @Programmatic
@@ -184,9 +180,6 @@ public class SyncService extends AbstractContainedObject {
                     for (Playlist playlist : playlists.allPlaylists()) {
                         playlist.newItem(asset);
                     }
-                } catch (FileNotFoundException e) {
-                    // TODO Auto-generated catch block
-                    e.printStackTrace();
                 } catch (IOException e) {
                     // TODO Auto-generated catch block
                     e.printStackTrace();
@@ -202,9 +195,12 @@ public class SyncService extends AbstractContainedObject {
 
     private List<File> filesForFolder(final File folder) {
         List<File> fileList = new ArrayList<File>();
-        for (final File file : folder.listFiles()) {
-            if (file.isFile() && !file.isHidden()) {
-                fileList.add(file);
+        File[] listFiles = folder.listFiles();
+        if (listFiles != null) {
+            for (final File file : listFiles) {
+                if (file.isFile() && !file.isHidden()) {
+                    fileList.add(file);
+                }
             }
         }
         return fileList;
@@ -277,9 +273,6 @@ public class SyncService extends AbstractContainedObject {
                     fos = new FileOutputStream(output);
                     fos.write(blobArray);
                     fos.close();
-                } catch (FileNotFoundException e) {
-                    // TODO Auto-generated catch block
-                    e.printStackTrace();
                 } catch (IOException e) {
                     // TODO Auto-generated catch block
                     e.printStackTrace();

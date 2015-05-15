@@ -22,7 +22,6 @@ import com.google.common.collect.ComparisonChain;
 import org.apache.commons.lang3.ObjectUtils;
 import org.apache.isis.applib.AbstractContainedObject;
 import org.apache.isis.applib.annotation.*;
-import org.apache.isis.applib.annotation.Render.Type;
 import org.apache.isis.applib.services.clock.ClockService;
 import org.apache.isis.applib.util.TitleBuffer;
 import org.estatio.dscm.DscmDashboard;
@@ -30,8 +29,6 @@ import org.estatio.dscm.dom.asset.Asset;
 import org.estatio.dscm.dom.asset.Assets;
 import org.estatio.dscm.dom.display.DisplayGroup;
 import org.estatio.dscm.utils.CalendarUtils;
-import org.isisaddons.wicket.fullcalendar2.cpt.applib.CalendarEvent;
-import org.isisaddons.wicket.fullcalendar2.cpt.applib.CalendarEventable;
 import org.joda.time.Interval;
 import org.joda.time.LocalDate;
 import org.joda.time.LocalDateTime;
@@ -95,9 +92,8 @@ import java.util.TreeSet;
                         + "&& repeatRule == :repeatRule")
 })
 //@Unique(name = "Playlist_displayGroup_startDate_startTime_type_repeatRule_UNQ", members = {"displayGroup", "startDate", "startTime", "type", "repeatRule"})
-@Bookmarkable
-@Bounded
-@Immutable
+@DomainObject(bounded = true, editing = Editing.DISABLED)
+@DomainObjectLayout(bookmarking = BookmarkPolicy.AS_ROOT)
 public class Playlist extends AbstractContainedObject implements Comparable<Playlist> {
 
     public String title() {
@@ -139,7 +135,6 @@ public class Playlist extends AbstractContainedObject implements Comparable<Play
 
     @MemberOrder(sequence = "4")
     @javax.jdo.annotations.Column(allowsNull = "false")
-
     public LocalTime getStartTime() {
         return startTime;
     }
@@ -152,8 +147,8 @@ public class Playlist extends AbstractContainedObject implements Comparable<Play
 
     private LocalDate endDate;
 
-    @Optional
     @MemberOrder(sequence = "5")
+    @Property(optionality = Optionality.OPTIONAL)
     public LocalDate getEndDate() {
         return endDate;
     }
@@ -213,8 +208,7 @@ public class Playlist extends AbstractContainedObject implements Comparable<Play
     @Column(allowsNull = "false")
     private String repeatRule;
 
-    @Hidden
-    @Optional
+    @Property(hidden = Where.EVERYWHERE, optionality = Optionality.OPTIONAL)
     public String getRepeatRule() {
         return repeatRule;
     }
@@ -231,8 +225,8 @@ public class Playlist extends AbstractContainedObject implements Comparable<Play
 
     // //////////////////////////////////////
 
-    @MultiLine(numberOfLines = 10)
     @MemberOrder(sequence = "10")
+    @PropertyLayout(multiLine = 10)
     public String getNextOccurences() {
         StringBuilder builder = new StringBuilder();
         LocalDate fromDate = clockService.now().compareTo(this.getStartDate()) >= 0 ? clockService.now() : this.getStartDate();
@@ -300,7 +294,7 @@ public class Playlist extends AbstractContainedObject implements Comparable<Play
     @Persistent(mappedBy = "playlist")
     private SortedSet<PlaylistItem> items = new TreeSet<PlaylistItem>();
 
-    @Render(Type.EAGERLY)
+    @CollectionLayout(render = RenderType.EAGERLY)
     public SortedSet<PlaylistItem> getItems() {
         return items;
     }
@@ -323,7 +317,7 @@ public class Playlist extends AbstractContainedObject implements Comparable<Play
     // //////////////////////////////////////
 
     public Playlist endAndCreateNewPlaylist(
-            final @Named("Start date") LocalDate newDate) {
+            final @ParameterLayout(named = "Start date") LocalDate newDate) {
         DisplayGroup newDisplayGroup = this.getDisplayGroup();
         PlaylistType newType = this.getType();
         Time newTime = Time.localTimeToTime(this.getStartTime());
@@ -351,7 +345,7 @@ public class Playlist extends AbstractContainedObject implements Comparable<Play
     // //////////////////////////////////////
 
     public Object remove(
-            @Named("Are you sure?") Boolean confirm) {
+            @ParameterLayout(named = "Are you sure?") Boolean confirm) {
         if (confirm) {
             doRemove();
             return newViewModelInstance(DscmDashboard.class, "dashboard");
@@ -361,7 +355,7 @@ public class Playlist extends AbstractContainedObject implements Comparable<Play
     }
 
     public String disableRemove(
-            @Named("Are you sure?") Boolean confirm) {
+            @ParameterLayout(named = "Are you sure?") Boolean confirm) {
         if (playlists.findByDisplayGroupAndType(displayGroup, type).size() == 1 &&
                 !getContainer().getUser().hasRole(".*admin_role")) {
             return "This is the only " + type.toString().toLowerCase() + " playlist of display group " + displayGroup.getName();

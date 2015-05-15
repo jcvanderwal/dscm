@@ -20,7 +20,6 @@ package org.estatio.dscm.dom.display;
 
 import org.apache.isis.applib.DomainObjectContainer;
 import org.apache.isis.applib.annotation.*;
-import org.apache.isis.applib.annotation.ActionSemantics.Of;
 import org.apache.isis.applib.query.QueryDefault;
 
 import javax.inject.Inject;
@@ -37,9 +36,9 @@ public class DisplayGroups {
         return "DisplayGroup";
     }
 
-    @Bookmarkable
-    @ActionSemantics(Of.SAFE)
     @MemberOrder(sequence = "1")
+    @Action(semantics = SemanticsOf.SAFE)
+    @ActionLayout(bookmarking = BookmarkPolicy.AS_ROOT)
     public List<DisplayGroup> allDisplayGroups() {
         // return container.allInstances(DisplayGroup.class);
         return container.allMatches(new QueryDefault<DisplayGroup>(DisplayGroup.class, "findAll"));
@@ -51,23 +50,11 @@ public class DisplayGroups {
 
     @MemberOrder(sequence = "2")
     public DisplayGroup newDisplayGroup(
-            final @Named("Name") String name) {
+            final @ParameterLayout(named = "Name") String name) {
         final DisplayGroup obj = container.newTransientInstance(DisplayGroup.class);
         obj.setName(name);
         container.persistIfNotAlready(obj);
         return obj;
-    }
-
-    @NotInServiceMenu
-    public List<DisplayGroup> remove(DisplayGroup displayGroup, @Named("Are you sure?") Boolean confirm) {
-        container.remove(displayGroup);
-        container.flush();
-
-        return displayGroups.allDisplayGroups();
-    }
-
-    public boolean hideRemove(DisplayGroup displayGroup, Boolean confirm) {
-        return !container.getUser().hasRole(".*admin_role");
     }
 
     // //////////////////////////////////////

@@ -20,7 +20,7 @@ package org.estatio.dscm.dom.playlist;
 
 import org.apache.isis.applib.annotation.*;
 import org.apache.isis.applib.util.ObjectContracts;
-import org.estatio.dscm.DomainObject;
+import org.estatio.dscm.DSCMDomainObject;
 import org.estatio.dscm.dom.asset.Asset;
 
 import javax.jdo.annotations.Column;
@@ -49,17 +49,17 @@ import java.math.BigDecimal;
                         + "FROM org.estatio.dscm.dom.playlist.PlaylistItem "
                         + "WHERE playlist == :playlist")
 })
-@Bookmarkable
-@Immutable
+@org.apache.isis.applib.annotation.DomainObject(editing = Editing.DISABLED)
+@DomainObjectLayout(bookmarking = BookmarkPolicy.AS_ROOT)
 public class PlaylistItem
-        extends DomainObject<PlaylistItem>
+        extends DSCMDomainObject<PlaylistItem>
         implements Comparable<PlaylistItem> {
 
     private Playlist playlist;
 
     @Column(name = "playlistId", allowsNull = "false")
-    @Hidden(where = Where.REFERENCES_PARENT)
     @MemberOrder(sequence = "1")
+    @Property(hidden = Where.REFERENCES_PARENT)
     public Playlist getPlaylist() {
         return playlist;
     }
@@ -88,8 +88,8 @@ public class PlaylistItem
 
     @Column(name = "assetId", allowsNull = "false")
     @Title(sequence = "2", prepend = ". ")
-    @Hidden(where = Where.REFERENCES_PARENT)
     @MemberOrder(sequence = "3")
+    @Property(hidden = Where.REFERENCES_PARENT)
     public Asset getAsset() {
         return asset;
     }
@@ -111,8 +111,7 @@ public class PlaylistItem
 
     @Persistent(mappedBy = "next")
     @MemberOrder(sequence = "4")
-    @Hidden(where = Where.ALL_TABLES)
-    @Optional
+    @Property(hidden = Where.ALL_TABLES, optionality = Optionality.OPTIONAL)
     public PlaylistItem getPrevious() {
         return previous;
     }
@@ -127,7 +126,7 @@ public class PlaylistItem
 
     @Column(name = "nextPlaylistItemId", allowsNull = "true")
     @MemberOrder(sequence = "5")
-    @Hidden(where = Where.ALL_TABLES)
+    @Property(hidden = Where.ALL_TABLES)
     public PlaylistItem getNext() {
         return next;
     }
@@ -139,7 +138,7 @@ public class PlaylistItem
     // //////////////////////////////////////
 
     public Object remove(
-            @Named("Are you sure?") Boolean confirm) {
+            @ParameterLayout(named = "Are you sure?") Boolean confirm) {
         if (confirm) {
             Playlist pl = getPlaylist();
             doRemove();

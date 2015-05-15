@@ -37,11 +37,11 @@ public class Publishers extends AbstractFactoryAndRepository {
         return "Publisher";
     }
 
-    @Bookmarkable
-    @ActionSemantics(Of.SAFE)
     @MemberOrder(sequence = "1")
+    @Action(semantics = SemanticsOf.SAFE)
+    @ActionLayout(bookmarking = BookmarkPolicy.AS_ROOT)
     public List<Publisher> allPublishers() {
-        return container.allInstances(Publisher.class);
+        return getContainer().allInstances(Publisher.class);
     }
 
     // //////////////////////////////////////
@@ -50,10 +50,10 @@ public class Publishers extends AbstractFactoryAndRepository {
 
     @MemberOrder(sequence = "2")
     public Publisher newPublisher(
-            final @Named("Name") String name) {
-        final Publisher obj = container.newTransientInstance(Publisher.class);
+            final @ParameterLayout(named = "Name") String name) {
+        final Publisher obj = getContainer().newTransientInstance(Publisher.class);
         obj.setName(name);
-        container.persistIfNotAlready(obj);
+        getContainer().persistIfNotAlready(obj);
         return obj;
     }
 
@@ -61,28 +61,8 @@ public class Publishers extends AbstractFactoryAndRepository {
         return !getContainer().getUser().hasRole(".*admin_role");
     }
 
-    // //////////////////////////////////////
-    // Injected services
-    // //////////////////////////////////////
-
-    @javax.inject.Inject
-    DomainObjectContainer container;
-
-    public Publisher findByName(@Named("Name") String name) {
+    public Publisher findByName(@ParameterLayout(named = "Name") String name) {
         return firstMatch(new QueryDefault<Publisher>(Publisher.class, "findByName", "name", name));
     }
 
-    // //////////////////////////////////////
-
-    @NotInServiceMenu
-    public List<Publisher> remove(Publisher publisher, @Named("Are you sure?") Boolean confirm) {
-        container.remove(publisher);
-        container.flush();
-
-        return allPublishers();
-    }
-
-    public boolean hideRemove(Publisher publisher, Boolean confirm) {
-        return !container.getUser().hasRole(".*admin_role");
-    }
 }
