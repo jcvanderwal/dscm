@@ -19,6 +19,9 @@
 package org.estatio.dscm.dom.playlist;
 
 import com.google.common.collect.ComparisonChain;
+import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.Maps;
+import com.google.common.collect.Sets;
 import org.apache.commons.lang3.ObjectUtils;
 import org.apache.isis.applib.AbstractContainedObject;
 import org.apache.isis.applib.annotation.*;
@@ -29,6 +32,8 @@ import org.estatio.dscm.dom.asset.Asset;
 import org.estatio.dscm.dom.asset.Assets;
 import org.estatio.dscm.dom.display.DisplayGroup;
 import org.estatio.dscm.utils.CalendarUtils;
+import org.isisaddons.wicket.fullcalendar2.cpt.applib.CalendarEventable;
+import org.isisaddons.wicket.fullcalendar2.cpt.applib.Calendarable;
 import org.joda.time.Interval;
 import org.joda.time.LocalDate;
 import org.joda.time.LocalDateTime;
@@ -40,10 +45,7 @@ import javax.jdo.annotations.IdentityType;
 import javax.jdo.annotations.Persistent;
 import javax.jdo.annotations.VersionStrategy;
 import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.SortedSet;
-import java.util.TreeSet;
+import java.util.*;
 
 @javax.jdo.annotations.PersistenceCapable(
         identityType = IdentityType.DATASTORE)
@@ -84,17 +86,16 @@ import java.util.TreeSet;
                         + "WHERE displayGroup == :displayGroup "
                         + "&& startTime == :startTime "
                         + "&& type == :type"),
-        @javax.jdo.annotations.Query(name = "findByDisplayGroupAndTimeAndTypeAndPlaylistRepeat", language = "JDOQL",
+        @javax.jdo.annotations.Query(name = "findByDisplayGroupAndTimeAndType", language = "JDOQL",
                 value = "SELECT FROM org.estatio.dscm.dom.playlist.Playlist "
                         + "WHERE displayGroup == :displayGroup "
                         + "&& startTime == :time "
-                        + "&& type == :type "
-                        + "&& repeatRule == :repeatRule")
+                        + "&& type == :type")
 })
 //@Unique(name = "Playlist_displayGroup_startDate_startTime_type_repeatRule_UNQ", members = {"displayGroup", "startDate", "startTime", "type", "repeatRule"})
 @DomainObject(bounded = true, editing = Editing.DISABLED)
 @DomainObjectLayout(bookmarking = BookmarkPolicy.AS_ROOT)
-public class Playlist extends AbstractContainedObject implements Comparable<Playlist> {
+public class Playlist extends AbstractContainedObject implements Comparable<Playlist>, Calendarable {
 
     public String title() {
         TitleBuffer tb = new TitleBuffer();
@@ -220,7 +221,35 @@ public class Playlist extends AbstractContainedObject implements Comparable<Play
     @PropertyLayout(named = "Repeat Rule")
     @MemberOrder(sequence = "9")
     public String getRepeatRuleReadable() {
-        return PlaylistRepeat.stringToPlaylistRepeat(getRepeatRule()).title();
+        String[] splitDays = getRepeatRule().split("=")[2].split(",");
+        String returnString = "";
+        for (String eachDay : splitDays) {
+            switch (eachDay) {
+                case "MO":
+                    returnString += "Mon, ";
+                    break;
+                case "TU":
+                    returnString += "Tue, ";
+                    break;
+                case "WE":
+                    returnString += "Wed, ";
+                    break;
+                case "TH":
+                    returnString += "Thu, ";
+                    break;
+                case "FR":
+                    returnString += "Fri, ";
+                    break;
+                case "SA":
+                    returnString += "Sat, ";
+                    break;
+                case "SU":
+                    returnString += "Sun";
+                    break;
+            }
+        }
+
+        return returnString.endsWith(" ") ? returnString.substring(0, returnString.length() - 2) : returnString;
     }
 
     // //////////////////////////////////////
@@ -230,32 +259,20 @@ public class Playlist extends AbstractContainedObject implements Comparable<Play
     public String getNextOccurences() {
         StringBuilder builder = new StringBuilder();
         LocalDate fromDate = clockService.now().compareTo(this.getStartDate()) >= 0 ? clockService.now() : this.getStartDate();
-        for (LocalDateTime occurence : nextOccurences(fromDate.plusDays(7), false)) {
-            builder.append(occurence.toString("E dd-MM-yyyy HH:mm"));
+        for (Occurrence occurence : nextOccurences(fromDate.plusDays(7))) {
+            builder.append(occurence.getDateTime().toString("E\tdd-MM-yyyy\tHH:mm"));
             builder.append("\n");
         }
+
         return builder.toString();
     }
 
     @Programmatic
-    public List<LocalDateTime> nextOccurences(LocalDate endDate, boolean test) {
-        List<LocalDateTime> nextList = new ArrayList<LocalDateTime>();
+    public List<Occurrence> nextOccurences(LocalDate endDate) {
+        List<Occurrence> nextOccurrences = new ArrayList<Occurrence>();
+
         final LocalDate start = getStartDate().isBefore(clockService.now()) ? clockService.now() : getStartDate();
         final LocalDate end = ObjectUtils.min(endDate, this.getEndDate());
-        List<Playlist> individualDayPlaylists = null;
-
-        if (this.getRepeatRule().equals(PlaylistRepeat.DAILY.rrule()) && test == false) {
-            individualDayPlaylists = playlists.findByDisplayGroupAndStartTimeAndType(
-                    this.getDisplayGroup(),
-                    this.getStartTime(),
-                    this.getType());
-            List<Playlist> copyIndividual = new ArrayList<Playlist>(individualDayPlaylists);
-            for (Playlist dailyPlaylist : copyIndividual) {
-                if (dailyPlaylist.getRepeatRule().equals(PlaylistRepeat.DAILY.rrule())) {
-                    individualDayPlaylists.remove(dailyPlaylist);
-                }
-            }
-        }
 
         if (end.compareTo(start) >= 0 && end.compareTo(clockService.now()) >= 0) {
             List<Interval> intervals;
@@ -267,26 +284,19 @@ public class Playlist extends AbstractContainedObject implements Comparable<Play
             for (Interval interval : intervals) {
                 LocalDateTime intervalStart = new LocalDateTime(interval.getStart());
                 if (intervalStart.compareTo(start.toLocalDateTime(new LocalTime("00:00"))) >= 0) {
-                    boolean add = true;
-                    if (individualDayPlaylists != null && !individualDayPlaylists.isEmpty()) {
-                        for (Playlist dailyPlaylist : individualDayPlaylists) {
-                            if (intervalStart.dayOfWeek().getAsText().toUpperCase().equals(PlaylistRepeat.stringToPlaylistRepeat(dailyPlaylist.getRepeatRule()).title())) {
-                                add = false;
-                            }
-                        }
-                    }
-
-                    if (add == true) {
-                        nextList.add(new LocalDateTime(
-                                interval.getStartMillis()).
-                                withHourOfDay(getStartTime().getHourOfDay()).
-                                withMinuteOfHour(getStartTime().getMinuteOfHour()));
-                    }
+                    nextOccurrences.add(new Occurrence(
+                            this.getType(),
+                            new LocalDateTime(
+                                    interval.getStartMillis()).
+                                    withHourOfDay(getStartTime().getHourOfDay()).
+                                    withMinuteOfHour(getStartTime().getMinuteOfHour()),
+                            this.title()
+                    ));
                 }
             }
         }
 
-        return nextList;
+        return nextOccurrences;
     }
 
     // //////////////////////////////////////
@@ -321,7 +331,7 @@ public class Playlist extends AbstractContainedObject implements Comparable<Play
         DisplayGroup newDisplayGroup = this.getDisplayGroup();
         PlaylistType newType = this.getType();
         Time newTime = Time.localTimeToTime(this.getStartTime());
-        boolean[] newRepeat = PlaylistRepeat.playlistRepeatToBooleans(this.getRepeatRule());
+        boolean[] newRepeat = repeatRuleToBooleans(this.getRepeatRule());
 
         Playlist newPlaylist = playlists.newPlaylist(
                 newDisplayGroup,
@@ -340,6 +350,39 @@ public class Playlist extends AbstractContainedObject implements Comparable<Play
         this.setEndDate(newDate);
 
         return newPlaylist;
+    }
+
+    public static boolean[] repeatRuleToBooleans(String rule) {
+        boolean[] days = new boolean[7];
+        String[] splitDays = rule.split("=")[2].split(",");
+
+        for (String eachDay : splitDays) {
+            switch (eachDay) {
+                case "MO":
+                    days[0] = true;
+                    break;
+                case "TU":
+                    days[1] = true;
+                    break;
+                case "WE":
+                    days[2] = true;
+                    break;
+                case "TH":
+                    days[3] = true;
+                    break;
+                case "FR":
+                    days[4] = true;
+                    break;
+                case "SA":
+                    days[5] = true;
+                    break;
+                case "SU":
+                    days[6] = true;
+                    break;
+            }
+        }
+
+        return days;
     }
 
     // //////////////////////////////////////
@@ -375,6 +418,38 @@ public class Playlist extends AbstractContainedObject implements Comparable<Play
         for (PlaylistItem item : getItems()) {
             item.doRemove();
         }
+    }
+
+    @Programmatic
+    public Weekdays repeatRuleCollidesWith(String repeatRule) {
+        String[] thisRepeatSplit = this.getRepeatRule().split("=")[2].split(",");
+        String[] otherRepeatSplit = repeatRule.split("=")[2].split(",");
+
+        for (String thisRepeatDay : thisRepeatSplit) {
+            for (String otherRepeatDay : otherRepeatSplit) {
+                if (thisRepeatDay.equals(otherRepeatDay)) return Weekdays.stringToWeekdays(thisRepeatDay);
+            }
+        }
+
+        return null;
+    }
+
+    @Override
+    @Programmatic
+    public Set<String> getCalendarNames() {
+        return Sets.newHashSet(getType().title());
+    }
+
+    @Override
+    @Programmatic
+    public ImmutableMap<String, CalendarEventable> getCalendarEvents() {
+        LocalDate fromDate = clockService.now().compareTo(this.getStartDate()) >= 0 ? clockService.now() : this.getStartDate();
+
+        final ImmutableMap eventsByCalendarName =
+                Maps.uniqueIndex(
+                        nextOccurences(fromDate.plusDays(7)), Occurrence.Functions.GET_CALENDAR_NAME);
+
+        return eventsByCalendarName;
     }
 
     // //////////////////////////////////////

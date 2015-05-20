@@ -19,8 +19,6 @@
 package org.estatio.dscm.dom.playlist;
 
 import org.apache.isis.applib.annotation.*;
-import org.apache.isis.applib.annotation.ActionSemantics.Of;
-import org.apache.isis.applib.annotation.Render.Type;
 import org.apache.isis.applib.query.QueryDefault;
 import org.estatio.dscm.EstatioDomainService;
 import org.estatio.dscm.dom.display.DisplayGroup;
@@ -118,16 +116,14 @@ public class Playlists extends EstatioDomainService<Playlist> {
     }
 
     @Programmatic
-    public Playlist findByDisplayGroupAndTimeAndTypeAndPlaylistRepeat(
+    public List<Playlist> findByDisplayGroupAndTimeAndType(
             final DisplayGroup displayGroup,
             final LocalTime time,
-            final PlaylistType type,
-            final String repeat) {
-        return firstMatch("findByDisplayGroupAndTimeAndTypeAndPlaylistRepeat",
+            final PlaylistType type) {
+        return allMatches("findByDisplayGroupAndTimeAndType",
                 "displayGroup", displayGroup,
                 "time", time,
-                "type", type,
-                "repeatRule", repeat);
+                "type", type);
     }
 
     @MemberOrder(sequence = "2")
@@ -149,9 +145,9 @@ public class Playlists extends EstatioDomainService<Playlist> {
         obj.setStartDate(startDate);
         obj.setStartTime(startTime.time());
         obj.setEndDate(endDate);
-        PlaylistRepeat repeat = booleanToRepeatRule(monday, tuesday, wednesday, thursday, friday, saturday, sunday);
+        String repeat = booleanToRepeatRule(monday, tuesday, wednesday, thursday, friday, saturday, sunday);
         if (repeat != null) {
-            obj.setRepeatRule(repeat.rrule());
+            obj.setRepeatRule(repeat);
         } else {
             return null;
         }
@@ -178,23 +174,30 @@ public class Playlists extends EstatioDomainService<Playlist> {
             return "At least one day must be selected";
         }
 
-        PlaylistRepeat repeat = booleanToRepeatRule(monday, tuesday, wednesday, thursday, friday, saturday, sunday);
+        String repeat = booleanToRepeatRule(monday, tuesday, wednesday, thursday, friday, saturday, sunday);
+        List<Playlist> possibleCollisions = findByDisplayGroupAndTimeAndType(displayGroup, startTime.time(), type);
 
-        final Boolean exists = findByDisplayGroupAndTimeAndTypeAndPlaylistRepeat(displayGroup, startTime.time(), type, repeat.rrule()) == null ? false : true;
-        return exists ? "The selected display group already has a playlist of this type with this start time and repeat rule" : null;
+        for (Playlist playlist : possibleCollisions) {
+            Weekdays day = playlist.repeatRuleCollidesWith(repeat);
+            if (day != null) {
+                return "A playlist of this type and start time is already active on ".concat(day.lowerCaseName());
+            }
+        }
+
+        return null;
     }
 
     public LocalDate default2NewPlaylist() {
         return getClockService().now();
     }
 
-    private PlaylistRepeat booleanToRepeatRule(boolean monday,
-                                               boolean tuesday,
-                                               boolean wednesday,
-                                               boolean thursday,
-                                               boolean friday,
-                                               boolean saturday,
-                                               boolean sunday) {
+    private String booleanToRepeatRule(boolean monday,
+                                       boolean tuesday,
+                                       boolean wednesday,
+                                       boolean thursday,
+                                       boolean friday,
+                                       boolean saturday,
+                                       boolean sunday) {
 
         if (!monday && !tuesday && !wednesday && !thursday && !friday && !saturday && !sunday) {
             return null;
@@ -215,6 +218,6 @@ public class Playlists extends EstatioDomainService<Playlist> {
             builder.setLength(builder.length() - 1);
         }
 
-        return PlaylistRepeat.stringToPlaylistRepeat(builder.toString());
+        return builder.toString();
     }
 }

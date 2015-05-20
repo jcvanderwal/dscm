@@ -43,7 +43,6 @@ import java.util.List;
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.*;
 
-//@Ignore("Causing (so far) inexplicable trouble with heap space on Jenkins, preventing deployment. See DSCM-20")
 public class PlaylistsTest extends DscmIntegTest {
 
     @Inject
@@ -90,11 +89,13 @@ public class PlaylistsTest extends DscmIntegTest {
     @Test
     public void testNextOccurrences() throws Exception {
         Playlist playlist = playlistFor(new LocalDate(2014, 7, 14), new LocalTime("14:00"));
-        List<LocalDateTime> nextOccurrences = generateNextOccurrencesForTests(playlist.getStartDate(), playlist.getStartTime(), playlist.getEndDate());
+        ((FixtureClock)Clock.getInstance()).setDate(2014, 4, 1);
+
+        List<Occurrence> nextOccurrences = playlist.nextOccurences(playlist.clockService.now().plusDays(7));
 
         assertThat(nextOccurrences.size(), is(7));
-        assertThat(nextOccurrences.get(0), is(new LocalDateTime(1980, 1, 1, 13, 0, 0, 0)));
-        assertThat(nextOccurrences.get(1), is(new LocalDateTime(1980, 1, 2, 13, 0, 0, 0)));
+        assertThat(nextOccurrences.get(0).getDateTime(), is(new LocalDateTime(2014, 4, 1, 13, 0, 0, 0)));
+        assertThat(nextOccurrences.get(1).getDateTime(), is(new LocalDateTime(2014, 4, 2, 13, 0, 0, 0)));
     }
 
     @Test
@@ -102,31 +103,20 @@ public class PlaylistsTest extends DscmIntegTest {
         List<Playlist> playlistResults = playlists.findByDisplayGroupAndStartDateTimeAndType(displayGroup, new LocalDate(2015, 4, 1), new LocalTime("08:00"), PlaylistType.FILLERS);
         Playlist playlist = null;
         for (Playlist playlistLoop : playlistResults) {
-            if (playlistLoop.getRepeatRule().equals(PlaylistRepeat.MONDAY.rrule())) {
+            if (playlistLoop.getRepeatRule().equals("RRULE:FREQ=DAILY;BYDAY=MO")) {
                 playlist = playlistLoop;
                 break;
             }
         }
 
-        assertThat(PlaylistRepeat.stringToPlaylistRepeat(playlist.getRepeatRule()), is(PlaylistRepeat.MONDAY));
+        assertThat(playlist.getRepeatRule(), is("RRULE:FREQ=DAILY;BYDAY=MO"));
 
         ((FixtureClock)Clock.getInstance()).setDate(2014, 4, 1);
 
-        List<LocalDateTime> nextOccurences = playlist.nextOccurences(playlist.getStartDate().plusDays(7), false);
+        List<Occurrence> nextOccurences = playlist.nextOccurences(playlist.getStartDate().plusDays(7));
 
         assertThat(nextOccurences.size(), is(1));
-        assertThat(nextOccurences.get(0), is(new LocalDateTime(2015, 4, 6, 8, 0, 0, 0)));
-    }
-
-    @Test
-    public void testOverlappingPlaylists() throws Exception {
-        List<Playlist> playlistResults = playlists.findByDisplayGroupAndStartDateTimeAndType(displayGroup, new LocalDate(1980, 1, 1), new LocalTime("08:00"), PlaylistType.FILLERS);
-        Playlist playlist = playlistResults.get(0);
-
-        ((FixtureClock)Clock.getInstance()).setDate(2014, 4, 25);
-
-        List<LocalDateTime> nextOccurrences = playlist.nextOccurences(playlist.clockService.now().plusDays(7), false);
-        assertThat(nextOccurrences.size(), is(6));
+        assertThat(nextOccurences.get(0).getDateTime(), is(new LocalDateTime(2015, 4, 6, 8, 0, 0, 0)));
     }
 
     @Test
@@ -146,7 +136,7 @@ public class PlaylistsTest extends DscmIntegTest {
         assertThat(newPlaylist.getStartTime(), is(oldPlaylist.getStartTime()));
 
         // And assert that next occurrences are correct
-        List<LocalDateTime> nextOccurrences = generateNextOccurrencesForTests(newPlaylist.getStartDate(), newPlaylist.getStartTime(), newPlaylist.getEndDate());
+        List<Occurrence> nextOccurrences = newPlaylist.nextOccurences(newPlaylist.getStartDate().plusDays(7));
         assertEquals(nextOccurencesToString(nextOccurrences), newPlaylist.getNextOccurences());
     }
 
@@ -187,10 +177,11 @@ public class PlaylistsTest extends DscmIntegTest {
         return nextOccurrences;
     }
 
-    private String nextOccurencesToString(List<LocalDateTime> nextOccurrences) {
+    private String nextOccurencesToString(List<Occurrence> nextOccurrences) {
         StringBuilder builder = new StringBuilder();
-        for (LocalDateTime occurence : nextOccurrences) {
-            builder.append(occurence.toString("E dd-MM-yyyy HH:mm"));
+        for (Occurrence occurence : nextOccurrences) {
+            LocalDateTime dateTime = occurence.getDateTime();
+            builder.append(dateTime.toString("E\tdd-MM-yyyy\tHH:mm"));
             builder.append("\n");
         }
 

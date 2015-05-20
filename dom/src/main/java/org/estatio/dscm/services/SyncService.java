@@ -31,10 +31,7 @@ import org.estatio.dscm.dom.asset.Assets;
 import org.estatio.dscm.dom.display.Display;
 import org.estatio.dscm.dom.display.DisplayGroup;
 import org.estatio.dscm.dom.display.DisplayGroups;
-import org.estatio.dscm.dom.playlist.Playlist;
-import org.estatio.dscm.dom.playlist.PlaylistItem;
-import org.estatio.dscm.dom.playlist.PlaylistType;
-import org.estatio.dscm.dom.playlist.Playlists;
+import org.estatio.dscm.dom.playlist.*;
 import org.estatio.dscm.dom.publisher.Publisher;
 import org.estatio.dscm.dom.publisher.Publishers;
 import org.joda.time.LocalDateTime;
@@ -86,7 +83,8 @@ public class SyncService extends AbstractContainedObject {
 
         for (Playlist playlist : playlists.findByDisplayGroupAndType(displayGroup, PlaylistType.MAIN)) {
             for (Display display : displayGroup.getDisplays()) {
-                for (LocalDateTime dateTime : playlist.nextOccurences(clockService.now().plusDays(7), false)) {
+                for (Occurrence occurrence : playlist.nextOccurences(clockService.now().plusDays(7))) {
+                    LocalDateTime dateTime = occurrence.getDateTime();
                     writePlaylist(display, dateTime, effectiveItems(playlist, dateTime), rt);
                 }
             }
@@ -109,7 +107,8 @@ public class SyncService extends AbstractContainedObject {
 
         for (Playlist playlist : playlists.findByDisplayGroupAndType(displayGroup, PlaylistType.MAIN)) {
             for (Display display : displayGroup.getDisplays()) {
-                for (LocalDateTime dateTime : playlist.nextOccurences(clockService.now().plusDays(7), false)) {
+                for (Occurrence occurrence : playlist.nextOccurences(clockService.now().plusDays(7))) {
+                    LocalDateTime dateTime = occurrence.getDateTime();
                     writePlaylist(display, dateTime, effectiveItems(playlist, dateTime), rt);
                 }
             }
