@@ -84,6 +84,7 @@ public class PlaylistsAndItems extends DiscoverableFixtureScript {
                     saturday,
                     sunday);
             playlistItems.newPlaylistItem(p1, assets.findAssetByName(assetName));
+            break;
         }
     }
 

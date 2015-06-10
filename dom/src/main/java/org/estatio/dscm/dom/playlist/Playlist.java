@@ -20,7 +20,6 @@ package org.estatio.dscm.dom.playlist;
 
 import com.google.common.collect.ComparisonChain;
 import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 import org.apache.commons.lang3.ObjectUtils;
 import org.apache.isis.applib.AbstractContainedObject;
@@ -102,7 +101,7 @@ public class Playlist extends AbstractContainedObject implements Comparable<Play
         return tb
                 .append(getContainer().titleOf(getDisplayGroup()))
                 .append(" ", getStartDate().toString("yyyy-MM-dd"))
-                .append(" ", getStartTime().toString("hh:mm"))
+                .append(" ", getStartTime().toString("HH:mm"))
                 .toString();
     }
 
@@ -221,6 +220,12 @@ public class Playlist extends AbstractContainedObject implements Comparable<Play
     @PropertyLayout(named = "Repeat Rule")
     @MemberOrder(sequence = "9")
     public String getRepeatRuleReadable() {
+        String[] updateOldRepeatRule = getRepeatRule().split("=");
+        // Old RRULE format for daily, change it to new one
+        if (updateOldRepeatRule.length == 2) {
+            this.setRepeatRule("RRULE:FREQ=DAILY;BYDAY=MO,TU,WE,TH,FR,SA,SU");
+        }
+
         String[] splitDays = getRepeatRule().split("=")[2].split(",");
         String returnString = "";
         for (String eachDay : splitDays) {
@@ -442,12 +447,10 @@ public class Playlist extends AbstractContainedObject implements Comparable<Play
 
     @Override
     @Programmatic
-    public ImmutableMap<String, CalendarEventable> getCalendarEvents() {
+    public ImmutableMap<String, List<? extends CalendarEventable>> getCalendarEvents() {
         LocalDate fromDate = clockService.now().compareTo(this.getStartDate()) >= 0 ? clockService.now() : this.getStartDate();
-
-        final ImmutableMap eventsByCalendarName =
-                Maps.uniqueIndex(
-                        nextOccurences(fromDate.plusDays(7)), Occurrence.Functions.GET_CALENDAR_NAME);
+        List<? extends CalendarEventable> nextOccurrences = nextOccurences(fromDate.plusDays(7));
+        final ImmutableMap<String, List<? extends CalendarEventable>> eventsByCalendarName = ImmutableMap.<String, List<? extends CalendarEventable>>builder().put(this.getType().title(), nextOccurrences).build();
 
         return eventsByCalendarName;
     }

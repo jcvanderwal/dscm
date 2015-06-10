@@ -18,6 +18,8 @@
  */
 package org.estatio.dscm.integtests.dom.playlist;
 
+import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.ImmutableSet;
 import org.apache.isis.applib.clock.Clock;
 import org.apache.isis.applib.fixtures.FixtureClock;
 import org.apache.isis.applib.services.clock.ClockService;
@@ -26,18 +28,16 @@ import org.estatio.dscm.dom.display.DisplayGroups;
 import org.estatio.dscm.dom.playlist.*;
 import org.estatio.dscm.fixture.playlist.PlaylistsAndItems;
 import org.estatio.dscm.integtests.DscmIntegTest;
-import org.joda.time.LocalDate;
-import org.joda.time.LocalDateTime;
-import org.joda.time.LocalTime;
-import org.joda.time.Period;
+import org.isisaddons.wicket.fullcalendar2.cpt.applib.CalendarEventable;
+import org.joda.time.*;
 import org.junit.Before;
 import org.junit.BeforeClass;
-import org.junit.Ignore;
 import org.junit.Test;
 
 import javax.inject.Inject;
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 import static org.hamcrest.CoreMatchers.is;
@@ -67,7 +67,7 @@ public class PlaylistsTest extends DscmIntegTest {
     }
 
     public void tearDown() throws Exception {
-        ((FixtureClock)Clock.getInstance()).reset();
+        ((FixtureClock) Clock.getInstance()).reset();
     }
 
     @Test
@@ -89,7 +89,7 @@ public class PlaylistsTest extends DscmIntegTest {
     @Test
     public void testNextOccurrences() throws Exception {
         Playlist playlist = playlistFor(new LocalDate(2014, 7, 14), new LocalTime("14:00"));
-        ((FixtureClock)Clock.getInstance()).setDate(2014, 4, 1);
+        ((FixtureClock) Clock.getInstance()).setDate(2014, 4, 1);
 
         List<Occurrence> nextOccurrences = playlist.nextOccurences(playlist.clockService.now().plusDays(7));
 
@@ -111,7 +111,7 @@ public class PlaylistsTest extends DscmIntegTest {
 
         assertThat(playlist.getRepeatRule(), is("RRULE:FREQ=DAILY;BYDAY=MO"));
 
-        ((FixtureClock)Clock.getInstance()).setDate(2014, 4, 1);
+        ((FixtureClock) Clock.getInstance()).setDate(2014, 4, 1);
 
         List<Occurrence> nextOccurences = playlist.nextOccurences(playlist.getStartDate().plusDays(7));
 
@@ -156,6 +156,31 @@ public class PlaylistsTest extends DscmIntegTest {
                 true);
 
         assertThat(mainPlayList.compareTo(compareTo), is(0));
+    }
+
+    @Test
+    public void testGetCalendarEvents() throws Exception {
+        Playlist playlist = playlistFor(new LocalDate(2014, 7, 14), new LocalTime("14:00"));
+        ((FixtureClock) Clock.getInstance()).setDate(2014, 4, 1);
+        ImmutableMap<String, List<? extends CalendarEventable>> calendarEvents = playlist.getCalendarEvents();
+
+        assertNotNull(calendarEvents);
+        assertFalse(calendarEvents.isEmpty());
+
+        ImmutableSet<String> keys = calendarEvents.keySet();
+        for (Iterator<String> it = keys.iterator(); it.hasNext();) {
+            String s = it.next();
+            if (s.equals(PlaylistType.FILLERS.title())) {
+                assertTrue(s.equals(PlaylistType.FILLERS.title()));
+                assertTrue(!calendarEvents.get(s).isEmpty());
+                Occurrence occ = (Occurrence)calendarEvents.get(s).get(0);
+                assertThat(occ.getDateTime(), is(new LocalDateTime(2014, 4, 1, 13, 0, 0, 0)));
+                assertThat(occ.toCalendarEvent().getDateTime(), is(new DateTime(2014, 4, 1, 13, 0, 0, 0)));
+                Occurrence occ2 = (Occurrence)calendarEvents.get(s).get(1);
+                assertThat(occ2.getDateTime(), is (new LocalDateTime(2014, 4, 2, 13, 0, 0, 0)));
+                assertThat(occ2.toCalendarEvent().getDateTime(), is(new DateTime(2014, 4, 2, 13, 0, 0, 0)));
+            }
+        }
     }
 
     private Playlist playlistFor(LocalDate date, LocalTime time) {
