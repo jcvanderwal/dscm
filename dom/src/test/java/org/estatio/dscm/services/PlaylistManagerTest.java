@@ -2,6 +2,8 @@ package org.estatio.dscm.services;
 
 import org.estatio.dscm.dom.asset.Asset;
 import org.estatio.dscm.dom.playlist.PlaylistItem;
+import org.estatio.dscm.dom.playlist.PlaylistType;
+
 import org.junit.Before;
 import org.junit.Test;
 
@@ -22,10 +24,13 @@ public class PlaylistManagerTest {
 
     @Test
     public void test() {
-        PlaylistManager manager = new PlaylistManager(createList("A10", "B20", "C10"));
-        assertThat(manager.nextItem(new BigDecimal("20")).getAsset().getName(), is("A"));
-        assertThat(manager.nextItem(new BigDecimal("10")).getAsset().getName(), is("C"));
-        assertThat(manager.nextItem(new BigDecimal("20")).getAsset().getName(), is("B"));
+        PlaylistManager manager = new PlaylistManager(createList("X10", "Y10", "Z10"), createList("A10", "B20", "C10"));
+        assertThat(manager.nextItem(new BigDecimal("10"), PlaylistType.MAIN).getAsset().getName(), is("X"));
+        assertThat(manager.nextItem(new BigDecimal("10"), PlaylistType.MAIN).getAsset().getName(), is("Y"));
+        assertThat(manager.nextItem(new BigDecimal("10"), PlaylistType.MAIN).getAsset().getName(), is("Z"));
+        assertThat(manager.nextItem(new BigDecimal("20"), PlaylistType.FILLERS).getAsset().getName(), is("A"));
+        assertThat(manager.nextItem(new BigDecimal("10"), PlaylistType.FILLERS).getAsset().getName(), is("C"));
+        assertThat(manager.nextItem(new BigDecimal("20"), PlaylistType.FILLERS).getAsset().getName(), is("B"));
         assertTrue(manager.itemsEquallyUsed());
     }
 

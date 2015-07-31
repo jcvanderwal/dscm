@@ -27,10 +27,11 @@ import org.joda.time.LocalDateTime;
 
 public class Occurrence implements CalendarEventable {
 
-    public Occurrence(PlaylistType type, LocalDateTime dateTime, String title) {
+    public Occurrence(PlaylistType type, LocalDateTime dateTime, String title, boolean emptyPlaylist) {
         this.type = type;
         this.dateTime = dateTime;
         this.title = title;
+        this.emptyPlaylist = emptyPlaylist;
     }
 
     private PlaylistType type;
@@ -51,6 +52,12 @@ public class Occurrence implements CalendarEventable {
         return title;
     }
 
+    private boolean emptyPlaylist;
+
+    public boolean getEmptyPlaylist() {
+        return emptyPlaylist;
+    }
+
     @Override
     @Programmatic
     public String getCalendarName() {
@@ -60,7 +67,7 @@ public class Occurrence implements CalendarEventable {
     @Override
     @Programmatic
     public CalendarEvent toCalendarEvent() {
-        return new CalendarEvent(getDateTime().toDateTime(), getCalendarName(), getTitle());
+        return new CalendarEvent(getDateTime().toDateTime(), getCalendarName(), getTitle(), getEmptyPlaylist());
     }
 
     public final static class Functions {

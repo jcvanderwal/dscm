@@ -295,7 +295,8 @@ public class Playlist extends AbstractContainedObject implements Comparable<Play
                                     interval.getStartMillis()).
                                     withHourOfDay(getStartTime().getHourOfDay()).
                                     withMinuteOfHour(getStartTime().getMinuteOfHour()),
-                            this.title()
+                            this.title(),
+                            getItems().isEmpty()
                     ));
                 }
             }
@@ -451,7 +452,7 @@ public class Playlist extends AbstractContainedObject implements Comparable<Play
         LocalDate fromDate = clockService.now().compareTo(this.getStartDate()) >= 0 ? clockService.now() : this.getStartDate();
         List<? extends CalendarEventable> nextOccurrences = nextOccurences(fromDate.plusDays(7));
         final ImmutableMap<String, List<? extends CalendarEventable>> eventsByCalendarName = ImmutableMap.<String, List<? extends CalendarEventable>>builder().put(this.getType().title(), nextOccurrences).build();
-
+        System.out.println(eventsByCalendarName);
         return eventsByCalendarName;
     }
 

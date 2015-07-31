@@ -1,10 +1,11 @@
 package org.estatio.dscm.services;
 
-import org.estatio.dscm.dom.playlist.PlaylistItem;
-
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
+
+import org.estatio.dscm.dom.playlist.PlaylistItem;
+import org.estatio.dscm.dom.playlist.PlaylistType;
 
 public class PlaylistGenerator {
 
@@ -17,21 +18,34 @@ public class PlaylistGenerator {
 
         List<PlaylistItem> resultingPlaylist = new ArrayList<PlaylistItem>();
 
-        PlaylistManager playlistManager = new PlaylistManager(fillers);
+        PlaylistManager playlistManager = new PlaylistManager(commercialItems, fillers);
 
         commercialDuration = PlaylistManager.totalDurationOf(commercialItems);
+        int offset = 0;
 
+        // TODO: Current implementation assumes that all assets have a duration of 10s (which is true in the current usecase). Better solution required for variable lengths
         /* Stop after all fillers are equally used */
         do {
-            resultingPlaylist.addAll(commercialItems);
-            BigDecimal timeLeftInCycle = cycleDuration.subtract(commercialDuration);
+            BigDecimal timeLeftInCycleMain = new BigDecimal(40);
+
+            while (timeLeftInCycleMain.compareTo(BigDecimal.ZERO) > 0) {
+                PlaylistItem nextMain = playlistManager.nextItem(timeLeftInCycleMain, PlaylistType.MAIN);
+                if (nextMain != null) {
+                    resultingPlaylist.add(nextMain);
+                    timeLeftInCycleMain = timeLeftInCycleMain.subtract(nextMain.getDuration());
+                } else {
+                    break;
+                }
+            }
+
+            BigDecimal timeLeftInCycleFiller = new BigDecimal(20);
 
             /* Stop after cycle is completely used */
-            while (timeLeftInCycle.compareTo(BigDecimal.ZERO) > 0) {
-                PlaylistItem nextFiller = playlistManager.nextItem(timeLeftInCycle);
+            while (timeLeftInCycleFiller.compareTo(BigDecimal.ZERO) > 0) {
+                PlaylistItem nextFiller = playlistManager.nextItem(timeLeftInCycleFiller, PlaylistType.FILLERS);
                 if (nextFiller != null) {
                     resultingPlaylist.add(nextFiller);
-                    timeLeftInCycle = timeLeftInCycle.subtract(nextFiller.getDuration());
+                    timeLeftInCycleFiller = timeLeftInCycleFiller.subtract(nextFiller.getDuration());
                 } else {
                     break;
                 }

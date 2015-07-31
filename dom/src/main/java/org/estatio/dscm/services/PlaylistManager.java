@@ -3,6 +3,7 @@ package org.estatio.dscm.services;
 import org.apache.commons.lang3.ObjectUtils;
 import org.apache.isis.applib.ApplicationException;
 import org.estatio.dscm.dom.playlist.PlaylistItem;
+import org.estatio.dscm.dom.playlist.PlaylistType;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;
@@ -12,38 +13,68 @@ import java.util.List;
 
 class PlaylistManager {
 
-    private List<PlayableItem> playableItemObjects;
+    private List<PlayableItem> playableMainItemObjects;
+    private List<PlayableItem> playableFillerItemObjects;
 
-    PlaylistManager(List<PlaylistItem> playlistItems) {
-        playableItemObjects = new ArrayList<PlaylistManager.PlayableItem>();
-        for (PlaylistItem item : playlistItems) {
-            playableItemObjects.add(new PlayableItem(item));
+    PlaylistManager(List<PlaylistItem> mainPlaylistItems, List<PlaylistItem> fillerPlaylistItems) {
+        playableMainItemObjects = new ArrayList<PlaylistManager.PlayableItem>();
+        playableFillerItemObjects = new ArrayList<PlaylistManager.PlayableItem>();
+
+        for (PlaylistItem item : mainPlaylistItems) {
+            playableMainItemObjects.add(new PlayableItem(item));
+        }
+
+        for (PlaylistItem item : fillerPlaylistItems) {
+            playableFillerItemObjects.add(new PlayableItem(item));
         }
     }
 
-    PlaylistItem nextItem(BigDecimal availableDuration) {
-        Collections.sort(playableItemObjects);
-        for (PlayableItem playableItem : playableItemObjects) {
-            if (playableItem.getDuration().compareTo(availableDuration) <= 0) {
-                playableItem.incrementUse();
-                return playableItem.getItem();
+    PlaylistItem nextItem(BigDecimal availableDuration, PlaylistType playlistType) {
+        if (playlistType.equals(PlaylistType.MAIN)) {
+            Collections.sort(playableMainItemObjects);
+            for (PlayableItem playableItem : playableMainItemObjects) {
+                if (playableItem.getDuration().compareTo(availableDuration) <= 0) {
+                    playableItem.incrementUse();
+                    return playableItem.getItem();
+                }
             }
+            return null;
         }
+
+        else if (playlistType.equals(PlaylistType.FILLERS)) {
+            Collections.sort(playableFillerItemObjects);
+            for (PlayableItem playableItem : playableFillerItemObjects) {
+                if (playableItem.getDuration().compareTo(availableDuration) <= 0) {
+                    playableItem.incrementUse();
+                    return playableItem.getItem();
+                }
+            }
+            return null;
+        }
+
         return null;
     }
 
     boolean itemsEquallyUsed() {
-        if (playableItemObjects.size() == 0) {
+        if (playableFillerItemObjects.size() == 0) {
             return true;
         }
 
-        BigInteger lowest = null;
-        BigInteger highest = null;
-        for (PlayableItem playableItem : playableItemObjects) {
-            lowest = ObjectUtils.min(lowest, playableItem.getTimesUsed());
-            highest = ObjectUtils.max(highest, playableItem.getTimesUsed());
+        BigInteger mainLowest = null;
+        BigInteger mainHighest = null;
+        BigInteger fillerLowest = null;
+        BigInteger fillerHighest = null;
+
+        for (PlayableItem playableItem : playableMainItemObjects) {
+            mainLowest = ObjectUtils.min(mainLowest, playableItem.getTimesUsed());
+            mainHighest = ObjectUtils.max(mainHighest, playableItem.getTimesUsed());
         }
-        return lowest == highest && lowest.compareTo(BigInteger.ZERO) > 0;
+
+        for (PlayableItem playableItem : playableFillerItemObjects) {
+            fillerLowest = ObjectUtils.min(fillerLowest, playableItem.getTimesUsed());
+            fillerHighest = ObjectUtils.max(fillerHighest, playableItem.getTimesUsed());
+        }
+        return (fillerLowest == fillerHighest && fillerLowest.compareTo(BigInteger.ZERO) > 0) && (mainLowest == mainHighest && mainLowest.compareTo(BigInteger.ZERO) > 0);
     }
 
     public static BigDecimal totalDurationOf(List<PlaylistItem> items) {

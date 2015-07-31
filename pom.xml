@@ -46,7 +46,7 @@
         <isis-module-stringinterpolator.version>1.9.0-SNAPSHOT</isis-module-stringinterpolator.version>
 
         <isis-wicket-excel.version>1.8.0</isis-wicket-excel.version>
-        <isis-wicket-fullcalendar2.version>1.8.0</isis-wicket-fullcalendar2.version>
+        <isis-wicket-fullcalendar2.version>1.9.1-SNAPSHOT</isis-wicket-fullcalendar2.version>
         <isis-wicket-gmap3.version>1.9.0-SNAPSHOT</isis-wicket-gmap3.version>
 
         <quartz-scheduler.version>2.2.1</quartz-scheduler.version>
@@ -73,11 +73,6 @@
             </releases>
             <snapshots>
             </snapshots>
-        </repository>
-        <repository>
-            <id>project.local</id>
-            <name>project</name>
-            <url>file:$/Users/sander/gits/isis-wicket-fullcalendar2/cpt/target</url>
         </repository>
     </repositories>
 

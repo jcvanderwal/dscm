@@ -38,6 +38,15 @@ public class PlaylistGeneratorTest {
     }
 
     @Test
+    public void testMultipleCyclesWithVariableDurationMoreThanFourtySecondsOfMain() throws Exception {
+        List<PlaylistItem> result = PlaylistGenerator.generate(
+                createList("A10", "B10", "C10", "D10", "E10"),
+                createList("X20", "Y10", "Z10"),
+                new BigDecimal("60"));
+        assertThat(sequenceStringof(result), is("ABCDXEABCYZDEABXCDEAYZBCDEXABCDYZEABCXDEABYZCDEAXBCDEYZ"));
+    }
+
+    @Test
     public void testMultipleCyclesWithVariableDurationAndDifferentOrder() throws Exception {
         List<PlaylistItem> result = PlaylistGenerator.generate(
                 createList("A10", "B10", "C10", "D10"),

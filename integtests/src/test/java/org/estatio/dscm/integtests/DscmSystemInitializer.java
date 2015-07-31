@@ -87,8 +87,8 @@ public class DscmSystemInitializer {
                     "org.isisaddons"
             );
 
-            withServices(
-                    new ExceptionRecognizerCompositeForJdoObjectStore());
+//            withServices(
+//                    new ExceptionRecognizerCompositeForJdoObjectStore());
         }
 
         private static IsisConfiguration testConfiguration() {

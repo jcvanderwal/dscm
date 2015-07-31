@@ -119,7 +119,8 @@ public class PlaylistTest_nextOccurences {
                                     interval.getStartMillis()).
                                     withHourOfDay(playlist.getStartTime().getHourOfDay()).
                                     withMinuteOfHour(playlist.getStartTime().getMinuteOfHour()),
-                            "Test title"
+                            "Test title",
+                            false
                     ));
                 }
             }
