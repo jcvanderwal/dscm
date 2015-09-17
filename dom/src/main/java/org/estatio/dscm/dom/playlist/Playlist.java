@@ -18,33 +18,54 @@
  */
 package org.estatio.dscm.dom.playlist;
 
-import com.google.common.collect.ComparisonChain;
-import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.Sets;
-import org.apache.commons.lang3.ObjectUtils;
-import org.apache.isis.applib.AbstractContainedObject;
-import org.apache.isis.applib.annotation.*;
-import org.apache.isis.applib.services.clock.ClockService;
-import org.apache.isis.applib.util.TitleBuffer;
-import org.estatio.dscm.DscmDashboard;
-import org.estatio.dscm.dom.asset.Asset;
-import org.estatio.dscm.dom.asset.Assets;
-import org.estatio.dscm.dom.display.DisplayGroup;
-import org.estatio.dscm.utils.CalendarUtils;
-import org.isisaddons.wicket.fullcalendar2.cpt.applib.CalendarEventable;
-import org.isisaddons.wicket.fullcalendar2.cpt.applib.Calendarable;
-import org.joda.time.Interval;
-import org.joda.time.LocalDate;
-import org.joda.time.LocalDateTime;
-import org.joda.time.LocalTime;
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Set;
+import java.util.SortedSet;
+import java.util.TreeSet;
 
 import javax.inject.Inject;
 import javax.jdo.annotations.Column;
 import javax.jdo.annotations.IdentityType;
 import javax.jdo.annotations.Persistent;
 import javax.jdo.annotations.VersionStrategy;
-import java.math.BigDecimal;
-import java.util.*;
+
+import com.google.common.collect.ComparisonChain;
+import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.Sets;
+
+import org.apache.commons.lang3.ObjectUtils;
+import org.joda.time.Interval;
+import org.joda.time.LocalDate;
+import org.joda.time.LocalDateTime;
+import org.joda.time.LocalTime;
+
+import org.apache.isis.applib.AbstractContainedObject;
+import org.apache.isis.applib.annotation.BookmarkPolicy;
+import org.apache.isis.applib.annotation.CollectionLayout;
+import org.apache.isis.applib.annotation.DomainObject;
+import org.apache.isis.applib.annotation.DomainObjectLayout;
+import org.apache.isis.applib.annotation.Editing;
+import org.apache.isis.applib.annotation.MemberOrder;
+import org.apache.isis.applib.annotation.Optionality;
+import org.apache.isis.applib.annotation.ParameterLayout;
+import org.apache.isis.applib.annotation.Programmatic;
+import org.apache.isis.applib.annotation.Property;
+import org.apache.isis.applib.annotation.PropertyLayout;
+import org.apache.isis.applib.annotation.RenderType;
+import org.apache.isis.applib.annotation.Where;
+import org.apache.isis.applib.services.clock.ClockService;
+import org.apache.isis.applib.util.TitleBuffer;
+
+import org.isisaddons.wicket.fullcalendar2.cpt.applib.CalendarEventable;
+import org.isisaddons.wicket.fullcalendar2.cpt.applib.Calendarable;
+
+import org.estatio.dscm.DscmDashboard;
+import org.estatio.dscm.dom.asset.Asset;
+import org.estatio.dscm.dom.asset.Assets;
+import org.estatio.dscm.dom.display.DisplayGroup;
+import org.estatio.dscm.utils.CalendarUtils;
 
 @javax.jdo.annotations.PersistenceCapable(
         identityType = IdentityType.DATASTORE)
@@ -230,27 +251,27 @@ public class Playlist extends AbstractContainedObject implements Comparable<Play
         String returnString = "";
         for (String eachDay : splitDays) {
             switch (eachDay) {
-                case "MO":
-                    returnString += "Mon, ";
-                    break;
-                case "TU":
-                    returnString += "Tue, ";
-                    break;
-                case "WE":
-                    returnString += "Wed, ";
-                    break;
-                case "TH":
-                    returnString += "Thu, ";
-                    break;
-                case "FR":
-                    returnString += "Fri, ";
-                    break;
-                case "SA":
-                    returnString += "Sat, ";
-                    break;
-                case "SU":
-                    returnString += "Sun";
-                    break;
+            case "MO":
+                returnString += "Mon, ";
+                break;
+            case "TU":
+                returnString += "Tue, ";
+                break;
+            case "WE":
+                returnString += "Wed, ";
+                break;
+            case "TH":
+                returnString += "Thu, ";
+                break;
+            case "FR":
+                returnString += "Fri, ";
+                break;
+            case "SA":
+                returnString += "Sat, ";
+                break;
+            case "SU":
+                returnString += "Sun";
+                break;
             }
         }
 
@@ -288,7 +309,22 @@ public class Playlist extends AbstractContainedObject implements Comparable<Play
 
             for (Interval interval : intervals) {
                 LocalDateTime intervalStart = new LocalDateTime(interval.getStart());
-                if (intervalStart.compareTo(start.toLocalDateTime(new LocalTime("00:00"))) >= 0) {
+                intervalStart = intervalStart.withTime(getStartTime().getHourOfDay(), getStartTime().getMinuteOfHour(), getStartTime().getSecondOfMinute(), getStartTime().getMillisOfSecond());
+                LocalTime time = getStartDate().isBefore(clockService.now()) ? clockService.nowAsLocalDateTime().toLocalTime() : getStartTime();
+
+                boolean mostRecent = true;
+                List<Playlist> otherPlaylists = playlists.findByDisplayGroupAndType(getDisplayGroup(), getType());
+
+                for (Playlist playlist : otherPlaylists) {
+                    if (playlist.repeatRuleToBooleans(playlist.getRepeatRule())[interval.getStart().getDayOfWeek() - 1]
+                            && playlist.getStartTime().isAfter(this.getStartTime())
+                            && playlist.getStartTime().isBefore(clockService.nowAsLocalDateTime().toLocalTime())) {
+                        mostRecent = false;
+                    }
+                }
+
+                int comp = intervalStart.compareTo(start.toLocalDateTime(time));
+                if (comp >= 0 || (intervalStart.toLocalDate().compareTo(start) == 0 && mostRecent)) {
                     nextOccurrences.add(new Occurrence(
                             this.getType(),
                             new LocalDateTime(
@@ -364,27 +400,27 @@ public class Playlist extends AbstractContainedObject implements Comparable<Play
 
         for (String eachDay : splitDays) {
             switch (eachDay) {
-                case "MO":
-                    days[0] = true;
-                    break;
-                case "TU":
-                    days[1] = true;
-                    break;
-                case "WE":
-                    days[2] = true;
-                    break;
-                case "TH":
-                    days[3] = true;
-                    break;
-                case "FR":
-                    days[4] = true;
-                    break;
-                case "SA":
-                    days[5] = true;
-                    break;
-                case "SU":
-                    days[6] = true;
-                    break;
+            case "MO":
+                days[0] = true;
+                break;
+            case "TU":
+                days[1] = true;
+                break;
+            case "WE":
+                days[2] = true;
+                break;
+            case "TH":
+                days[3] = true;
+                break;
+            case "FR":
+                days[4] = true;
+                break;
+            case "SA":
+                days[5] = true;
+                break;
+            case "SU":
+                days[6] = true;
+                break;
             }
         }
 
@@ -433,7 +469,8 @@ public class Playlist extends AbstractContainedObject implements Comparable<Play
 
         for (String thisRepeatDay : thisRepeatSplit) {
             for (String otherRepeatDay : otherRepeatSplit) {
-                if (thisRepeatDay.equals(otherRepeatDay)) return Weekdays.stringToWeekdays(thisRepeatDay);
+                if (thisRepeatDay.equals(otherRepeatDay))
+                    return Weekdays.stringToWeekdays(thisRepeatDay);
             }
         }
 
