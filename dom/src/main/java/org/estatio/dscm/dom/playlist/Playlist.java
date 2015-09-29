@@ -21,7 +21,6 @@ package org.estatio.dscm.dom.playlist;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
 import java.util.SortedSet;
 import java.util.TreeSet;
 
@@ -32,8 +31,6 @@ import javax.jdo.annotations.Persistent;
 import javax.jdo.annotations.VersionStrategy;
 
 import com.google.common.collect.ComparisonChain;
-import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.Sets;
 
 import org.apache.commons.lang3.ObjectUtils;
 import org.joda.time.Interval;
@@ -57,9 +54,6 @@ import org.apache.isis.applib.annotation.RenderType;
 import org.apache.isis.applib.annotation.Where;
 import org.apache.isis.applib.services.clock.ClockService;
 import org.apache.isis.applib.util.TitleBuffer;
-
-import org.isisaddons.wicket.fullcalendar2.cpt.applib.CalendarEventable;
-import org.isisaddons.wicket.fullcalendar2.cpt.applib.Calendarable;
 
 import org.estatio.dscm.DscmDashboard;
 import org.estatio.dscm.dom.asset.Asset;
@@ -115,7 +109,7 @@ import org.estatio.dscm.utils.CalendarUtils;
 //@Unique(name = "Playlist_displayGroup_startDate_startTime_type_repeatRule_UNQ", members = {"displayGroup", "startDate", "startTime", "type", "repeatRule"})
 @DomainObject(bounded = true, editing = Editing.DISABLED)
 @DomainObjectLayout(bookmarking = BookmarkPolicy.AS_ROOT)
-public class Playlist extends AbstractContainedObject implements Comparable<Playlist>, Calendarable {
+public class Playlist extends AbstractContainedObject implements Comparable<Playlist> {
 
     public String title() {
         TitleBuffer tb = new TitleBuffer();
@@ -477,21 +471,21 @@ public class Playlist extends AbstractContainedObject implements Comparable<Play
         return null;
     }
 
-    @Override
-    @Programmatic
-    public Set<String> getCalendarNames() {
-        return Sets.newHashSet(getType().title());
-    }
+//    @Override
+//    @Programmatic
+//    public Set<String> getCalendarNames() {
+//        return Sets.newHashSet(getType().title());
+//    }
 
-    @Override
-    @Programmatic
-    public ImmutableMap<String, List<? extends CalendarEventable>> getCalendarEvents() {
-        LocalDate fromDate = clockService.now().compareTo(this.getStartDate()) >= 0 ? clockService.now() : this.getStartDate();
-        List<? extends CalendarEventable> nextOccurrences = nextOccurences(fromDate.plusDays(7));
-        final ImmutableMap<String, List<? extends CalendarEventable>> eventsByCalendarName = ImmutableMap.<String, List<? extends CalendarEventable>>builder().put(this.getType().title(), nextOccurrences).build();
-        System.out.println(eventsByCalendarName);
-        return eventsByCalendarName;
-    }
+//    @Override
+//    @Programmatic
+//    public ImmutableMap<String, List<? extends CalendarEventable>> getCalendarEvents() {
+//        LocalDate fromDate = clockService.now().compareTo(this.getStartDate()) >= 0 ? clockService.now() : this.getStartDate();
+//        List<? extends CalendarEventable> nextOccurrences = nextOccurences(fromDate.plusDays(7));
+//        final ImmutableMap<String, List<? extends CalendarEventable>> eventsByCalendarName = ImmutableMap.<String, List<? extends CalendarEventable>>builder().put(this.getType().title(), nextOccurrences).build();
+//        System.out.println(eventsByCalendarName);
+//        return eventsByCalendarName;
+//    }
 
     // //////////////////////////////////////
 
