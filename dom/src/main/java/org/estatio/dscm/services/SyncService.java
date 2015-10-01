@@ -233,6 +233,7 @@ public class SyncService extends AbstractContainedObject {
 
         List<PlaylistItem> fillers = new ArrayList<PlaylistItem>();
         List<PlaylistItem> commercials = new ArrayList<PlaylistItem>();
+
         commercials.addAll(playlist.getItems());
         Playlist fillerPlaylist = playlists.findByDisplayGroupAndDateTimeAndType(
                 playlist.getDisplayGroup(),

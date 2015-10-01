@@ -114,11 +114,21 @@ public class Playlist extends AbstractContainedObject implements Comparable<Play
 
     public String title() {
         TitleBuffer tb = new TitleBuffer();
-        return tb
-                .append(getContainer().titleOf(getDisplayGroup()))
-                .append(" ", getStartDate().toString("yyyy-MM-dd"))
-                .append(" ", getStartTime().toString("HH:mm"))
-                .toString();
+
+        if (this.getItems().size() == 0) {
+            return tb
+                    .append(getContainer().titleOf(getDisplayGroup()))
+                    .append(" ", getStartDate().toString("yyyy-MM-dd"))
+                    .append(" ", getStartTime().toString("HH:mm"))
+                    .append(" - ", "WARNING: Playlist is empty!")
+                    .toString();
+        } else {
+            return tb
+                    .append(getContainer().titleOf(getDisplayGroup()))
+                    .append(" ", getStartDate().toString("yyyy-MM-dd"))
+                    .append(" ", getStartTime().toString("HH:mm"))
+                    .toString();
+        }
     }
 
     private DisplayGroup displayGroup;
