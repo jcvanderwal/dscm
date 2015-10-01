@@ -18,31 +18,46 @@
  */
 package org.estatio.dscm.services;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.PrintStream;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+
+import javax.activation.MimetypesFileTypeMap;
+import javax.annotation.PostConstruct;
+import javax.inject.Inject;
+
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
+import org.joda.time.LocalDateTime;
+
 import org.apache.isis.applib.AbstractContainedObject;
-import org.apache.isis.applib.annotation.*;
+import org.apache.isis.applib.annotation.DomainService;
+import org.apache.isis.applib.annotation.DomainServiceLayout;
+import org.apache.isis.applib.annotation.Programmatic;
 import org.apache.isis.applib.services.clock.ClockService;
 import org.apache.isis.applib.services.command.CommandContext;
 import org.apache.isis.applib.value.Blob;
+
 import org.estatio.dscm.DscmDashboard;
 import org.estatio.dscm.dom.asset.Asset;
 import org.estatio.dscm.dom.asset.Assets;
 import org.estatio.dscm.dom.display.Display;
 import org.estatio.dscm.dom.display.DisplayGroup;
 import org.estatio.dscm.dom.display.DisplayGroups;
-import org.estatio.dscm.dom.playlist.*;
+import org.estatio.dscm.dom.playlist.Occurrence;
+import org.estatio.dscm.dom.playlist.Playlist;
+import org.estatio.dscm.dom.playlist.PlaylistItem;
+import org.estatio.dscm.dom.playlist.PlaylistType;
+import org.estatio.dscm.dom.playlist.Playlists;
 import org.estatio.dscm.dom.publisher.Publisher;
 import org.estatio.dscm.dom.publisher.Publishers;
-import org.joda.time.LocalDateTime;
-
-import javax.activation.MimetypesFileTypeMap;
-import javax.annotation.PostConstruct;
-import javax.inject.Inject;
-import java.io.*;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
 
 //import org.apache.isis.applib.services.command.Command;
 
@@ -175,7 +190,7 @@ public class SyncService extends AbstractContainedObject {
                     is = new FileInputStream(file);
                     final String mimeType = new MimetypesFileTypeMap().getContentType(file);
                     Blob blob = new Blob(file.getName(), mimeType, IOUtils.toByteArray(is));
-                    asset = assets.newAsset(blob, publisher, null, clockService.now(), null);
+                    asset = assets.newAsset(blob, null, publisher, null, clockService.now(), null);
                     for (Playlist playlist : playlists.allPlaylists()) {
                         playlist.newItem(asset);
                     }

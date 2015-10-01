@@ -18,15 +18,20 @@
  */
 package org.estatio.dscm.dom.display;
 
-import org.apache.isis.applib.annotation.*;
-import org.apache.isis.applib.annotation.ActionSemantics.Of;
-import org.estatio.dscm.DscmDashboard;
-import org.estatio.dscm.EstatioDomainService;
-
 import java.util.List;
 
+import org.apache.isis.applib.annotation.Action;
+import org.apache.isis.applib.annotation.ActionLayout;
+import org.apache.isis.applib.annotation.BookmarkPolicy;
+import org.apache.isis.applib.annotation.DomainService;
+import org.apache.isis.applib.annotation.MemberOrder;
+import org.apache.isis.applib.annotation.ParameterLayout;
+import org.apache.isis.applib.annotation.SemanticsOf;
+
+import org.estatio.dscm.EstatioDomainService;
+
 @DomainService
-public class Displays extends EstatioDomainService<Display> {
+public class    Displays extends EstatioDomainService<Display> {
 
     public Displays() {
         super(Displays.class, Display.class);
@@ -51,7 +56,7 @@ public class Displays extends EstatioDomainService<Display> {
     // Create (action)
     // //////////////////////////////////////
 
-    @MemberOrder(sequence = "2")
+    @MemberOrder(name = "Displays", sequence = "2")
     public Display newDisplay(
             final @ParameterLayout(named = "Name") String name,
             final DisplayGroup displayGroup) {

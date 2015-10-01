@@ -18,15 +18,29 @@
  */
 package org.estatio.dscm.dom.playlist;
 
-import org.apache.isis.applib.annotation.*;
-import org.apache.isis.applib.query.QueryDefault;
-import org.estatio.dscm.EstatioDomainService;
-import org.estatio.dscm.dom.display.DisplayGroup;
+import java.math.BigDecimal;
+import java.util.List;
+
 import org.joda.time.LocalDate;
 import org.joda.time.LocalTime;
 
-import java.math.BigDecimal;
-import java.util.List;
+import org.apache.isis.applib.annotation.Action;
+import org.apache.isis.applib.annotation.ActionLayout;
+import org.apache.isis.applib.annotation.BookmarkPolicy;
+import org.apache.isis.applib.annotation.CollectionLayout;
+import org.apache.isis.applib.annotation.Contributed;
+import org.apache.isis.applib.annotation.DomainService;
+import org.apache.isis.applib.annotation.MemberOrder;
+import org.apache.isis.applib.annotation.Optionality;
+import org.apache.isis.applib.annotation.Parameter;
+import org.apache.isis.applib.annotation.ParameterLayout;
+import org.apache.isis.applib.annotation.Programmatic;
+import org.apache.isis.applib.annotation.RenderType;
+import org.apache.isis.applib.annotation.SemanticsOf;
+import org.apache.isis.applib.query.QueryDefault;
+
+import org.estatio.dscm.EstatioDomainService;
+import org.estatio.dscm.dom.display.DisplayGroup;
 
 @DomainService
 public class Playlists extends EstatioDomainService<Playlist> {
@@ -92,12 +106,14 @@ public class Playlists extends EstatioDomainService<Playlist> {
 
     @Action(semantics = SemanticsOf.SAFE)
     @CollectionLayout(render = RenderType.EAGERLY)
+    @ActionLayout(contributed = Contributed.AS_ASSOCIATION)
     public List<Playlist> mainPlaylists(DisplayGroup displayGroup) {
         return findByDisplayGroupAndType(displayGroup, PlaylistType.MAIN);
     }
 
     @Action(semantics = SemanticsOf.SAFE)
     @CollectionLayout(render = RenderType.EAGERLY)
+    @ActionLayout(contributed = Contributed.AS_ASSOCIATION)
     public List<Playlist> fillerPlaylists(DisplayGroup displayGroup) {
         return findByDisplayGroupAndType(displayGroup, PlaylistType.FILLERS);
     }

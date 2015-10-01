@@ -18,18 +18,30 @@
  */
 package org.estatio.dscm.dom.asset;
 
+import java.math.BigDecimal;
+import java.util.List;
+
+import org.joda.time.LocalDate;
+
 import org.apache.isis.applib.DomainObjectContainer;
-import org.apache.isis.applib.annotation.*;
+import org.apache.isis.applib.annotation.Action;
+import org.apache.isis.applib.annotation.ActionLayout;
+import org.apache.isis.applib.annotation.BookmarkPolicy;
+import org.apache.isis.applib.annotation.Contributed;
+import org.apache.isis.applib.annotation.DomainService;
+import org.apache.isis.applib.annotation.MemberOrder;
+import org.apache.isis.applib.annotation.Optionality;
+import org.apache.isis.applib.annotation.Parameter;
+import org.apache.isis.applib.annotation.ParameterLayout;
+import org.apache.isis.applib.annotation.Programmatic;
+import org.apache.isis.applib.annotation.SemanticsOf;
 import org.apache.isis.applib.query.QueryDefault;
 import org.apache.isis.applib.services.clock.ClockService;
 import org.apache.isis.applib.value.Blob;
+
 import org.estatio.dscm.EstatioDomainService;
 import org.estatio.dscm.dom.display.DisplayGroup;
 import org.estatio.dscm.dom.publisher.Publisher;
-import org.joda.time.LocalDate;
-
-import java.math.BigDecimal;
-import java.util.List;
 
 @DomainService
 public class Assets extends EstatioDomainService<Asset> {
@@ -59,24 +71,32 @@ public class Assets extends EstatioDomainService<Asset> {
     // //////////////////////////////////////
 
     @MemberOrder(sequence = "2")
-    public Asset newAsset(final @ParameterLayout(named = "File") Blob file,
-                          final Publisher publisher, final DisplayGroup displayGroup,
-                          final @ParameterLayout(named = "Start date") LocalDate startDate,
-                          final @ParameterLayout(named = "Duration (seconds)") BigDecimal duration) {
+    @ActionLayout(contributed = Contributed.AS_ASSOCIATION)
+    public Asset newAsset(
+            final @ParameterLayout(named = "File") Blob file,
+            final @Parameter(optionality = Optionality.OPTIONAL) @ParameterLayout(named = "Description") String description,
+            final @ParameterLayout(named = "Publisher") Publisher publisher,
+            final @ParameterLayout(named = "Display Group") DisplayGroup displayGroup,
+            final @ParameterLayout(named = "Start date") LocalDate startDate,
+            final @ParameterLayout(named = "Duration (seconds)") BigDecimal duration) {
         final Asset obj = container.newTransientInstance(Asset.class);
         obj.setName(file.getName());
-        obj.setDuration(duration);
+        obj.setDescription(description);
         obj.setPublisher(publisher);
+        obj.setDisplayGroup(displayGroup);
         obj.setStartDate(startDate);
+        obj.setDuration(duration);
         obj.setFile(file);
         container.persistIfNotAlready(obj);
         return obj;
     }
 
+    @Programmatic
     public LocalDate default3NewAsset() {
         return clockService.now();
     }
 
+    @Programmatic
     public String validateNewAsset(
             final Blob file,
             final Publisher publisher,

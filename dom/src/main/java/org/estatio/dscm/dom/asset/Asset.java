@@ -18,22 +18,37 @@
  */
 package org.estatio.dscm.dom.asset;
 
-import org.apache.isis.applib.AbstractDomainObject;
-import org.apache.isis.applib.annotation.*;
-import org.apache.isis.applib.util.ObjectContracts;
-import org.apache.isis.applib.value.Blob;
-import org.estatio.dscm.DscmDashboard;
-import org.estatio.dscm.dom.display.DisplayGroup;
-import org.estatio.dscm.dom.playlist.PlaylistItems;
-import org.estatio.dscm.dom.publisher.Publisher;
-import org.joda.time.LocalDate;
+import java.math.BigDecimal;
 
 import javax.inject.Inject;
 import javax.jdo.annotations.Column;
 import javax.jdo.annotations.IdentityType;
 import javax.jdo.annotations.Persistent;
 import javax.jdo.annotations.VersionStrategy;
-import java.math.BigDecimal;
+
+import org.joda.time.LocalDate;
+
+import org.apache.isis.applib.AbstractDomainObject;
+import org.apache.isis.applib.annotation.Action;
+import org.apache.isis.applib.annotation.BookmarkPolicy;
+import org.apache.isis.applib.annotation.DomainObject;
+import org.apache.isis.applib.annotation.DomainObjectLayout;
+import org.apache.isis.applib.annotation.Editing;
+import org.apache.isis.applib.annotation.MemberOrder;
+import org.apache.isis.applib.annotation.Optionality;
+import org.apache.isis.applib.annotation.ParameterLayout;
+import org.apache.isis.applib.annotation.Programmatic;
+import org.apache.isis.applib.annotation.Property;
+import org.apache.isis.applib.annotation.SemanticsOf;
+import org.apache.isis.applib.annotation.Title;
+import org.apache.isis.applib.annotation.Where;
+import org.apache.isis.applib.util.ObjectContracts;
+import org.apache.isis.applib.value.Blob;
+
+import org.estatio.dscm.DscmDashboard;
+import org.estatio.dscm.dom.display.DisplayGroup;
+import org.estatio.dscm.dom.playlist.PlaylistItems;
+import org.estatio.dscm.dom.publisher.Publisher;
 
 @javax.jdo.annotations.PersistenceCapable(identityType = IdentityType.DATASTORE)
 @javax.jdo.annotations.DatastoreIdentity(strategy = javax.jdo.annotations.IdGeneratorStrategy.IDENTITY, column = "id")
@@ -187,17 +202,21 @@ public class Asset extends AbstractDomainObject implements Comparable<Asset> {
 
     // //////////////////////////////////////
 
-    @Inject
-    private PlaylistItems playlistItems;
-
     @Action(semantics = SemanticsOf.IDEMPOTENT)
-    public Asset changeDates(
+    @MemberOrder(name = "startDate", sequence = "1")
+    public Asset changeDate(
             final @ParameterLayout(named = "Start date") LocalDate startDate) {
         setStartDate(startDate);
         return this;
     }
 
+    @Programmatic
     public LocalDate default0ChangeDates() {
         return getStartDate();
     }
+
+    // //////////////////////////////////////
+
+    @Inject
+    private PlaylistItems playlistItems;
 }

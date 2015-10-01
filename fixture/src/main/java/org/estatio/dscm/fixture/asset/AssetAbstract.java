@@ -19,11 +19,9 @@
 
 package org.estatio.dscm.fixture.asset;
 
-import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.math.BigDecimal;
 
 import javax.activation.MimetypesFileTypeMap;
@@ -42,6 +40,7 @@ public abstract class AssetAbstract extends DiscoverableFixtureScript {
     protected void createAsset(String fileName, String publisherName) {
         assets.newAsset(
                 resourceAsBlob(fileName),
+                null,
                 publishers.findByName(publisherName),
                 null,
                 clockService.now(),

@@ -18,15 +18,23 @@
  */
 package org.estatio.dscm.dom.display;
 
-import org.apache.isis.applib.annotation.*;
-import org.apache.isis.applib.util.ObjectContracts;
-import org.estatio.dscm.DSCMDomainObject;
+import java.util.List;
 
 import javax.inject.Inject;
 import javax.jdo.annotations.Column;
 import javax.jdo.annotations.IdentityType;
 import javax.jdo.annotations.VersionStrategy;
-import java.util.List;
+
+import org.apache.isis.applib.annotation.BookmarkPolicy;
+import org.apache.isis.applib.annotation.DomainObject;
+import org.apache.isis.applib.annotation.DomainObjectLayout;
+import org.apache.isis.applib.annotation.Editing;
+import org.apache.isis.applib.annotation.MemberOrder;
+import org.apache.isis.applib.annotation.ParameterLayout;
+import org.apache.isis.applib.annotation.Title;
+import org.apache.isis.applib.util.ObjectContracts;
+
+import org.estatio.dscm.DSCMDomainObject;
 
 @javax.jdo.annotations.PersistenceCapable(
         identityType = IdentityType.DATASTORE)
@@ -66,6 +74,7 @@ public class Display extends DSCMDomainObject<Display> implements Comparable<Dis
         this.displayGroup = displayGroup;
     }
 
+    @MemberOrder(name = "displayGroup", sequence = "1")
     public Display changeDisplayGroup(final @ParameterLayout(named = "Display Group") DisplayGroup displayGroup) {
         setDisplayGroup(displayGroup);
         return this;

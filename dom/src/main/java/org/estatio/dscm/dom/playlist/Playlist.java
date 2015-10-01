@@ -46,6 +46,7 @@ import org.apache.isis.applib.annotation.DomainObjectLayout;
 import org.apache.isis.applib.annotation.Editing;
 import org.apache.isis.applib.annotation.MemberOrder;
 import org.apache.isis.applib.annotation.Optionality;
+import org.apache.isis.applib.annotation.Parameter;
 import org.apache.isis.applib.annotation.ParameterLayout;
 import org.apache.isis.applib.annotation.Programmatic;
 import org.apache.isis.applib.annotation.Property;
@@ -351,6 +352,7 @@ public class Playlist extends AbstractContainedObject implements Comparable<Play
 
     // //////////////////////////////////////
 
+    @MemberOrder(name = "items", sequence = "1")
     public Playlist newItem(Asset asset) {
         playlistItems.newPlaylistItem(this, asset);
         return this;
@@ -489,6 +491,54 @@ public class Playlist extends AbstractContainedObject implements Comparable<Play
 
     // //////////////////////////////////////
 
+    @MemberOrder(name = "nextOccurences", sequence = "1")
+    public Playlist changeValues(
+            @ParameterLayout(named = "Start Date") LocalDate startDate,
+            @ParameterLayout(named = "Start Time") Time startTime,
+            @Parameter(optionality = Optionality.OPTIONAL) @ParameterLayout(named = "End Date") LocalDate endDate
+    ) {
+        setStartDate(startDate);
+        setStartTime(startTime.time());
+        setEndDate(endDate);
+
+        return this;
+    }
+
+    @Programmatic
+    public LocalDate default0ChangeValues() {
+        return getStartDate();
+    }
+
+    @Programmatic
+    public Time default1ChangeValues() {
+        return Time.localTimeToTime(getStartTime());
+    }
+
+    @Programmatic
+    public LocalDate default2ChangeValues() {
+        return getEndDate();
+    }
+
+    @Programmatic
+    public String validateChangeValues(
+            LocalDate startDate,
+            Time startTime,
+            LocalDate endDate
+    ) {
+        if (endDate != null) {
+            if (startDate.isAfter(endDate)) {
+                return "Invalid input: The start date is after the end date";
+            }
+            else if (endDate != null && endDate.isBefore(startDate)) {
+                return "Invalid input: The end date is before the start date";
+            }
+        }
+
+        return null;
+    }
+
+    // //////////////////////////////////////
+
     @Override
     public int compareTo(Playlist other) {
         return ComparisonChain.start()
@@ -511,5 +561,8 @@ public class Playlist extends AbstractContainedObject implements Comparable<Play
 
     @Inject
     Playlists playlists;
+
+    @Inject
+    Time time;
 
 }
