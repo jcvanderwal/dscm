@@ -18,14 +18,17 @@
  */
 package org.estatio.dscm;
 
-import org.apache.isis.applib.annotation.Named;
-import org.apache.isis.applib.annotation.Render;
-import org.apache.isis.applib.annotation.Render.Type;
-import org.estatio.dscm.dom.display.DisplayGroup;
-import org.estatio.dscm.dom.display.DisplayGroups;
+import java.util.List;
 
 import javax.inject.Inject;
-import java.util.List;
+
+import org.apache.isis.applib.annotation.CollectionLayout;
+import org.apache.isis.applib.annotation.Named;
+import org.apache.isis.applib.annotation.RenderType;
+import org.apache.isis.applib.services.clock.ClockService;
+
+import org.estatio.dscm.dom.playlist.Playlist;
+import org.estatio.dscm.dom.playlist.Playlists;
 
 @Named("Dashboard")
 public class DscmDashboard extends EstatioViewModel {
@@ -51,14 +54,15 @@ public class DscmDashboard extends EstatioViewModel {
 
     // //////////////////////////////////////
 
-    @Render(Type.EAGERLY)
-    public List<DisplayGroup> getDisplayGroups() {
-        return displayGroups.allDisplayGroups();
+    @CollectionLayout(render = RenderType.EAGERLY)
+    public List<Playlist> getActivePlaylists() {
+        return playlists.findAllActive(clockService.now());
     }
 
-    // //////////////////////////////////////
+    @Inject
+    private Playlists playlists;
 
     @Inject
-    private DisplayGroups displayGroups;
+    private ClockService clockService;
 
 }

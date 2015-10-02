@@ -131,6 +131,11 @@ public class Playlist extends AbstractContainedObject implements Comparable<Play
         }
     }
 
+
+    public boolean isValid() {
+        return this.getItems().size() > 0;
+    }
+
     private DisplayGroup displayGroup;
 
     @javax.jdo.annotations.Column(name = "displayGroupId", allowsNull = "false")
@@ -286,7 +291,7 @@ public class Playlist extends AbstractContainedObject implements Comparable<Play
     // //////////////////////////////////////
 
     @MemberOrder(sequence = "10")
-    @PropertyLayout(multiLine = 10)
+    @PropertyLayout(multiLine = 10, hidden = Where.ALL_TABLES)
     public String getNextOccurences() {
         StringBuilder builder = new StringBuilder();
         LocalDate fromDate = clockService.now().compareTo(this.getStartDate()) >= 0 ? clockService.now() : this.getStartDate();

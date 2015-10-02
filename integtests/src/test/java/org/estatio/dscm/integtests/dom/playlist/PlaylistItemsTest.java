@@ -18,9 +18,6 @@
  */
 package org.estatio.dscm.integtests.dom.playlist;
 
-import static org.hamcrest.CoreMatchers.is;
-import static org.junit.Assert.assertThat;
-
 import javax.inject.Inject;
 
 import org.junit.Before;
@@ -34,6 +31,9 @@ import org.estatio.dscm.dom.playlist.PlaylistItems;
 import org.estatio.dscm.dom.playlist.Playlists;
 import org.estatio.dscm.fixture.DemoFixture;
 import org.estatio.dscm.integtests.DscmIntegTest;
+
+import static org.hamcrest.CoreMatchers.is;
+import static org.junit.Assert.assertThat;
 
 public class PlaylistItemsTest extends DscmIntegTest {
 
@@ -55,7 +55,7 @@ public class PlaylistItemsTest extends DscmIntegTest {
 
         @Test
         public void sizeDoesMatter() throws Exception {
-            assertThat(playlistItems.allPlaylistItems().size(), is(8));
+            assertThat(playlistItems.allPlaylistItems().size(), is(5));
         }
 
     }

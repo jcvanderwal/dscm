@@ -68,6 +68,13 @@ public class Playlists extends EstatioDomainService<Playlist> {
     // //////////////////////////////////////
 
     @Programmatic
+    public List<Playlist> findAllActive(
+            final LocalDate date) {
+        return allMatches("findAllActive",
+                "date", date);
+    }
+
+    @Programmatic
     public List<Playlist> findByDisplayGroupAndStartDateTimeAndType(
             final DisplayGroup displayGroup,
             final LocalDate startDate,
