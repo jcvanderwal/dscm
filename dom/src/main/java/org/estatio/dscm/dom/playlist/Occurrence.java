@@ -19,9 +19,16 @@
 
 package org.estatio.dscm.dom.playlist;
 
+import java.util.function.Function;
+
 import org.joda.time.LocalDateTime;
 
-public class Occurrence {
+import org.apache.isis.applib.annotation.Programmatic;
+
+import org.isisaddons.wicket.fullcalendar2.cpt.applib.CalendarEvent;
+import org.isisaddons.wicket.fullcalendar2.cpt.applib.CalendarEventable;
+
+public class Occurrence implements CalendarEventable {
 
     public Occurrence(PlaylistType type, LocalDateTime dateTime, String title, boolean emptyPlaylist) {
         this.type = type;
@@ -54,33 +61,33 @@ public class Occurrence {
         return emptyPlaylist;
     }
 
-//    @Override
-//    @Programmatic
-//    public String getCalendarName() {
-//        return this.getType().title();
-//    }
-//
-//    @Override
-//    @Programmatic
-//    public CalendarEvent toCalendarEvent() {
-//        return new CalendarEvent(getDateTime().toDateTime(), getCalendarName(), getTitle(), getEmptyPlaylist());
-//    }
+    @Override
+    @Programmatic
+    public String getCalendarName() {
+        return this.getType().title();
+    }
 
-//    public final static class Functions {
-//        private Functions() {
-//        }
-//
-//        public final static Function<Occurrence, CalendarEvent> TO_CALENDAR_EVENT = new Function<Occurrence, CalendarEvent>() {
-//            @Override
-//            public CalendarEvent apply(final Occurrence input) {
-//                return input.toCalendarEvent();
-//            }
-//        };
-//        public final static Function<Occurrence, String> GET_CALENDAR_NAME = new Function<Occurrence, String>() {
-//            @Override
-//            public String apply(final Occurrence input) {
-//                return input.getCalendarName();
-//            }
-//        };
-//    }
+    @Override
+    @Programmatic
+    public CalendarEvent toCalendarEvent() {
+        return new CalendarEvent(getDateTime().toDateTime(), getCalendarName(), getTitle(), getEmptyPlaylist());
+    }
+
+    public final static class Functions {
+        private Functions() {
+        }
+
+        public final static Function<Occurrence, CalendarEvent> TO_CALENDAR_EVENT = new Function<Occurrence, CalendarEvent>() {
+            @Override
+            public CalendarEvent apply(final Occurrence input) {
+                return input.toCalendarEvent();
+            }
+        };
+        public final static Function<Occurrence, String> GET_CALENDAR_NAME = new Function<Occurrence, String>() {
+            @Override
+            public String apply(final Occurrence input) {
+                return input.getCalendarName();
+            }
+        };
+    }
 }

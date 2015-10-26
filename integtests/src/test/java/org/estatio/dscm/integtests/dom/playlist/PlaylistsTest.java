@@ -20,14 +20,18 @@ package org.estatio.dscm.integtests.dom.playlist;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 import javax.inject.Inject;
 
+import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.ImmutableSet;
+
+import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
 import org.joda.time.LocalDateTime;
 import org.joda.time.LocalTime;
-import org.joda.time.Period;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -35,6 +39,8 @@ import org.junit.Test;
 import org.apache.isis.applib.clock.Clock;
 import org.apache.isis.applib.fixtures.FixtureClock;
 import org.apache.isis.applib.services.clock.ClockService;
+
+import org.isisaddons.wicket.fullcalendar2.cpt.applib.CalendarEventable;
 
 import org.estatio.dscm.dom.display.DisplayGroup;
 import org.estatio.dscm.dom.display.DisplayGroups;
@@ -48,6 +54,7 @@ import org.estatio.dscm.integtests.DscmIntegTest;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertThat;
@@ -186,50 +193,35 @@ public class PlaylistsTest extends DscmIntegTest {
         assertThat(mainPlayList.compareTo(compareTo), is(0));
     }
 
-//    @Test
-//    public void testGetCalendarEvents() throws Exception {
-//        Playlist playlist = playlistFor(new LocalDate(2014, 7, 14), new LocalTime("14:00"));
-//        ((FixtureClock) Clock.getInstance()).setDate(2014, 4, 1);
-//        ((FixtureClock) Clock.getInstance()).setTime(1, 0);
-//
-//        ImmutableMap<String, List<? extends CalendarEventable>> calendarEvents = playlist.getCalendarEvents();
-//
-//        assertNotNull(calendarEvents);
-//        assertFalse(calendarEvents.isEmpty());
-//
-//        ImmutableSet<String> keys = calendarEvents.keySet();
-//        for (Iterator<String> it = keys.iterator(); it.hasNext(); ) {
-//            String s = it.next();
-//            if (s.equals(PlaylistType.FILLERS.title())) {
-//                assertTrue(s.equals(PlaylistType.FILLERS.title()));
-//                assertTrue(!calendarEvents.get(s).isEmpty());
-//                Occurrence occ = (Occurrence) calendarEvents.get(s).get(0);
-//                assertThat(occ.getDateTime(), is(new LocalDateTime(2014, 4, 1, 13, 0, 0, 0)));
-//                assertThat(occ.toCalendarEvent().getDateTime(), is(new DateTime(2014, 4, 1, 13, 0, 0, 0)));
-//                Occurrence occ2 = (Occurrence) calendarEvents.get(s).get(1);
-//                assertThat(occ2.getDateTime(), is(new LocalDateTime(2014, 4, 2, 13, 0, 0, 0)));
-//                assertThat(occ2.toCalendarEvent().getDateTime(), is(new DateTime(2014, 4, 2, 13, 0, 0, 0)));
-//            }
-//        }
-//    }
+    @Test
+    public void testGetCalendarEvents() throws Exception {
+        Playlist playlist = playlistFor(new LocalDate(2014, 7, 14), new LocalTime("14:00"));
+        ((FixtureClock) Clock.getInstance()).setDate(2014, 4, 1);
+        ((FixtureClock) Clock.getInstance()).setTime(1, 0);
+
+        ImmutableMap<String, List<? extends CalendarEventable>> calendarEvents = playlist.getCalendarEvents();
+
+        assertNotNull(calendarEvents);
+        assertFalse(calendarEvents.isEmpty());
+
+        ImmutableSet<String> keys = calendarEvents.keySet();
+        for (Iterator<String> it = keys.iterator(); it.hasNext(); ) {
+            String s = it.next();
+            if (s.equals(PlaylistType.FILLERS.title())) {
+                assertTrue(s.equals(PlaylistType.FILLERS.title()));
+                assertTrue(!calendarEvents.get(s).isEmpty());
+                Occurrence occ = (Occurrence) calendarEvents.get(s).get(0);
+                assertThat(occ.getDateTime(), is(new LocalDateTime(2014, 4, 1, 13, 0, 0, 0)));
+                assertThat(occ.toCalendarEvent().getDateTime(), is(new DateTime(2014, 4, 1, 13, 0, 0, 0)));
+                Occurrence occ2 = (Occurrence) calendarEvents.get(s).get(1);
+                assertThat(occ2.getDateTime(), is(new LocalDateTime(2014, 4, 2, 13, 0, 0, 0)));
+                assertThat(occ2.toCalendarEvent().getDateTime(), is(new DateTime(2014, 4, 2, 13, 0, 0, 0)));
+            }
+        }
+    }
 
     private Playlist playlistFor(LocalDate date, LocalTime time) {
         return playlists.findByDisplayGroupAndDateTimeAndType(displayGroup, date, time, PlaylistType.FILLERS);
-    }
-
-    private List<LocalDateTime> generateNextOccurrencesForTests(LocalDate startDate, LocalTime startTime, LocalDate endDate) {
-        List<LocalDateTime> nextOccurrences = new ArrayList<LocalDateTime>();
-        int max = 7;
-
-        if (endDate != null) {
-            max = Period.fieldDifference(startDate, endDate).getDays() < 7 ? Period.fieldDifference(startDate, endDate).getDays() : 7;
-        }
-
-        for (int i = 0; i < max; i++) {
-            nextOccurrences.add(startDate.plusDays(i).toLocalDateTime(startTime));
-        }
-
-        return nextOccurrences;
     }
 
     private String nextOccurencesToString(List<Occurrence> nextOccurrences) {

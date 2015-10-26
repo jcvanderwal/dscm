@@ -100,29 +100,17 @@
             <version>3.1.0</version>
         </dependency>
 
-        <!--<dependency>-->
-            <!--<groupId>org.isisaddons.wicket.fullcalendar2</groupId>-->
-            <!--<artifactId>isis-wicket-fullcalendar2-cpt</artifactId>-->
-            <!--<version>1.9.1-SNAPSHOT</version>-->
-        <!--</dependency>-->
+        <dependency>
+            <groupId>org.isisaddons.wicket.fullcalendar2</groupId>
+            <artifactId>isis-wicket-fullcalendar2-cpt</artifactId>
+            <version>1.9.1-SNAPSHOT</version>
+        </dependency>
 
-        <!--<dependency>-->
-            <!--<groupId>isis.fullcalendar2</groupId>-->
-            <!--<artifactId>isis-wicket-fullcalendar2</artifactId>-->
-            <!--<version>1.0.0</version>-->
-        <!--</dependency>-->
-
-        <!--<dependency>-->
-            <!--<groupId>wicketfullcal</groupId>-->
-            <!--<artifactId>mod-wicket-fullcalendar</artifactId>-->
-            <!--<version>1.0.0</version>-->
-        <!--</dependency>-->
-
-        <!--<dependency>-->
-            <!--<groupId>net.ftlines.wicket-fullcalendar</groupId>-->
-            <!--<artifactId>wicket-fullcalendar-core</artifactId>-->
-            <!--<version>2.3.1-SNAPSHOT</version>-->
-        <!--</dependency>-->
+        <dependency>
+            <groupId>net.ftlines.wicket-fullcalendar</groupId>
+            <artifactId>wicket-fullcalendar-core</artifactId>
+            <version>2.3.1-SNAPSHOT</version>
+        </dependency>
 
     </dependencies>
 
