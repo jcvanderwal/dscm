@@ -292,10 +292,10 @@ public class Playlist extends AbstractContainedObject implements Comparable<Play
 
     @MemberOrder(sequence = "10")
     @PropertyLayout(multiLine = 10, hidden = Where.ALL_TABLES)
-    public String getNextOccurences() {
+    public String getNextOccurrences() {
         StringBuilder builder = new StringBuilder();
         LocalDate fromDate = clockService.now().compareTo(this.getStartDate()) >= 0 ? clockService.now() : this.getStartDate();
-        for (Occurrence occurence : nextOccurences(fromDate.plusDays(7))) {
+        for (Occurrence occurence : nextOccurrences(fromDate.plusDays(7))) {
             builder.append(occurence.getDateTime().toString("E\tdd-MM-yyyy\tHH:mm"));
             builder.append("\n");
         }
@@ -304,7 +304,7 @@ public class Playlist extends AbstractContainedObject implements Comparable<Play
     }
 
     @Programmatic
-    public List<Occurrence> nextOccurences(LocalDate endDate) {
+    public List<Occurrence> nextOccurrences(LocalDate endDate) {
         List<Occurrence> nextOccurrences = new ArrayList<Occurrence>();
 
         final LocalDate start = getStartDate().isBefore(clockService.now()) ? clockService.now() : getStartDate();
@@ -498,7 +498,7 @@ public class Playlist extends AbstractContainedObject implements Comparable<Play
 //    @Programmatic
 //    public ImmutableMap<String, List<? extends CalendarEventable>> getCalendarEvents() {
 //        LocalDate fromDate = clockService.now().compareTo(this.getStartDate()) >= 0 ? clockService.now() : this.getStartDate();
-//        List<? extends CalendarEventable> nextOccurrences = nextOccurences(fromDate.plusDays(7));
+//        List<? extends CalendarEventable> nextOccurrences = nextOccurrences(fromDate.plusDays(7));
 //        final ImmutableMap<String, List<? extends CalendarEventable>> eventsByCalendarName = ImmutableMap.<String, List<? extends CalendarEventable>>builder().put(this.getType().title(), nextOccurrences).build();
 //        System.out.println(eventsByCalendarName);
 //        return eventsByCalendarName;
@@ -506,7 +506,7 @@ public class Playlist extends AbstractContainedObject implements Comparable<Play
 
     // //////////////////////////////////////
 
-    @MemberOrder(name = "nextOccurences", sequence = "1")
+    @MemberOrder(name = "nextOccurrences", sequence = "1")
     public Playlist changeValues(
             @ParameterLayout(named = "Start Date") LocalDate startDate,
             @ParameterLayout(named = "Start Time") Time startTime,

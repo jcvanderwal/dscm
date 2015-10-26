@@ -98,7 +98,7 @@ public class SyncService extends AbstractContainedObject {
 
         for (Playlist playlist : playlists.findByDisplayGroupAndType(displayGroup, PlaylistType.MAIN)) {
             for (Display display : displayGroup.getDisplays()) {
-                for (Occurrence occurrence : playlist.nextOccurences(clockService.now().plusDays(7))) {
+                for (Occurrence occurrence : playlist.nextOccurrences(clockService.now().plusDays(7))) {
                     LocalDateTime dateTime = occurrence.getDateTime();
                     writePlaylist(display, dateTime, effectiveItems(playlist, dateTime), rt);
                 }
@@ -122,7 +122,7 @@ public class SyncService extends AbstractContainedObject {
 
         for (Playlist playlist : playlists.findByDisplayGroupAndType(displayGroup, PlaylistType.MAIN)) {
             for (Display display : displayGroup.getDisplays()) {
-                for (Occurrence occurrence : playlist.nextOccurences(clockService.now().plusDays(7))) {
+                for (Occurrence occurrence : playlist.nextOccurrences(clockService.now().plusDays(7))) {
                     LocalDateTime dateTime = occurrence.getDateTime();
                     writePlaylist(display, dateTime, effectiveItems(playlist, dateTime), rt);
                 }

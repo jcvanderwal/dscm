@@ -103,7 +103,7 @@ public class PlaylistsTest extends DscmIntegTest {
         ((FixtureClock) Clock.getInstance()).setTime(1, 0);
 
         assertTrue(playlist.clockService.nowAsLocalDateTime().equals(new LocalDateTime(2014, 4, 1, 1, 0, 0, 0)));
-        List<Occurrence> nextOccurrences = playlist.nextOccurences(playlist.clockService.now().plusDays(7));
+        List<Occurrence> nextOccurrences = playlist.nextOccurrences(playlist.clockService.now().plusDays(7));
 
         assertThat(nextOccurrences.size(), is(7));
         assertThat(nextOccurrences.get(0).getDateTime(), is(new LocalDateTime(2014, 4, 1, 13, 0, 0, 0)));
@@ -125,7 +125,7 @@ public class PlaylistsTest extends DscmIntegTest {
 
         ((FixtureClock) Clock.getInstance()).setDate(2014, 4, 1);
 
-        List<Occurrence> nextOccurences = playlist.nextOccurences(playlist.getStartDate().plusDays(7));
+        List<Occurrence> nextOccurences = playlist.nextOccurrences(playlist.getStartDate().plusDays(7));
 
         assertThat(nextOccurences.size(), is(1));
         assertThat(nextOccurences.get(0).getDateTime(), is(new LocalDateTime(2015, 4, 6, 8, 0, 0, 0)));
@@ -137,12 +137,12 @@ public class PlaylistsTest extends DscmIntegTest {
         ((FixtureClock) Clock.getInstance()).setTime(1, 0);
 
         Playlist result = playlists.findByDisplayGroupAndStartTimeAndType(displayGroup, Time.T0800.time(), PlaylistType.MAIN).get(0);
-        List<Occurrence> nextOccs = result.nextOccurences(result.clockService.now().plusDays(7));
+        List<Occurrence> nextOccs = result.nextOccurrences(result.clockService.now().plusDays(7));
         assertThat(nextOccs.get(0).getDateTime(), is(new LocalDateTime(2014, 4, 1, 8, 0)));
 
         ((FixtureClock) Clock.getInstance()).setTime(15, 0);
 
-        nextOccs = result.nextOccurences(result.clockService.now().plusDays(7));
+        nextOccs = result.nextOccurrences(result.clockService.now().plusDays(7));
         assertThat(nextOccs.get(0).getDateTime(), is(new LocalDateTime(2014, 4, 2, 8, 0)));
 
     }
@@ -164,8 +164,8 @@ public class PlaylistsTest extends DscmIntegTest {
         assertThat(newPlaylist.getStartTime(), is(oldPlaylist.getStartTime()));
 
         // And assert that next occurrences are correct
-        List<Occurrence> nextOccurrences = newPlaylist.nextOccurences(newPlaylist.getStartDate().plusDays(7));
-        assertEquals(nextOccurencesToString(nextOccurrences), newPlaylist.getNextOccurences());
+        List<Occurrence> nextOccurrences = newPlaylist.nextOccurrences(newPlaylist.getStartDate().plusDays(7));
+        assertEquals(nextOccurencesToString(nextOccurrences), newPlaylist.getNextOccurrences());
     }
 
     @Test
