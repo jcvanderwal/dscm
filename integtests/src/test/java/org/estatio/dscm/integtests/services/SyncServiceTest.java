@@ -45,7 +45,7 @@ import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertThat;
 
-public class SyncServiceTest extends DscmIntegTest {
+    public class SyncServiceTest extends DscmIntegTest {
 
     @Inject
     SyncService syncService;
@@ -95,9 +95,11 @@ public class SyncServiceTest extends DscmIntegTest {
             }
 
             assertThat(effectiveItems.get(0).getAsset().getName(), is(AssetForCommercial.NAME));
-            // why not AssetForFiller.NAME?
             assertThat(effectiveItems.get(1).getAsset().getName(), is(AssetForCommercial.NAME));
-            assertThat(effectiveItems.get(2).getAsset().getName(), is(AssetForFiller.NAME));
+            assertThat(effectiveItems.get(2).getAsset().getName(), is(AssetForCommercial.NAME));
+            assertThat(effectiveItems.get(3).getAsset().getName(), is(AssetForCommercial.NAME));
+            assertThat(effectiveItems.get(4).getAsset().getName(), is(AssetForFiller.NAME));
+            assertThat(effectiveItems.get(5).getAsset().getName(), is(AssetForFiller.NAME));
         }
 
         @Test

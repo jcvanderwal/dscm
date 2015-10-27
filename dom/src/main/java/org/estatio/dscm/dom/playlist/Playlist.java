@@ -123,14 +123,14 @@ public class Playlist extends AbstractContainedObject implements Comparable<Play
 
         if (this.getItems().size() == 0) {
             return tb
-                    .append(getContainer().titleOf(getDisplayGroup()))
+                    .append(getDisplayGroup().getName())
                     .append(" ", getStartDate().toString("yyyy-MM-dd"))
                     .append(" ", getStartTime().toString("HH:mm"))
                     .append(" - ", "WARNING: Playlist is empty!")
                     .toString();
         } else {
             return tb
-                    .append(getContainer().titleOf(getDisplayGroup()))
+                    .append(getDisplayGroup().getName())
                     .append(" ", getStartDate().toString("yyyy-MM-dd"))
                     .append(" ", getStartTime().toString("HH:mm"))
                     .toString();
@@ -308,6 +308,7 @@ public class Playlist extends AbstractContainedObject implements Comparable<Play
         return builder.toString();
     }
 
+    // Creates nextOccurrences until the (end)date given as parameter is reached.
     @Programmatic
     public List<Occurrence> nextOccurrences(LocalDate endDate) {
         List<Occurrence> nextOccurrences = new ArrayList<Occurrence>();
@@ -315,6 +316,9 @@ public class Playlist extends AbstractContainedObject implements Comparable<Play
         final LocalDate start = getStartDate().isBefore(clockService.now()) ? clockService.now() : getStartDate();
         final LocalDate end = ObjectUtils.min(endDate, this.getEndDate());
 
+        // When the end date is after or equal to the start date, and the end date is in the future (e.g. later than today) a week of intervals is generated.
+        // example interval: 2015-03-12T00:00:00.000+01:00/2015-03-13T00:00:00.000+01:00 which is equal to a time period of 1 day.
+        // almost 365 (1 year) periods/interval are generated. why???
         if (end.compareTo(start) >= 0 && end.compareTo(clockService.now()) >= 0) {
             List<Interval> intervals;
             intervals = CalendarUtils.intervalsInRange(
@@ -322,24 +326,24 @@ public class Playlist extends AbstractContainedObject implements Comparable<Play
                     end,
                     getRepeatRule());
 
+            // For every interval ...????
             for (Interval interval : intervals) {
                 LocalDateTime intervalStart = new LocalDateTime(interval.getStart());
                 intervalStart = intervalStart.withTime(getStartTime().getHourOfDay(), getStartTime().getMinuteOfHour(), getStartTime().getSecondOfMinute(), getStartTime().getMillisOfSecond());
                 LocalTime time = getStartDate().isBefore(clockService.now()) ? clockService.nowAsLocalDateTime().toLocalTime() : getStartTime();
 
-                boolean mostRecent = true;
-                List<Playlist> otherPlaylists = playlists.findByDisplayGroupAndType(getDisplayGroup(), getType());
+                // hier zat ie........................
 
-                for (Playlist playlist : otherPlaylists) {
-                    if (playlist.repeatRuleToBooleans(playlist.getRepeatRule())[interval.getStart().getDayOfWeek() - 1]
-                            && playlist.getStartTime().isAfter(this.getStartTime())
-                            && playlist.getStartTime().isBefore(clockService.nowAsLocalDateTime().toLocalTime())) {
-                        mostRecent = false;
-                    }
-                }
-
+                // As long as the intervalstart is after (or equal) the start time of the current playlist
+                // OR
+                // if the intervalstart is before the start time of the current playlist AND the Current playlist is the most recent playlist
+                // Then
+                // A new occurence is added to the nextOccurrences
+                // So:
+                // Goal of this scope: Keep adding new occurences until the same day is reached. e.g. Today is Monday, keep scheduling next occurrences until you reach Monday next week. Or isn't it?
                 int comp = intervalStart.compareTo(start.toLocalDateTime(time));
-                if (comp >= 0 || (intervalStart.toLocalDate().compareTo(start) == 0 && mostRecent)) {
+
+                if (comp >= 0 || (intervalStart.toLocalDate().compareTo(start) == 0 && isMostRecent(interval))) {
                     nextOccurrences.add(new Occurrence(
                             this.getType(),
                             new LocalDateTime(
@@ -354,6 +358,26 @@ public class Playlist extends AbstractContainedObject implements Comparable<Play
         }
 
         return nextOccurrences;
+    }
+
+    // //////////////////////////////////////
+
+    @Programmatic
+    public boolean isMostRecent (Interval interval) {
+        //boolean mostRecent = true;
+
+        //List all playlists that have the same type, displaygroup. These playlists could be deprecated or have another repeatrule since there is no check for date and/or time
+        List<Playlist> otherPlaylists = playlists.findByDisplayGroupAndType(getDisplayGroup(), getType());
+
+        //Loop through all playlists. When a playlist starts later then the current playlist, and earlier than the actual time (now), then the current playlist is up to date (and should be replaced by the more recent playlist.
+        for(Playlist playlist :otherPlaylists) {
+            if (playlist.repeatRuleToBooleans(playlist.getRepeatRule())[interval.getStart().getDayOfWeek() - 1] && playlist.getStartTime().isAfter(this.getStartTime()) && playlist.getStartTime().isBefore(clockService.nowAsLocalDateTime().toLocalTime())) {
+                return false;
+            }
+        }
+
+        return true;
+
     }
 
     // //////////////////////////////////////
