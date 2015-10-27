@@ -133,6 +133,7 @@ public class Playlist extends AbstractContainedObject implements Comparable<Play
                     .append(getDisplayGroup().getName())
                     .append(" ", getStartDate().toString("yyyy-MM-dd"))
                     .append(" ", getStartTime().toString("HH:mm"))
+                    .append(" - ", getType())
                     .toString();
         }
     }
