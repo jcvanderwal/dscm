@@ -18,7 +18,6 @@
  */
 package org.estatio.dscm;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import javax.inject.Inject;
@@ -27,10 +26,8 @@ import org.apache.isis.applib.annotation.CollectionLayout;
 import org.apache.isis.applib.annotation.MemberOrder;
 import org.apache.isis.applib.annotation.Named;
 import org.apache.isis.applib.annotation.RenderType;
-import org.apache.isis.applib.annotation.Where;
 import org.apache.isis.applib.services.clock.ClockService;
 
-import org.estatio.dscm.dom.playlist.Occurrence;
 import org.estatio.dscm.dom.playlist.Playlist;
 import org.estatio.dscm.dom.playlist.Playlists;
 
@@ -59,28 +56,9 @@ public class DscmDashboard extends EstatioViewModel {
     // //////////////////////////////////////
 
     @MemberOrder(sequence = "1")
-    @CollectionLayout(render = RenderType.EAGERLY, hidden = Where.ANYWHERE)
+    @CollectionLayout(render = RenderType.EAGERLY)
     public List<Playlist> getActivePlaylists() {
         return playlists.findAllActive(clockService.now());
-    }
-
-    @MemberOrder(sequence = "2")
-    @CollectionLayout(named = "Schedule For Today", render = RenderType.EAGERLY, sortedBy = Occurrence.OccurrencesComparator.class)
-    public List<Occurrence> getSchedule() {
-        List<Occurrence> occ =  new ArrayList<>();
-        for (Playlist pl : getActivePlaylists()){
-            occ.addAll(pl.nextOccurrences(clockService.now().plusDays(1)));
-        }
-        return occ;
-    }
-    @MemberOrder(sequence = "3")
-    @CollectionLayout(named = "Week Schedule", render = RenderType.EAGERLY, sortedBy = Occurrence.OccurrencesComparator.class)
-    public List<Occurrence> getWeekSchedule() {
-        List<Occurrence> weekOcc =  new ArrayList<>();
-        for (Playlist pl : getActivePlaylists()){
-            weekOcc.addAll(pl.nextOccurrences(clockService.now().plusDays(7)));
-        }
-        return weekOcc;
     }
 
     @Inject
