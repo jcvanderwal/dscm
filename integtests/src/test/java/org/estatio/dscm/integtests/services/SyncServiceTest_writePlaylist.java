@@ -92,7 +92,7 @@ public class SyncServiceTest_writePlaylist extends DscmIntegTest {
         // then the file exists
         String fileName = syncService.createPlaylistFilename(display, dateTime);
         File file = new File(fileName);
-        assertTrue("Not found: " + fileName, file.isFile());
+        assertTrue("Not found: " + fileName, file.exists());
         // and the file has two rows corresponding the current fixtures
         FileReader namereader = new FileReader(file);
         BufferedReader in = new BufferedReader(namereader);
