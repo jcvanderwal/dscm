@@ -245,7 +245,7 @@ public class Playlist extends AbstractContainedObject implements Comparable<Play
     @Column(allowsNull = "false")
     private String repeatRule;
 
-    @Property(hidden = Where.EVERYWHERE, optionality = Optionality.OPTIONAL)
+    @Property(hidden = Where.EVERYWHERE)
     public String getRepeatRule() {
         return repeatRule;
     }
@@ -301,8 +301,8 @@ public class Playlist extends AbstractContainedObject implements Comparable<Play
     public String getNextOccurrences() {
         StringBuilder builder = new StringBuilder();
         LocalDate fromDate = clockService.now().compareTo(this.getStartDate()) >= 0 ? clockService.now() : this.getStartDate();
-        for (Occurrence occurence : nextOccurrences(fromDate.plusDays(7))) {
-            builder.append(occurence.getDateTime().toString("E\tdd-MM-yyyy\tHH:mm"));
+        for (Occurrence occurrence : nextOccurrences(fromDate.plusDays(7))) {
+            builder.append(occurrence.getDateTime().toString("E\tdd-MM-yyyy\tHH:mm"));
             builder.append("\n");
         }
 
@@ -474,7 +474,7 @@ public class Playlist extends AbstractContainedObject implements Comparable<Play
             @ParameterLayout(named = "Are you sure?") Boolean confirm) {
         if (confirm) {
             doRemove();
-            return newViewModelInstance(DscmDashboard.class, "dashboard");
+            return new DscmDashboard();
         } else {
             return this;
         }

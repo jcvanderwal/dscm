@@ -133,7 +133,7 @@ public class SyncService extends AbstractContainedObject {
             syncPlaylist(display, path);
         }
 
-        return newViewModelInstance(DscmDashboard.class, "dashboard");
+        return new DscmDashboard();
     }
 
     @Programmatic

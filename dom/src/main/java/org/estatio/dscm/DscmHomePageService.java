@@ -32,15 +32,10 @@ public class DscmHomePageService extends EstatioService<DscmHomePageService> {
         super(DscmHomePageService.class);
     }
 
-    @Override
-    public String iconName() {
-        return "Dashboard";
-    }
-
     @ActionSemantics(Of.SAFE)
     @HomePage
     public DscmDashboard lookup() {
-        return newViewModelInstance(DscmDashboard.class, "dashboard");
+        return new DscmDashboard();
     }
 
 }

@@ -30,6 +30,7 @@ import org.joda.time.LocalTime;
 
 import org.apache.isis.applib.annotation.Programmatic;
 import org.apache.isis.applib.annotation.PropertyLayout;
+import org.apache.isis.applib.annotation.ViewModel;
 import org.apache.isis.applib.annotation.Where;
 
 import org.isisaddons.wicket.fullcalendar2.cpt.applib.CalendarEvent;

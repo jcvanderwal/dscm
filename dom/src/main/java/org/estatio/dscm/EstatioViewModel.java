@@ -18,42 +18,28 @@
  */
 package org.estatio.dscm;
 
-import org.apache.isis.applib.AbstractViewModel;
-import org.apache.isis.applib.services.bookmark.BookmarkService;
+import javax.inject.Inject;
+
+import org.apache.isis.applib.AbstractContainedObject;
 import org.apache.isis.applib.services.clock.ClockService;
-import org.apache.isis.applib.services.memento.MementoService;
+import org.apache.isis.applib.services.eventbus.EventBusService;
 
-public abstract class EstatioViewModel extends AbstractViewModel {
+public abstract class EstatioViewModel extends AbstractContainedObject {
 
+    @Inject
     private ClockService clockService;
 
     protected ClockService getClockService() {
         return clockService;
     }
 
-    public final void injectClockService(final ClockService clockService) {
-        this.clockService = clockService;
-    }
-
     // //////////////////////////////////////
 
-    private MementoService mementoService;
+    @Inject
+    private EventBusService eventBusService;
 
-    protected MementoService getMementoService() {
-        return mementoService;
+    protected EventBusService getEventBusService() {
+        return eventBusService;
     }
 
-    final public void injectMementoService(final MementoService mementoService) {
-        this.mementoService = mementoService;
-    }
-
-    private BookmarkService bookmarkService;
-
-    protected BookmarkService getBookmarkService() {
-        return bookmarkService;
-    }
-
-    public final void injectBookmarkService(BookmarkService bookmarkService) {
-        this.bookmarkService = bookmarkService;
-    }
 }
