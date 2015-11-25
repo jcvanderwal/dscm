@@ -75,7 +75,6 @@ public class SyncServiceTest_writePlaylist extends DscmIntegTest {
         syncService.init(properties);
     }
 
-    @Ignore
     @Test
     public void testFileExists() throws Exception {
 

@@ -60,6 +60,8 @@
 
         <clover.version>3.1.12</clover.version>
         <maven.clover.licenseLocation>${siteBaseDir}/codequality/clover.license</maven.clover.licenseLocation>
+
+        <exclude.tests>none</exclude.tests>
     </properties>
 
     <repositories>
@@ -354,6 +356,14 @@
 
 
     <profiles>
+        <profile>
+            <id>cloudbees</id>
+            <properties>
+                <exclude.tests>**/*writePlaylist.java</exclude.tests>
+            </properties>
+        </profile>
+
+
         <profile>
             <id>m2e</id>
             <activation>
